@@ -169,28 +169,28 @@ public class itemUtil {
         return itemCount;
     }
 
-    public static ItemStack[] removeItem (Player player, Material shopType, int sellNumber) throws Exception {
+    public static ItemStack[] removeItem(Player player, Material shopType, int sellNumber) throws Exception {
         ItemStack[] itemStacks = player.getInventory().getContents();
 
-        for (ItemStack i:itemStacks){
-            if (i!=null){
-                if (i.getType().equals(shopType)){
-                    if (i.getAmount()<=sellNumber){
-                        sellNumber = sellNumber-i.getAmount();
+        for (ItemStack i : itemStacks) {
+            if (i != null) {
+                if (i.getType().equals(shopType)) {
+                    if (i.getAmount() <= sellNumber) {
+                        sellNumber = sellNumber - i.getAmount();
                         i.setType(Material.AIR);
 
-                    }else{
-                        i.setAmount(i.getAmount()-sellNumber);
+                    } else {
+                        i.setAmount(i.getAmount() - sellNumber);
                         sellNumber = 0;
                     }
-                    if (sellNumber == 0){
+                    if (sellNumber == 0) {
                         break;
                     }
                 }
             }
 
         }
-        if (sellNumber!=0){
+        if (sellNumber != 0) {
             throw new Exception();
         }
         return itemStacks;

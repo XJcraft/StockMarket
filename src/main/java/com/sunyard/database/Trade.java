@@ -1,8 +1,5 @@
 package com.sunyard.database;
 
-import com.sunyard.trade.stockMarket;
-import org.bukkit.Material;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,7 +22,7 @@ public class Trade {
     boolean sell;
 
     @Column
-    Material material;
+    String material;
 
     @Column
     int itemPrice;
@@ -84,11 +81,11 @@ public class Trade {
         this.tradeNumber = tradeNumber;
     }
 
-    public Material getMaterial() {
+    public String getMaterial() {
         return material;
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(String material) {
         this.material = material;
     }
 }

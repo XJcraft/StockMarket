@@ -96,7 +96,7 @@ public class stockMarketListener implements Listener {
         int buyNumber = Integer.parseInt(bills[4]);
         boolean itemSize = Boolean.parseBoolean(bills[5]);
         boolean moneySize = Boolean.parseBoolean(bills[6]);
-        int ownedItem = itemUtil.getItemNumber(player,shopType);
+        int ownedItem = itemUtil.getItemNumber(player, shopType);
 
         switch (event.getSlot()) {
             case 0:
@@ -208,19 +208,20 @@ public class stockMarketListener implements Listener {
                 break;
 
             case 48:
-                if (!(itemUtil.getItemNumber(player,shopType)>=sellNumber)){
-                    player.sendMessage(String.format("You don't have enough %s!",shopType.name()));
-                    break;}
+                if (!(itemUtil.getItemNumber(player, shopType) >= sellNumber)) {
+                    player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
+                    break;
+                }
                 try {
-                    player.getInventory().setContents(itemUtil.removeItem(player,shopType,sellNumber));
-                }catch (Exception e){
+                    player.getInventory().setContents(itemUtil.removeItem(player, shopType, sellNumber));
+                } catch (Exception e) {
                     player.sendMessage("Trade failed!");
                 }
 
                 Trade trade = new Trade();
                 trade.setPlayer(player.getName());
                 trade.setSell(true);
-                trade.setMaterial(shopType);
+                trade.setMaterial(shopType.name());
                 trade.setMoneyPrice(moneyPrice);
                 trade.setItemPrice(itemPrice);
 
@@ -231,7 +232,7 @@ public class stockMarketListener implements Listener {
                 trade.setTradeNumber(sellNumber);
                 plugin.getDatabase().save(trade);
 
-                player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"),sellNumber,shopType.name(),itemPrice,moneyPrice));
+                player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
 //                buy(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 

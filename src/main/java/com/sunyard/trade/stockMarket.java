@@ -67,8 +67,6 @@ public class stockMarket extends JavaPlugin {
             }
             getLogger().info("Successful import database structure.");
         }
-
-        //TODO
     }
 
     @Override
