@@ -208,36 +208,11 @@ public class stockMarketListener implements Listener {
                 break;
 
             case 48:
-                if (!(itemUtil.getItemNumber(player, shopType) >= sellNumber)) {
-                    player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
-                    break;
-                }
-                try {
-                    player.getInventory().setContents(itemUtil.removeItem(player, shopType, sellNumber));
-                } catch (Exception e) {
-                    player.sendMessage("Trade failed!");
-                }
-
-                Trade trade = new Trade();
-                trade.setPlayer(player.getName());
-                trade.setSell(true);
-                trade.setMaterial(shopType.name());
-                trade.setMoneyPrice(moneyPrice);
-                trade.setItemPrice(itemPrice);
-
-                int number = 1;
-                if (itemSize) {
-                    number = shopType.getMaxStackSize();
-                }
-                trade.setTradeNumber(sellNumber);
-                plugin.getDatabase().save(trade);
-
-                player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
-//                buy(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                sell(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
             case 50:
-                sell(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                buy(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
         }
@@ -254,7 +229,31 @@ public class stockMarketListener implements Listener {
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+        if (!(itemUtil.getItemNumber(player, shopType) >= sellNumber)) {
+            player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
+            return;
+        }
+        try {
+            player.getInventory().setContents(itemUtil.removeItem(player, shopType, sellNumber));
+        } catch (Exception e) {
+            player.sendMessage("Trade failed!");
+        }
 
+        Trade trade = new Trade();
+        trade.setPlayer(player.getName());
+        trade.setSell(true);
+        trade.setMaterial(shopType.name());
+        trade.setMoneyPrice(moneyPrice);
+        trade.setItemPrice(itemPrice);
+
+        int number = 1;
+        if (itemSize) {
+            number = shopType.getMaxStackSize();
+        }
+        trade.setTradeNumber(sellNumber);
+        plugin.getDatabase().save(trade);
+
+        player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
 
     }
 

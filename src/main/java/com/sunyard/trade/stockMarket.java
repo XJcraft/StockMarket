@@ -1,6 +1,7 @@
 package com.sunyard.trade;
 
 import com.sunyard.blockFML.blockFMLListener;
+import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -50,12 +51,14 @@ public class stockMarket extends JavaPlugin {
     private void setupConfig() {
         saveDefaultConfig();
         YamlConfiguration conf = (YamlConfiguration) getConfig();
+        //TODO encode problems
     }
 
     private void setupDatabase() {
         try {
             getLogger().info("Trying to enable database...");
             getDatabase().find(Trade.class).findRowCount();
+            getDatabase().find(Storage.class).findRowCount();
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info("Fail to enable database, trying to initialize...");
@@ -73,6 +76,7 @@ public class stockMarket extends JavaPlugin {
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(Trade.class);
+        list.add(Storage.class);
         return list;
     }
 

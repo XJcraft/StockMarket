@@ -23,6 +23,7 @@ message:
   sellButton: Sell %d %s with %d emerald
   buyButton: Buy %s with %d emerald with price %d:%d
   itemOwned: You have %d %s in your bag.
-  moneyOwned: You have ￥%d in your bag.
+  moneyOwned: You have $%d in your bag.
   createSell: You place %d sale(s) of %s with price %d:%d
+  createBuy:
 
