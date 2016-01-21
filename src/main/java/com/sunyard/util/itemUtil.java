@@ -126,6 +126,16 @@ public class itemUtil {
         return downArrow;
     }
 
+    public static ItemStack getLowest() {
+        ItemStack lowest = new ItemStack(Material.LEATHER, 1);
+        return lowest;
+    }
+
+    public static ItemStack getHighest() {
+        ItemStack Highest = new ItemStack(Material.PAPER, 1);
+        return Highest;
+    }
+
     public static ItemStack getDetail(String name, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         ItemStack detailPaper = new ItemStack(Material.NAME_TAG, 1);
         ItemMeta im = detailPaper.getItemMeta();
@@ -169,28 +179,53 @@ public class itemUtil {
         return itemCount;
     }
 
-    public static ItemStack[] removeItem(Player player, Material shopType, int sellNumber) throws Exception {
+    public static ItemStack[] removeItem(Player player, Material material, int number) throws Exception {
         ItemStack[] itemStacks = player.getInventory().getContents();
 
         for (ItemStack i : itemStacks) {
             if (i != null) {
-                if (i.getType().equals(shopType)) {
-                    if (i.getAmount() <= sellNumber) {
-                        sellNumber = sellNumber - i.getAmount();
+                if (i.getType().equals(material)) {
+                    if (i.getAmount() <= number) {
+                        number = number - i.getAmount();
                         i.setType(Material.AIR);
 
                     } else {
-                        i.setAmount(i.getAmount() - sellNumber);
-                        sellNumber = 0;
+                        i.setAmount(i.getAmount() - number);
+                        number = 0;
                     }
-                    if (sellNumber == 0) {
+                    if (number == 0) {
                         break;
                     }
                 }
             }
 
         }
-        if (sellNumber != 0) {
+        if (number != 0) {
+            throw new Exception();
+        }
+        return itemStacks;
+    }
+
+    public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
+        ItemStack[] itemStacks = player.getInventory().getContents();
+
+        for (ItemStack i : itemStacks) {
+            if (i == null) {
+                if (number >= material.getMaxStackSize()) {
+                    i.setType(material);
+                    i.setAmount(material.getMaxStackSize());
+                    number = number - material.getMaxStackSize();
+                } else {
+                    i.setType(material);
+                    i.setAmount(number);
+                    number = 0;
+                }
+                if (number == 0) {
+                    break;
+                }
+            }
+        }
+        if (number != 0) {
             throw new Exception();
         }
         return itemStacks;

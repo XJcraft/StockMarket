@@ -245,6 +245,7 @@ public class stockMarketListener implements Listener {
         trade.setMaterial(shopType.name());
         trade.setMoneyPrice(moneyPrice);
         trade.setItemPrice(itemPrice);
+        trade.setPrice(((double) moneyPrice) / (double) itemPrice);
 
         int number = 1;
         if (itemSize) {

@@ -33,6 +33,9 @@ public class Trade {
     @Column
     int tradeNumber;
 
+    @Column
+    double price;
+
     public int getId() {
         return id;
     }
@@ -87,5 +90,13 @@ public class Trade {
 
     public void setMaterial(String material) {
         this.material = material;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

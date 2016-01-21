@@ -1,11 +1,14 @@
 package com.sunyard.trade;
 
+import com.sunyard.database.Trade;
 import com.sunyard.util.itemUtil;
+import com.sunyard.util.sqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -83,7 +86,39 @@ public class shopGUI {
         itemStacks[30] = itemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.itemOwned"), itemUtil.getItemNumber(player, shopType), shopType.name()));
         itemStacks[32] = itemUtil.buy(String.format(plugin.getConfig().getString("message.moneyOwned"), itemUtil.getItemNumber(player, itemUtil.getCurrency())));
 
+        //最低卖价
+        itemStacks[4] = getLowest(plugin, shopType);
+
+        //最高售价
+        itemStacks[22] = getHighest(plugin, shopType);
+
         menu.setContents(itemStacks);
         player.openInventory(menu);
+    }
+
+    private static ItemStack getHighest(Plugin plugin, Material shopType) {
+        ItemStack itemStack = itemUtil.getHighest();
+        ItemMeta itemMetaH = itemStack.getItemMeta();
+        Trade tradeH = sqlUtil.getFirst(plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "0").orderBy().asc("price").findList());
+        if (tradeH != null) {
+            itemMetaH.setDisplayName(String.format("Highest buy price: %d:%d by %s", tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
+        } else {
+            itemMetaH.setDisplayName("Nobody buying");
+        }
+        itemStack.setItemMeta(itemMetaH);
+        return itemStack;
+    }
+
+    private static ItemStack getLowest(Plugin plugin, Material shopType) {
+        ItemStack itemStack = itemUtil.getLowest();
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        Trade trade = sqlUtil.getFirst(plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().desc("price").findList());
+        if (trade != null) {
+            itemMeta.setDisplayName(String.format("Lowest sell price: %d:%d by %s", trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
+        } else {
+            itemMeta.setDisplayName("Nobody selling");
+        }
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 }
