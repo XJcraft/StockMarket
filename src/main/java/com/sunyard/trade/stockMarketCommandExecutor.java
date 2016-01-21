@@ -1,6 +1,5 @@
 package com.sunyard.trade;
 
-import com.sunyard.util.itemUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,11 +22,7 @@ public class stockMarketCommandExecutor implements CommandExecutor {
         } else if (!commandSender.hasPermission("trade.enable")) {
             commandSender.sendMessage("You don't have this permission!");
         } else if (strings.length == 0) {
-            commandSender.sendMessage("Trade mode enabled");
-            ((Player) commandSender).setItemInHand(itemUtil.getNumberStack(0));
-            for (int i = 0; i < 10; i++) {
-                ((Player) commandSender).getInventory().addItem(itemUtil.getNumberStack(i));
-            }
+            //TODO check or get payment
 
             return true;
         }

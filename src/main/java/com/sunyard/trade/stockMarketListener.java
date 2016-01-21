@@ -229,6 +229,10 @@ public class stockMarketListener implements Listener {
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+        sellNumber = sellNumber - sellNumber % itemPrice;
+        if (sellNumber == 0) {
+            player.sendMessage("You will need to sell more items than price");
+        }
         if (!(itemUtil.getItemNumber(player, shopType) >= sellNumber)) {
             player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
             return;

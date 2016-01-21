@@ -1,6 +1,6 @@
 blockFML: true
 shop:
-  enabled: true
+  enable: true
   name: [Stock Market]
   sql:
     hostname:
@@ -12,6 +12,11 @@ shop:
 message:
   enable: StockMarket has been enabled
   disable: StockMarket has been disabled
+  enableDB: Trying to enable database...
+  DBenabled: Database enable successful!
+  DBdisabled: Fail to enable database, trying to initialize...
+  DBfail: Fail to create database structure, please make sure the clear of database!
+  DBpass: Successful import database structure.
   noCreatePermission: You don't have permission to create the shop.
   noUsePermission: You don't have permission to use shop.
   blockFML: The mod installed on your client is forbidden!

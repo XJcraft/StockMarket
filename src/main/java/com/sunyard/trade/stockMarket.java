@@ -21,6 +21,7 @@ public class stockMarket extends JavaPlugin {
     //TODO add dynamic prefix for sql tables
     Plugin plugin;
     Connection connection = null;
+    boolean isEnabled = getConfig().getBoolean("shop.enable");
 
     @Override
     public void onEnable() {
@@ -29,9 +30,11 @@ public class stockMarket extends JavaPlugin {
 
 
         setupConfig();
-        setupListeners();
-        setupCommand();
         setupDatabase();
+        if (isEnabled) {
+            setupListeners();
+            setupCommand();
+        }
         getLogger().info(getConfig().getString("message.enable"));
     }
 
@@ -56,19 +59,20 @@ public class stockMarket extends JavaPlugin {
 
     private void setupDatabase() {
         try {
-            getLogger().info("Trying to enable database...");
+            getLogger().info(getConfig().getString("message.enableDB"));
             getDatabase().find(Trade.class).findRowCount();
             getDatabase().find(Storage.class).findRowCount();
-            getLogger().info("Database enable successful!");
+            getLogger().info(getConfig().getString("message.DBenabled"));
         } catch (Exception e) {
-            getLogger().info("Fail to enable database, trying to initialize...");
+            getLogger().info(getConfig().getString("message.DBdisabled"));
             try {
                 installDDL();
+                getLogger().info(getConfig().getString("message.DBpass"));
             } catch (Exception e2) {
-                getLogger().warning("Fail to create database structure, please make sure the clear of database!");
+                getLogger().warning(getConfig().getString("message.DBfail"));
+                isEnabled = false;
                 e2.printStackTrace();
             }
-            getLogger().info("Successful import database structure.");
         }
     }
 
@@ -86,5 +90,4 @@ public class stockMarket extends JavaPlugin {
         saveConfig();
         getLogger().info(getConfig().getString("message.disable"));
     }
-
 }
