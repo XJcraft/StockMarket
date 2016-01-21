@@ -1,0 +1,27 @@
+name: stockMarket
+main: com.sunyard.trade.stockMarket
+version: 0.50
+author: Ree
+description: This plugin is used to simulated a stock market
+website: http://mc.0ydy.com/
+database: true
+
+commands:
+    trade:
+        description: This is a demo command.
+        usage: /<command>
+        permission: trade.command
+        permission-message: You don't have <permission>
+
+permissions:
+    trade.command:
+        description: Allow user to use trade command
+        default: true
+    trade.enable:
+        description: Allow user to use trade plugin
+        default: true
+
+    trade.create:
+        description: Allow user to create shop
+        default: op
+

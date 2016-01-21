@@ -1,0 +1,198 @@
+package com.sunyard.util;
+
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+
+/**
+ * Created by Weiyuan on 2016/1/15.
+ */
+public class itemUtil {
+    public static ItemStack getNumberStack(int i) {
+
+        i = i % 10;
+        ItemStack itemStack = new ItemStack(Material.BANNER, 1);
+        BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
+        bannerMeta.setBaseColor(DyeColor.WHITE);
+
+
+        switch (i) {
+            case 0:
+                bannerMeta.setDisplayName("0");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+                break;
+            case 1:
+                bannerMeta.setDisplayName("1");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.SQUARE_TOP_LEFT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_CENTER));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                break;
+            case 2:
+                bannerMeta.setDisplayName("2");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                break;
+            case 3:
+                bannerMeta.setDisplayName("3");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                break;
+            case 4:
+                bannerMeta.setDisplayName("4");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.HALF_HORIZONTAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.STRIPE_CENTER));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                break;
+            case 5:
+                bannerMeta.setBaseColor(DyeColor.BLACK);
+                bannerMeta.setDisplayName("5");
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_VERTICAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                break;
+            case 6:
+                bannerMeta.setDisplayName("6");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLE_BOTTOM));
+                break;
+            case 7:
+                bannerMeta.setDisplayName("7");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                break;
+            case 8:
+                bannerMeta.setDisplayName("8");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                break;
+            case 9:
+                bannerMeta.setDisplayName("9");
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.HALF_HORIZONTAL));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.STRIPE_CENTER));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+                break;
+        }
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+        itemStack.setItemMeta(bannerMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getUpArrow() {
+        ItemStack upArrow = new ItemStack(Material.BANNER, 1);
+        BannerMeta bannerMeta = (BannerMeta) upArrow.getItemMeta();
+        bannerMeta.setDisplayName("+");
+        bannerMeta.setBaseColor(DyeColor.BLACK);
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_LEFT));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_RIGHT_MIRROR));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+
+        upArrow.setItemMeta(bannerMeta);
+        return upArrow;
+    }
+
+    public static ItemStack getDownArrow() {
+        ItemStack downArrow = new ItemStack(Material.BANNER, 1);
+        BannerMeta bannerMeta = (BannerMeta) downArrow.getItemMeta();
+        bannerMeta.setDisplayName("-");
+        bannerMeta.setBaseColor(DyeColor.BLACK);
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_RIGHT));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_LEFT_MIRROR));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+        downArrow.setItemMeta(bannerMeta);
+        return downArrow;
+    }
+
+    public static ItemStack getDetail(String name, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+        ItemStack detailPaper = new ItemStack(Material.NAME_TAG, 1);
+        ItemMeta im = detailPaper.getItemMeta();
+        im.setDisplayName(name + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
+        detailPaper.setItemMeta(im);
+        return detailPaper;
+    }
+
+    public static ItemStack buy(String info) {
+        ItemStack buy = new ItemStack(Material.EMERALD, 1);
+        ItemMeta im;
+        im = buy.getItemMeta();
+        im.setDisplayName(info);
+        buy.setItemMeta(im);
+        return buy;
+    }
+
+    public static ItemStack sell(Material shopType, String info) {
+        ItemStack sell = new ItemStack(shopType, 1);
+        ItemMeta im;
+        im = sell.getItemMeta();
+        im.setDisplayName(info);
+        sell.setItemMeta(im);
+        return sell;
+    }
+
+    public static Material getCurrency() {
+        return Material.EMERALD;
+    }
+
+    public static int getItemNumber(Player player, Material type) {
+        ItemStack[] bag = player.getInventory().getContents();
+        int itemCount = 0;
+        for (ItemStack i : bag) {
+            if (i != null) {
+                if (i.getType().equals(type)) {
+                    itemCount = i.getAmount() + itemCount;
+                }
+            }
+        }
+        return itemCount;
+    }
+
+    public static ItemStack[] removeItem (Player player, Material shopType, int sellNumber) throws Exception {
+        ItemStack[] itemStacks = player.getInventory().getContents();
+
+        for (ItemStack i:itemStacks){
+            if (i!=null){
+                if (i.getType().equals(shopType)){
+                    if (i.getAmount()<=sellNumber){
+                        sellNumber = sellNumber-i.getAmount();
+                        i.setType(Material.AIR);
+
+                    }else{
+                        i.setAmount(i.getAmount()-sellNumber);
+                        sellNumber = 0;
+                    }
+                    if (sellNumber == 0){
+                        break;
+                    }
+                }
+            }
+
+        }
+        if (sellNumber!=0){
+            throw new Exception();
+        }
+        return itemStacks;
+    }
+}

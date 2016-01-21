@@ -1,0 +1,28 @@
+blockFML: true
+shop:
+  enabled: true
+  name: [Stock Market]
+  sql:
+    hostname:
+    port:
+    database:
+    user:
+    password:
+    prefix: StockMarket_
+message:
+  enable: StockMarket has been enabled
+  disable: StockMarket has been disabled
+  noCreatePermission: You don't have permission to create the shop.
+  noUsePermission: You don't have permission to use shop.
+  blockFML: The mod installed on your client is forbidden!
+  createShop: The shop for %s have been built!
+  enterShop: Entering %s market...
+  itemMiss: Item not found, check your item name!
+  invalidShop: Invalid shop!
+  priceButton: Use %d %s to exchange %d emerald
+  sellButton: Sell %d %s with %d emerald
+  buyButton: Buy %s with %d emerald with price %d:%d
+  itemOwned: You have %d %s in your bag.
+  moneyOwned: You have ￥%d in your bag.
+  createSell: You place %d sale(s) of %s with price %d:%d
+
