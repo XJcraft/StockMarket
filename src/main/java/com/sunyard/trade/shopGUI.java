@@ -15,7 +15,8 @@ import org.bukkit.plugin.Plugin;
  * Created by Weiyuan on 2016/1/12.
  */
 public class shopGUI {
-    public static void shopGUI(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+    public static void shopGUI(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice,
+                               int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         itemPrice = itemPrice % 10000;
         moneyPrice = moneyPrice % 10000;
         if (itemPrice == 0) {
@@ -79,12 +80,16 @@ public class shopGUI {
         }
 
         //买卖键
-        itemStacks[48] = itemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.sellButton"), sellNumber, shopType.name(), sellNumber * moneyPrice / itemPrice));
-        itemStacks[50] = itemUtil.buy(String.format(plugin.getConfig().getString("message.buyButton"), shopType.name(), moneyPrice * buyNumber, itemPrice, moneyPrice));
+        itemStacks[48] = itemUtil.sell(shopType,
+                String.format(plugin.getConfig().getString("message.sellButton"), sellNumber, shopType.name(), sellNumber * moneyPrice / itemPrice));
+        itemStacks[50] = itemUtil.buy(
+                String.format(plugin.getConfig().getString("message.buyButton"), shopType.name(), moneyPrice * buyNumber, itemPrice, moneyPrice));
 
         //库存显示
-        itemStacks[30] = itemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.itemOwned"), itemUtil.getItemNumber(player, shopType), shopType.name()));
-        itemStacks[32] = itemUtil.buy(String.format(plugin.getConfig().getString("message.moneyOwned"), itemUtil.getItemNumber(player, itemUtil.getCurrency())));
+        itemStacks[30] = itemUtil.sell(shopType,
+                String.format(plugin.getConfig().getString("message.itemOwned"), itemUtil.getItemNumber(player, shopType), shopType.name()));
+        itemStacks[32] = itemUtil.buy(
+                String.format(plugin.getConfig().getString("message.moneyOwned"), itemUtil.getItemNumber(player, itemUtil.getCurrency())));
 
         //最低卖价
         itemStacks[4] = getLowest(plugin, shopType);
@@ -99,7 +104,8 @@ public class shopGUI {
     private static ItemStack getHighest(Plugin plugin, Material shopType) {
         ItemStack itemStack = itemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
-        Trade tradeH = sqlUtil.getFirst(plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "0").orderBy().asc("price").findList());
+        Trade tradeH = sqlUtil.getFirst(
+                plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "0").orderBy().desc("price").findList());
         if (tradeH != null) {
             itemMetaH.setDisplayName(String.format("Highest buy price: %d:%d by %s", tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
         } else {
@@ -112,7 +118,8 @@ public class shopGUI {
     private static ItemStack getLowest(Plugin plugin, Material shopType) {
         ItemStack itemStack = itemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
-        Trade trade = sqlUtil.getFirst(plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().desc("price").findList());
+        Trade trade = sqlUtil.getFirst(
+                plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().asc("price").findList());
         if (trade != null) {
             itemMeta.setDisplayName(String.format("Lowest sell price: %d:%d by %s", trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
         } else {

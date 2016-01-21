@@ -37,7 +37,7 @@ public class stockMarketListener implements Listener {
 
         if (matchPattern(event.getLine(1))) {
             if (event.getPlayer().hasPermission("trade.create")) {
-                event.setLine(1, "Shop");
+                event.setLine(1, plugin.getConfig().getString("shop.name"));
                 try {
                     event.setLine(2, Material.getMaterial(event.getLine(2).toUpperCase()).name());
                     event.getPlayer().setItemInHand(new ItemStack(Material.getMaterial(event.getLine(2).toUpperCase())));
@@ -59,7 +59,7 @@ public class stockMarketListener implements Listener {
         if (event.getPlayer() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
             if (event.getClickedBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock().getState();
-                if (sign.getLine(1).equalsIgnoreCase("shop")) {
+                if (sign.getLine(1).equalsIgnoreCase(plugin.getConfig().getString("shop.name"))) {
                     try {
                         Material shopType = Material.getMaterial(sign.getLine(2).toUpperCase());
                         event.getPlayer().sendMessage(String.format(plugin.getConfig().getString("message.enterShop"), shopType.name()));
