@@ -27,19 +27,15 @@ public class stockMarket extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         plugin = this;
-
-
         setupConfig();
         setupDatabase();
-        if (isEnabled) {
-            setupListeners();
-            setupCommand();
-        }
+        setupListeners();
+        setupCommand();
         getLogger().info(getConfig().getString("message.enable"));
     }
 
     private void setupListeners() {
-        if (plugin.getConfig().getBoolean("shop.enabled")) {
+        if (isEnabled) {
             getServer().getPluginManager().registerEvents(new stockMarketListener(this), this);
         }
         if (plugin.getConfig().getBoolean("blockFML")) {

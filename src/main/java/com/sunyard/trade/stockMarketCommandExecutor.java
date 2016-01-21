@@ -23,11 +23,8 @@ public class stockMarketCommandExecutor implements CommandExecutor {
             commandSender.sendMessage("You don't have this permission!");
         } else if (strings.length == 0) {
             //TODO check or get payment
-
             return true;
         }
-
-
         return false;
     }
 }
