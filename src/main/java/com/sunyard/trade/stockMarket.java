@@ -74,7 +74,7 @@ public class stockMarket extends JavaPlugin {
 
     @Override
     public List<Class<?>> getDatabaseClasses() {
-        List<Class<?>> list = new ArrayList<Class<?>>();
+        List<Class<?>> list = new ArrayList<>();
         list.add(Trade.class);
         list.add(Storage.class);
         return list;

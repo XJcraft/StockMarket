@@ -1,5 +1,6 @@
 package com.sunyard.trade;
 
+import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
 import com.sunyard.util.itemUtil;
 import org.bukkit.Material;
@@ -13,6 +14,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
 
 /**
  * Created by Weiyuan on 2016/1/8.
@@ -225,10 +228,60 @@ public class stockMarketListener implements Listener {
     }
 
     private void buy(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
-        //TODO buy method
+        if (moneySize) {
+            buyNumber = buyNumber * itemUtil.getCurrency().getMaxStackSize();
+        }
+        if (buyNumber > itemUtil.getItemNumber(player, itemUtil.getCurrency())) {
+            player.sendMessage("You don't have enough money for this trade!");
+            return;
+        } else if (buyNumber < moneyPrice) {
+            player.sendMessage("You offer is not enough for a single trade");
+            return;
+        }
+
+        List<Trade> list = plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().asc("price").findList();
+        for (Trade trade : list) {
+            if (trade.getMoneyPrice() > buyNumber) {
+                player.sendMessage("Run out of money!");
+                break;
+            }
+            int get = 0;
+            int pay = 0;
+            while (trade.getTradeNumber() > 0 && trade.getMoneyPrice() <= buyNumber) {
+                trade.setTradeNumber(trade.getTradeNumber() - 1);
+                buyNumber = buyNumber - trade.getMoneyPrice();
+                get = get + trade.getItemPrice();
+                pay = pay + trade.getMoneyPrice();
+            }
+
+
+            try {
+
+                player.getInventory().setContents(itemUtil.addItem(itemUtil.removeItem(player, itemUtil.getCurrency(), pay), shopType, get, plugin));
+                if (trade.getTradeNumber() == 0) {
+                    plugin.getDatabase().delete(trade);
+                } else {
+                    plugin.getDatabase().save(trade);
+                }
+                Storage storage = new Storage();
+                storage.setPlayername(trade.getPlayer());
+                storage.setItemName(itemUtil.getCurrency().name());
+                storage.setItemNumber(pay);
+                player.sendMessage(String.format("You bought %d from %s with $%d. ", get, trade.getPlayer(), pay));
+            } catch (Exception e) {
+//                e.printStackTrace();
+                player.sendMessage("You don't have enough space in your bag!");
+                break;
+            }
+
+        }
+
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+        if (itemSize) {
+            sellNumber = sellNumber * shopType.getMaxStackSize();
+        }
         sellNumber = sellNumber - sellNumber % itemPrice;
         if (sellNumber == 0) {
             player.sendMessage("You will need to sell more items than price");

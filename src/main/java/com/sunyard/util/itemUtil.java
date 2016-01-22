@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Created by Weiyuan on 2016/1/15.
@@ -206,26 +207,39 @@ public class itemUtil {
         return itemStacks;
     }
 
-    public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
-        ItemStack[] itemStacks = player.getInventory().getContents();
+//    public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
+//        ItemStack[] itemStacks = player.getInventory().getContents();
+//        return addItem(itemStacks,material,number);
+//    }
 
-        for (ItemStack i : itemStacks) {
-            if (i == null) {
-                if (number >= material.getMaxStackSize()) {
-                    i.setType(material);
-                    i.setAmount(material.getMaxStackSize());
-                    number = number - material.getMaxStackSize();
-                } else {
-                    i.setType(material);
-                    i.setAmount(number);
+    public static ItemStack[] addItem(ItemStack[] itemStacks, Material material, int number, Plugin plugin) throws Exception {
+
+        for (int n = 0; n < 36; n++) {
+            if (number == 0) {
+                break;
+            }
+//            ItemStack itemStacks[n] = itemStacks[n];
+
+            if (itemStacks[n] == null) {
+                itemStacks[n] = new ItemStack(material, 1);
+                if (number <= material.getMaxStackSize()) {
+                    itemStacks[n].setAmount(number);
                     number = 0;
+                } else {
+                    itemStacks[n].setAmount(material.getMaxStackSize());
+                    number = number - material.getMaxStackSize();
                 }
-                if (number == 0) {
-                    break;
+            } else if (itemStacks[n].getType().equals(material)) {
+                if (number <= (material.getMaxStackSize() - itemStacks[n].getAmount())) {
+                    itemStacks[n].setAmount(itemStacks[n].getAmount() + number);
+                    number = 0;
+                } else {
+                    number = number - material.getMaxStackSize() + itemStacks[n].getAmount();
+                    itemStacks[n].setAmount(material.getMaxStackSize());
                 }
             }
         }
-        if (number != 0) {
+        if (number > 0) {
             throw new Exception();
         }
         return itemStacks;
