@@ -23,6 +23,12 @@ public class Storage {
     @Column
     int itemNumber;
 
+    @Column
+    String paidFrom;
+
+    @Column
+    String shopType;
+
     public int getId() {
         return id;
     }
@@ -53,5 +59,21 @@ public class Storage {
 
     public void setItemNumber(int itemNumber) {
         this.itemNumber = itemNumber;
+    }
+
+    public String getPaidFrom() {
+        return paidFrom;
+    }
+
+    public void setPaidFrom(String paidFrom) {
+        this.paidFrom = paidFrom;
+    }
+
+    public String getShopType() {
+        return shopType;
+    }
+
+    public void setShopType(String shopType) {
+        this.shopType = shopType;
     }
 }

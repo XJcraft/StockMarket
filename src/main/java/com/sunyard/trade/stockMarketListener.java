@@ -2,7 +2,7 @@ package com.sunyard.trade;
 
 import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
-import com.sunyard.util.itemUtil;
+import com.sunyard.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -20,10 +20,10 @@ import java.util.List;
 /**
  * Created by Weiyuan on 2016/1/8.
  */
-public class stockMarketListener implements Listener {
+public class StockMarketListener implements Listener {
     private Plugin plugin;
 
-    public stockMarketListener(stockMarket stockMarket) {
+    public StockMarketListener(StockMarket stockMarket) {
         plugin = stockMarket;
     }
 
@@ -66,7 +66,7 @@ public class stockMarketListener implements Listener {
                     try {
                         Material shopType = Material.getMaterial(sign.getLine(2).toUpperCase());
                         event.getPlayer().sendMessage(String.format(plugin.getConfig().getString("message.enterShop"), shopType.name()));
-                        shopGUI.shopGUI(plugin, event.getPlayer(), shopType, 1, 1, 1, 1, false, false);
+                        ShopGUI.shopGUI(plugin, event.getPlayer(), shopType, 1, 1, 1, 1, false, false);
                         //open shop gui
                     } catch (Exception e) {
                         plugin.getLogger().info(e.toString());
@@ -99,7 +99,7 @@ public class stockMarketListener implements Listener {
         int buyNumber = Integer.parseInt(bills[4]);
         boolean itemSize = Boolean.parseBoolean(bills[5]);
         boolean moneySize = Boolean.parseBoolean(bills[6]);
-        int ownedItem = itemUtil.getItemNumber(player, shopType);
+        int ownedItem = ItemUtil.getItemNumber(player, shopType);
 
         switch (event.getSlot()) {
             case 0:
@@ -224,21 +224,20 @@ public class stockMarketListener implements Listener {
         sellNumber = sellNumber + 1000;
         buyNumber = buyNumber + 1000;
 
-        shopGUI.shopGUI(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+        ShopGUI.shopGUI(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
     }
 
     private void buy(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         if (moneySize) {
-            buyNumber = buyNumber * itemUtil.getCurrency().getMaxStackSize();
+            buyNumber = buyNumber * ItemUtil.getCurrency().getMaxStackSize();
         }
-        if (buyNumber > itemUtil.getItemNumber(player, itemUtil.getCurrency())) {
+        if (buyNumber > ItemUtil.getItemNumber(player, ItemUtil.getCurrency())) {
             player.sendMessage("You don't have enough money for this trade!");
             return;
         } else if (buyNumber < moneyPrice) {
             player.sendMessage("You offer is not enough for a single trade");
             return;
         }
-
         List<Trade> list = plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().asc("price").findList();
         for (Trade trade : list) {
             if (trade.getMoneyPrice() > buyNumber) {
@@ -253,11 +252,8 @@ public class stockMarketListener implements Listener {
                 get = get + trade.getItemPrice();
                 pay = pay + trade.getMoneyPrice();
             }
-
-
             try {
-
-                player.getInventory().setContents(itemUtil.addItem(itemUtil.removeItem(player, itemUtil.getCurrency(), pay), shopType, get, plugin));
+                player.getInventory().setContents(ItemUtil.addItem(ItemUtil.removeItem(player, ItemUtil.getCurrency(), pay), shopType, get, plugin));
                 if (trade.getTradeNumber() == 0) {
                     plugin.getDatabase().delete(trade);
                 } else {
@@ -265,17 +261,19 @@ public class stockMarketListener implements Listener {
                 }
                 Storage storage = new Storage();
                 storage.setPlayername(trade.getPlayer());
-                storage.setItemName(itemUtil.getCurrency().name());
+                storage.setItemName(ItemUtil.getCurrency().name());
                 storage.setItemNumber(pay);
+                storage.setPaidFrom(player.getDisplayName());
+                storage.setShopType(shopType.name());
+                plugin.getDatabase().save(storage);
+
                 player.sendMessage(String.format("You bought %d from %s with $%d. ", get, trade.getPlayer(), pay));
             } catch (Exception e) {
 //                e.printStackTrace();
                 player.sendMessage("You don't have enough space in your bag!");
                 break;
             }
-
         }
-
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
@@ -286,12 +284,12 @@ public class stockMarketListener implements Listener {
         if (sellNumber == 0) {
             player.sendMessage("You will need to sell more items than price");
         }
-        if (!(itemUtil.getItemNumber(player, shopType) >= sellNumber)) {
+        if (!(ItemUtil.getItemNumber(player, shopType) >= sellNumber)) {
             player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
             return;
         }
         try {
-            player.getInventory().setContents(itemUtil.removeItem(player, shopType, sellNumber));
+            player.getInventory().setContents(ItemUtil.removeItem(player, shopType, sellNumber));
         } catch (Exception e) {
             player.sendMessage("Trade failed!");
         }

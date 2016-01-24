@@ -13,7 +13,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * Created by Weiyuan on 2016/1/15.
  */
-public class itemUtil {
+public class ItemUtil {
     public static ItemStack getNumberStack(int i) {
 
         i = i % 10;

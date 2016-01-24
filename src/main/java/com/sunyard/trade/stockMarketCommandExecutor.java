@@ -8,10 +8,10 @@ import org.bukkit.entity.Player;
 /**
  * Created by Weiyuan on 2016/1/8.
  */
-public class stockMarketCommandExecutor implements CommandExecutor {
-    private final stockMarket plugin;
+public class StockMarketCommandExecutor implements CommandExecutor {
+    private final StockMarket plugin;
 
-    public stockMarketCommandExecutor(stockMarket plugin) {
+    public StockMarketCommandExecutor(StockMarket plugin) {
         this.plugin = plugin;
     }
 
@@ -22,9 +22,12 @@ public class stockMarketCommandExecutor implements CommandExecutor {
         } else if (!commandSender.hasPermission("trade.enable")) {
             commandSender.sendMessage("You don't have this permission!");
         } else if (strings.length == 0) {
-            //TODO check or get payment
+            //open bag
+
             return true;
         }
         return false;
     }
+
+
 }

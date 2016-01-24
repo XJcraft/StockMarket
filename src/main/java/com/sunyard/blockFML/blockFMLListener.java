@@ -1,6 +1,6 @@
 package com.sunyard.blockFML;
 
-import com.sunyard.trade.stockMarket;
+import com.sunyard.trade.StockMarket;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,10 +10,10 @@ import org.bukkit.plugin.Plugin;
 /**
  * Created by Weiyuan on 2016/1/19.
  */
-public class blockFMLListener implements Listener {
+public class BlockFMLListener implements Listener {
     Plugin plugin;
 
-    public blockFMLListener(stockMarket stockMarket) {
+    public BlockFMLListener(StockMarket stockMarket) {
         plugin = stockMarket;
     }
 

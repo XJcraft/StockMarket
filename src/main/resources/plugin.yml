@@ -1,5 +1,5 @@
-name: stockMarket
-main: com.sunyard.trade.stockMarket
+name: StockMarket
+main: com.sunyard.trade.StockMarket
 version: 0.60
 author: Ree
 description: This plugin is used to simulated a stock market

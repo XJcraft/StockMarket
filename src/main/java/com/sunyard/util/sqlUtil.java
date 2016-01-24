@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Weiyuan on 2016/1/21.
  */
-public class sqlUtil {
+public class SqlUtil {
 
     public static Trade getFirst(List<Trade> list) {
         if (list.size() > 0) {

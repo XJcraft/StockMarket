@@ -1,6 +1,6 @@
 package com.sunyard.trade;
 
-import com.sunyard.blockFML.blockFMLListener;
+import com.sunyard.blockFML.BlockFMLListener;
 import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Weiyuan on 2016/1/7.
  */
-public class stockMarket extends JavaPlugin {
+public class StockMarket extends JavaPlugin {
 
 
     public final String prefix = getConfig().getString("shop.sql.prefix");
@@ -36,15 +36,15 @@ public class stockMarket extends JavaPlugin {
 
     private void setupListeners() {
         if (isEnabled) {
-            getServer().getPluginManager().registerEvents(new stockMarketListener(this), this);
+            getServer().getPluginManager().registerEvents(new StockMarketListener(this), this);
         }
         if (plugin.getConfig().getBoolean("blockFML")) {
-            getServer().getPluginManager().registerEvents(new blockFMLListener(this), this);
+            getServer().getPluginManager().registerEvents(new BlockFMLListener(this), this);
         }
     }
 
     private void setupCommand() {
-        getCommand("trade").setExecutor(new stockMarketCommandExecutor(this));
+        getCommand("trade").setExecutor(new StockMarketCommandExecutor(this));
     }
 
     private void setupConfig() {
