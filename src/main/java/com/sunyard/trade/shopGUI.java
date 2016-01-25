@@ -34,7 +34,7 @@ public class ShopGUI {
         if (buyNumber == 0) {
             buyNumber = 1;
         }
-        Inventory menu = Bukkit.createInventory(null, 54, "[Stock Market]");
+        Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.name"));
         ItemStack[] itemStacks = menu.getContents();
 
         for (int i = 0; i < 4; i++) {

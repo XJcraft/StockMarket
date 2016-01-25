@@ -1,6 +1,7 @@
 package com.sunyard.trade;
 
 import com.sunyard.blockFML.BlockFMLListener;
+import com.sunyard.database.PriceSheet;
 import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +59,7 @@ public class StockMarket extends JavaPlugin {
             getLogger().info(getConfig().getString("message.enableDB"));
             getDatabase().find(Trade.class).findRowCount();
             getDatabase().find(Storage.class).findRowCount();
+            getDatabase().find(PriceSheet.class).findRowCount();
             getLogger().info(getConfig().getString("message.DBenabled"));
         } catch (Exception e) {
             getLogger().info(getConfig().getString("message.DBdisabled"));
@@ -77,6 +79,7 @@ public class StockMarket extends JavaPlugin {
         List<Class<?>> list = new ArrayList<>();
         list.add(Trade.class);
         list.add(Storage.class);
+        list.add(PriceSheet.class);
         return list;
     }
 
