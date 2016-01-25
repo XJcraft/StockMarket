@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Calendar;
 
 /**
  * Created by Weiyuan on 2016/1/21.
@@ -28,6 +29,12 @@ public class Storage {
 
     @Column
     String shopType;
+
+    @Column
+    Calendar buyDate;
+
+    @Column
+    Calendar sellDate;
 
     public int getId() {
         return id;
@@ -75,5 +82,21 @@ public class Storage {
 
     public void setShopType(String shopType) {
         this.shopType = shopType;
+    }
+
+    public Calendar getBuyDate() {
+        return buyDate;
+    }
+
+    public void setBuyDate(Calendar buyDate) {
+        this.buyDate = buyDate;
+    }
+
+    public Calendar getSellDate() {
+        return sellDate;
+    }
+
+    public void setSellDate(Calendar sellDate) {
+        this.sellDate = sellDate;
     }
 }

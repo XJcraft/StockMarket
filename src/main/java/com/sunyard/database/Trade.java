@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Calendar;
 
 /**
  * Created by Weiyuan on 2016/1/20.
@@ -36,6 +37,9 @@ public class Trade {
     @Column
     double price;
 
+    @Column
+    Calendar tradeDate;
+
     public int getId() {
         return id;
     }
@@ -58,6 +62,14 @@ public class Trade {
 
     public void setSell(boolean sell) {
         this.sell = sell;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
     }
 
     public int getItemPrice() {
@@ -84,19 +96,19 @@ public class Trade {
         this.tradeNumber = tradeNumber;
     }
 
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Calendar getTradeDate() {
+        return tradeDate;
+    }
+
+    public void setTradeDate(Calendar tradeDate) {
+        this.tradeDate = tradeDate;
     }
 }

@@ -2,6 +2,7 @@ blockFML: true
 shop:
   enable: true
   name: [Stock Market]
+  bagName: [Stock Storage]
   sql:
     hostname:
     port:
