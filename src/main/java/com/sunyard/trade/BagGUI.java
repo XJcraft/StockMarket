@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import static com.sunyard.util.ItemUtil.getCurrency;
  * Created by Weiyuan on 2016/1/24.
  */
 public class BagGUI {
-    public static void BagGUI(StockMarket plugin, Player player) {
+    public static void BagGUI(Plugin plugin, Player player) {
         List<Storage> list = plugin.getDatabase().find(Storage.class).where().ieq("playername", player.getDisplayName()).findList();
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.bagName"));
         ItemStack[] itemStacks = menu.getContents();
@@ -28,7 +29,7 @@ public class BagGUI {
             int number = storage.getItemNumber();
             int i = 1;
             int all = number / getCurrency().getMaxStackSize();
-            if (all != number / i) {
+            if (number % getCurrency().getMaxStackSize() != 0) {
                 all++;
             }
             while (number > 0) {
@@ -44,9 +45,12 @@ public class BagGUI {
                 List<String> stringList = new ArrayList<String>();
                 stringList.add(String.format("Paid by %s", storage.getPaidFrom()));
                 stringList.add(String.format("Market:%s", storage.getShopType()));
-                stringList.add(String.format("Sold in: %s", storage.getSellDate().getTime().toString()));
-                stringList.add(String.format("Bought in: %s", storage.getBuyDate().getTime().toString()));
+                stringList.add(String.format("Sold in: %s", storage.getBargainDate().getTime().toString()));
+                stringList.add(String.format("Bought in: %s", storage.getOrderDate().getTime().toString()));
                 stringList.add(String.format("Package %d/%d", i, all));
+                if (storage.getPlayername().equals(storage.getPaidFrom())) {
+                    stringList.add("returned");
+                }
                 itemMeta.setLore(stringList);
                 itemStacks[slot].setItemMeta(itemMeta);
                 slot++;

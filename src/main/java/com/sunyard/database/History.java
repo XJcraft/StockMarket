@@ -4,30 +4,34 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Calendar;
 
 /**
  * Created by Weiyuan on 2016/1/25.
  */
 @Entity
-@Table(name = "StockMarket_sheet")
-public class PriceSheet {
+@Table(name = "StockMarket_history")
+public class History {
     @Id
     int id;
+
+    @Column
+    String seller;
+
+    @Column
+    String buyer;
 
     @Column
     String material;
 
     @Column
-    int ItemPrice;
+    int itemPrice;
 
     @Column
     int moneyPrice;
 
     @Column
-    int Count;
-
-    @Column
-    int sum;
+    Calendar dealDate;
 
     public int getId() {
         return id;
@@ -35,6 +39,22 @@ public class PriceSheet {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getSeller() {
+        return seller;
+    }
+
+    public void setSeller(String seller) {
+        this.seller = seller;
+    }
+
+    public String getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(String buyer) {
+        this.buyer = buyer;
     }
 
     public String getMaterial() {
@@ -46,11 +66,11 @@ public class PriceSheet {
     }
 
     public int getItemPrice() {
-        return ItemPrice;
+        return itemPrice;
     }
 
     public void setItemPrice(int itemPrice) {
-        ItemPrice = itemPrice;
+        this.itemPrice = itemPrice;
     }
 
     public int getMoneyPrice() {
@@ -61,19 +81,12 @@ public class PriceSheet {
         this.moneyPrice = moneyPrice;
     }
 
-    public int getCount() {
-        return Count;
+
+    public Calendar getDealDate() {
+        return dealDate;
     }
 
-    public void setCount(int count) {
-        Count = count;
-    }
-
-    public int getSum() {
-        return sum;
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
+    public void setDealDate(Calendar dealDate) {
+        this.dealDate = dealDate;
     }
 }

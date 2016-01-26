@@ -31,10 +31,10 @@ public class Storage {
     String shopType;
 
     @Column
-    Calendar buyDate;
+    Calendar orderDate;
 
     @Column
-    Calendar sellDate;
+    Calendar bargainDate;
 
     public int getId() {
         return id;
@@ -84,19 +84,19 @@ public class Storage {
         this.shopType = shopType;
     }
 
-    public Calendar getBuyDate() {
-        return buyDate;
+    public Calendar getOrderDate() {
+        return orderDate;
     }
 
-    public void setBuyDate(Calendar buyDate) {
-        this.buyDate = buyDate;
+    public void setOrderDate(Calendar orderDate) {
+        this.orderDate = orderDate;
     }
 
-    public Calendar getSellDate() {
-        return sellDate;
+    public Calendar getBargainDate() {
+        return bargainDate;
     }
 
-    public void setSellDate(Calendar sellDate) {
-        this.sellDate = sellDate;
+    public void setBargainDate(Calendar bargainDate) {
+        this.bargainDate = bargainDate;
     }
 }
