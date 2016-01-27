@@ -1,7 +1,9 @@
 package com.sunyard.trade;
 
+import com.sunyard.database.History;
 import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
+import com.sunyard.util.InfoUtil;
 import com.sunyard.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -10,11 +12,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -27,18 +33,41 @@ public class StockMarketListener implements Listener {
         plugin = stockMarket;
     }
 
-    public static String removeColor(String str) {
-        if (str == null)
-            return null;
-        str = str.replaceAll("(?i)&[0-F]", "");
-        return str;
-    }
 
+    @EventHandler
+    public void useStorage(InventoryClickEvent event) {
+        if (!event.getInventory().getName().equals(plugin.getConfig().getString("shop.bagName"))) {
+            return;
+        }
+        if (event.getRawSlot() < 54) {
+            if (event.getAction() == InventoryAction.PICKUP_ALL || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+                ItemStack itemStack = event.getCurrentItem();
+
+                String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
+                String[] lores = itemStack.getItemMeta().getLore().get(4).split("/");
+                Storage storage = plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
+                if (lores[1].equals("1")) {
+                    plugin.getDatabase().delete(storage);
+                } else {
+                    storage.setItemNumber(storage.getItemNumber() - itemStack.getAmount());
+                    plugin.getDatabase().save(storage);
+                }
+                ItemMeta itemMeta = itemStack.getItemMeta();
+                itemMeta.setLore(null);
+                itemMeta.setDisplayName(null);
+                itemStack.setItemMeta(itemMeta);
+            } else {
+                event.setCancelled(true);
+                BagGUI.BagGUI(plugin, (Player) event.getWhoClicked());
+            }
+        } else {
+        }
+    }
 
     @EventHandler
     public void createShop(SignChangeEvent event) {
 
-        if (matchPattern(event.getLine(1))) {
+        if (InfoUtil.matchPattern(plugin.getConfig().getString("shop.name"), event.getLine(1))) {
             if (event.getPlayer().hasPermission("trade.create")) {
                 event.setLine(1, plugin.getConfig().getString("shop.name"));
                 try {
@@ -228,6 +257,7 @@ public class StockMarketListener implements Listener {
     }
 
     private void buy(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+
         if (moneySize) {
             buyNumber = buyNumber * ItemUtil.getCurrency().getMaxStackSize();
         }
@@ -237,43 +267,36 @@ public class StockMarketListener implements Listener {
         } else if (buyNumber < moneyPrice) {
             player.sendMessage("You offer is not enough for a single trade");
             return;
+        } else if (!(ItemUtil.getItemNumber(player, ItemUtil.getCurrency()) >= buyNumber)) {
+            player.sendMessage(String.format("You don't have enough %s!", ItemUtil.getCurrency()));
+            return;
         }
-        List<Trade> list = plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("sell", "1").orderBy().asc("price").findList();
-        for (Trade trade : list) {
-            if (trade.getMoneyPrice() > buyNumber) {
-                player.sendMessage("Run out of money!");
-                break;
-            }
-            int get = 0;
-            int pay = 0;
-            while (trade.getTradeNumber() > 0 && trade.getMoneyPrice() <= buyNumber) {
-                trade.setTradeNumber(trade.getTradeNumber() - 1);
-                buyNumber = buyNumber - trade.getMoneyPrice();
-                get = get + trade.getItemPrice();
-                pay = pay + trade.getMoneyPrice();
-            }
-            try {
-                player.getInventory().setContents(ItemUtil.addItem(ItemUtil.removeItem(player, ItemUtil.getCurrency(), pay), shopType, get, plugin));
-                if (trade.getTradeNumber() == 0) {
-                    plugin.getDatabase().delete(trade);
-                } else {
-                    plugin.getDatabase().save(trade);
-                }
-                Storage storage = new Storage();
-                storage.setPlayername(trade.getPlayer());
-                storage.setItemName(ItemUtil.getCurrency().name());
-                storage.setItemNumber(pay);
-                storage.setPaidFrom(player.getDisplayName());
-                storage.setShopType(shopType.name());
-                plugin.getDatabase().save(storage);
 
-                player.sendMessage(String.format("You bought %d from %s with $%d. ", get, trade.getPlayer(), pay));
-            } catch (Exception e) {
-//                e.printStackTrace();
-                player.sendMessage("You don't have enough space in your bag!");
-                break;
-            }
+        try {
+            player.getInventory().setContents(ItemUtil.removeItem(player, ItemUtil.getCurrency(), buyNumber));
+        } catch (Exception e) {
+            player.sendMessage("Trade failed!");
+            return;
         }
+
+        Trade trade = new Trade();
+        trade.setPlayer(player.getName());
+        trade.setSell(false);
+        trade.setMaterial(shopType.name());
+        trade.setMoneyPrice(moneyPrice);
+        trade.setItemPrice(itemPrice);
+        trade.setPrice(((double) moneyPrice) / (double) itemPrice);
+        trade.setTradeDate(java.util.Calendar.getInstance());
+
+        int number = 1;
+        if (moneySize) {
+            number = ItemUtil.getCurrency().getMaxStackSize();
+        }
+        trade.setTradeNumber(buyNumber);
+        plugin.getDatabase().save(trade);
+
+        player.sendMessage(String.format(plugin.getConfig().getString("message.createBuy"), buyNumber, shopType.name(), itemPrice, moneyPrice));
+        trade(plugin, player, shopType);
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
@@ -292,6 +315,7 @@ public class StockMarketListener implements Listener {
             player.getInventory().setContents(ItemUtil.removeItem(player, shopType, sellNumber));
         } catch (Exception e) {
             player.sendMessage("Trade failed!");
+            return;
         }
 
         Trade trade = new Trade();
@@ -301,6 +325,7 @@ public class StockMarketListener implements Listener {
         trade.setMoneyPrice(moneyPrice);
         trade.setItemPrice(itemPrice);
         trade.setPrice(((double) moneyPrice) / (double) itemPrice);
+        trade.setTradeDate(java.util.Calendar.getInstance());
 
         int number = 1;
         if (itemSize) {
@@ -310,10 +335,97 @@ public class StockMarketListener implements Listener {
         plugin.getDatabase().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
+        trade(plugin, player, shopType);
 
     }
 
-    private boolean matchPattern(String line) {
-        return removeColor(line).equalsIgnoreCase(plugin.getConfig().getString("shop.name"));
+    public void trade(Plugin plugin, Player player, Material shopType) {
+        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("player", player.getDisplayName()).orderBy().asc("price").findList();
+        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("player", player.getDisplayName()).orderBy().desc("price").findList();
+        List<History> histories = new ArrayList<>();
+
+        boolean isNotFinish = true;
+        boolean hasTrade = false;
+        while (isNotFinish) {
+            if (sells.size() == 0 || paids.size() == 0) {
+                isNotFinish = false;
+                break;
+            }
+            Trade sell = sells.get(0);
+            Trade paid = paids.get(0);
+            if (sell.getPrice() > paid.getPrice()) {
+                isNotFinish = false;
+                break;
+            }
+            int multi = 1;
+            if (sell.getTradeNumber() / sell.getItemPrice() >= paid.getTradeNumber() / sell.getMoneyPrice()) {
+                multi = paid.getTradeNumber() / sell.getMoneyPrice();
+            } else {
+                multi = sell.getTradeNumber() / sell.getItemPrice();
+            }
+            plugin.getLogger().info("multi:" + multi);
+            sell.setTradeNumber(sell.getTradeNumber() - sell.getItemPrice() * multi);
+            paid.setTradeNumber(paid.getTradeNumber() - sell.getMoneyPrice() * multi);
+
+            Storage getMoney = new Storage();
+            getMoney.setItemNumber(sell.getMoneyPrice() * multi);
+            getMoney.setPlayername(sell.getPlayer());
+            getMoney.setPaidFrom(paid.getPlayer());
+            getMoney.setItemName(ItemUtil.getCurrency().name());
+            getMoney.setShopType(sell.getMaterial());
+            getMoney.setBargainDate(Calendar.getInstance());
+            getMoney.setOrderDate(sell.getTradeDate());
+            plugin.getDatabase().save(getMoney);
+
+            Storage getItem = new Storage();
+            getItem.setItemNumber(sell.getItemPrice() * multi);
+            getItem.setPlayername(paid.getPlayer());
+            getItem.setPaidFrom(sell.getPlayer());
+            getItem.setItemName(sell.getMaterial());
+            getItem.setShopType(sell.getMaterial());
+            getItem.setBargainDate(getMoney.getBargainDate());
+            getItem.setOrderDate(paid.getTradeDate());
+            plugin.getDatabase().save(getItem);
+
+            History history = new History();
+            history.setBuyer(paid.getPlayer());
+            history.setSeller(sell.getPlayer());
+            history.setItemPrice(sell.getItemPrice());
+            history.setMoneyPrice(sell.getMoneyPrice());
+            history.setDealDate(Calendar.getInstance());
+            history.setMaterial(sell.getMaterial());
+            histories.add(history);
+            player.sendMessage(String.format("Get %d %s with $%d from %s", sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));
+
+            plugin.getLogger().info("trade:" + paid.getTradeNumber());
+            plugin.getLogger().info("money price:" + paid.getMoneyPrice());
+            if (paid.getTradeNumber() == 0) {
+                paids.remove(paid);
+                plugin.getDatabase().delete(paid);
+            } else if (paid.getTradeNumber() < paid.getMoneyPrice()) {
+                Storage remainedMoney = new Storage();
+                remainedMoney.setShopType(sell.getMaterial());
+                remainedMoney.setItemName(ItemUtil.getCurrency().name());
+                remainedMoney.setItemNumber(paid.getTradeNumber());
+                remainedMoney.setPlayername(paid.getPlayer());
+                remainedMoney.setPaidFrom(paid.getPlayer());
+                remainedMoney.setOrderDate(paid.getTradeDate());
+                remainedMoney.setBargainDate(null);
+                plugin.getDatabase().save(remainedMoney);
+
+                paids.remove(paid);
+                plugin.getDatabase().delete(paid);
+            }
+            if (sell.getTradeNumber() == 0) {
+                sells.remove(sell);
+                plugin.getDatabase().delete(sell);
+            }
+        }
+        plugin.getDatabase().save(sells);
+        plugin.getDatabase().save(paids);
+        plugin.getDatabase().save(histories);
+        if (hasTrade) {
+            BagGUI.BagGUI(plugin, player);
+        }
     }
 }

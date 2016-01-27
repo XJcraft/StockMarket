@@ -31,6 +31,9 @@ public class History {
     int moneyPrice;
 
     @Column
+    int sold;
+
+    @Column
     Calendar dealDate;
 
     public int getId() {
@@ -81,6 +84,13 @@ public class History {
         this.moneyPrice = moneyPrice;
     }
 
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
+    }
 
     public Calendar getDealDate() {
         return dealDate;

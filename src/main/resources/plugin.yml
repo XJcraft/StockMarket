@@ -9,7 +9,7 @@ database: true
 commands:
     trade:
         description: This is a demo command.
-        usage: /<command>
+        usage: use /<command> help to show all commands avaliable in plugin
         permission: trade.command
         permission-message: You don't have <permission>
 
