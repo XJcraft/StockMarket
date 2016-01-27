@@ -22,9 +22,18 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         } else if (!commandSender.hasPermission("trade.enable")) {
             commandSender.sendMessage("You don't have this permission!");
         } else if (strings.length == 0) {
-            //open bag
+            BagGUI.BagGUI(plugin, (Player) commandSender);
 
             return true;
+        } else if (strings.length == 1) {
+            if (strings[1].equals("list")) {
+                //TODO get price list
+            }
+        } else if (strings.length == 2) {
+            if (strings[1].equals("list")) {
+                String material = strings[2];
+                //TODO get specific price detail
+            }
         }
         return false;
     }

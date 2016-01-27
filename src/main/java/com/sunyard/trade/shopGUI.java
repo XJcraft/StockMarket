@@ -11,6 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Weiyuan on 2016/1/12.
  */
@@ -70,6 +73,14 @@ public class ShopGUI {
         }
 
         itemStacks[13] = ItemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, shopType.name(), moneyPrice));
+        ItemMeta itemMeta13 = itemStacks[13].getItemMeta();
+        List<String> list13 = new ArrayList();
+        list13.add(getLowest(plugin, shopType));
+        list13.add(getHighest(plugin, shopType));
+        itemMeta13.setLore(list13);
+        itemStacks[13].setItemMeta(itemMeta13);
+
+
         itemStacks[40] = ItemUtil.getDetail(shopType.name(), moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
 
         if (itemSize) {
@@ -91,17 +102,17 @@ public class ShopGUI {
         itemStacks[32] = ItemUtil.buy(
                 String.format(plugin.getConfig().getString("message.moneyOwned"), ItemUtil.getItemNumber(player, ItemUtil.getCurrency())));
 
-        //最低卖价
-        itemStacks[4] = getLowest(plugin, shopType);
-
-        //最高售价
-        itemStacks[22] = getHighest(plugin, shopType);
+//        //最低卖价
+//        itemStacks[4] = getLowest(plugin, shopType);
+//
+//        //最高售价
+//        itemStacks[22] = getHighest(plugin, shopType);
 
         menu.setContents(itemStacks);
         player.openInventory(menu);
     }
 
-    private static ItemStack getHighest(Plugin plugin, Material shopType) {
+    private static String getHighest(Plugin plugin, Material shopType) {
         ItemStack itemStack = ItemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
         Trade tradeH = SqlUtil.getFirst(
@@ -112,10 +123,10 @@ public class ShopGUI {
             itemMetaH.setDisplayName("Nobody buying");
         }
         itemStack.setItemMeta(itemMetaH);
-        return itemStack;
+        return itemMetaH.getDisplayName();
     }
 
-    private static ItemStack getLowest(Plugin plugin, Material shopType) {
+    private static String getLowest(Plugin plugin, Material shopType) {
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
         Trade trade = SqlUtil.getFirst(
@@ -126,6 +137,6 @@ public class ShopGUI {
             itemMeta.setDisplayName("Nobody selling");
         }
         itemStack.setItemMeta(itemMeta);
-        return itemStack;
+        return itemMeta.getDisplayName();
     }
 }

@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 /**
  * Created by Weiyuan on 2016/1/15.
@@ -207,19 +206,17 @@ public class ItemUtil {
         return itemStacks;
     }
 
-//    public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
-//        ItemStack[] itemStacks = player.getInventory().getContents();
-//        return addItem(itemStacks,material,number);
-//    }
+    public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
+        ItemStack[] itemStacks = player.getInventory().getContents();
+        return addItem(itemStacks, material, number);
+    }
 
-    public static ItemStack[] addItem(ItemStack[] itemStacks, Material material, int number, Plugin plugin) throws Exception {
+    public static ItemStack[] addItem(ItemStack[] itemStacks, Material material, int number) throws Exception {
 
         for (int n = 0; n < 36; n++) {
             if (number == 0) {
                 break;
             }
-//            ItemStack itemStacks[n] = itemStacks[n];
-
             if (itemStacks[n] == null) {
                 itemStacks[n] = new ItemStack(material, 1);
                 if (number <= material.getMaxStackSize()) {

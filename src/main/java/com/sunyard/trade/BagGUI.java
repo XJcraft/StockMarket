@@ -45,11 +45,16 @@ public class BagGUI {
                 List<String> stringList = new ArrayList<String>();
                 stringList.add(String.format("Paid by %s", storage.getPaidFrom()));
                 stringList.add(String.format("Market:%s", storage.getShopType()));
-                stringList.add(String.format("Sold in: %s", storage.getBargainDate().getTime().toString()));
+                if (storage.getBargainDate() != null) {
+                    stringList.add(String.format("Sold in: %s", storage.getBargainDate().getTime().toString()));
+                } else {
+                    stringList.add(String.format("Never sold"));
+                }
                 stringList.add(String.format("Bought in: %s", storage.getOrderDate().getTime().toString()));
                 stringList.add(String.format("Package %d/%d", i, all));
-                if (storage.getPlayername().equals(storage.getPaidFrom())) {
-                    stringList.add("returned");
+
+                if (storage.getBargainDate() == null) {
+                    stringList.add(String.format("This is a refund!"));
                 }
                 itemMeta.setLore(stringList);
                 itemStacks[slot].setItemMeta(itemMeta);
