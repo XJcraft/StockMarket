@@ -4,25 +4,21 @@ import com.sunyard.blockFML.BlockFMLListener;
 import com.sunyard.database.History;
 import com.sunyard.database.Storage;
 import com.sunyard.database.Trade;
+import com.sunyard.util.JavaPluginFix;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Weiyuan on 2016/1/7.
  */
-public class StockMarket extends JavaPlugin {
-
-
-    public final String prefix = getConfig().getString("shop.sql.prefix");
+public class StockMarket extends JavaPluginFix {
+    //    public final String prefix = getConfig().getString("shop.sql.prefix");
     //TODO add dynamic prefix for sql tables
     Plugin plugin;
-    Connection connection = null;
-    boolean isEnabled = getConfig().getBoolean("shop.enable");
+    boolean isEnabled;
 
     @Override
     public void onEnable() {
@@ -32,10 +28,11 @@ public class StockMarket extends JavaPlugin {
         setupDatabase();
         setupListeners();
         setupCommand();
-        getLogger().info(getConfig().getString("message.enable"));
+        getLogger().info("StockMarket has been enabled");
     }
 
     private void setupListeners() {
+        isEnabled = getConfig().getBoolean("shop.enable");
         if (isEnabled) {
             getServer().getPluginManager().registerEvents(new StockMarketListener(this), this);
         }
@@ -50,24 +47,26 @@ public class StockMarket extends JavaPlugin {
 
     private void setupConfig() {
         saveDefaultConfig();
+        getConfig();
+        saveConfig();
         YamlConfiguration conf = (YamlConfiguration) getConfig();
         //TODO encode problems
     }
 
     private void setupDatabase() {
         try {
-            getLogger().info(getConfig().getString("message.enableDB"));
+            getLogger().info("Trying to enable database...");
             getDatabase().find(Trade.class).findRowCount();
             getDatabase().find(Storage.class).findRowCount();
             getDatabase().find(History.class).findRowCount();
-            getLogger().info(getConfig().getString("message.DBenabled"));
+            getLogger().info("Database enable successful!");
         } catch (Exception e) {
-            getLogger().info(getConfig().getString("message.DBdisabled"));
+            getLogger().info(getConfig().getString("Fail to enable database, trying to initialize..."));
             try {
                 installDDL();
-                getLogger().info(getConfig().getString("message.DBpass"));
+                getLogger().info("Successful import database structure.");
             } catch (Exception e2) {
-                getLogger().warning(getConfig().getString("message.DBfail"));
+                getLogger().warning("Fail to create database structure, please make sure the clear of database!");
                 isEnabled = false;
                 e2.printStackTrace();
             }
@@ -86,7 +85,7 @@ public class StockMarket extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
-        saveConfig();
-        getLogger().info(getConfig().getString("message.disable"));
+//        saveConfig();
+        getLogger().info("StockMarket has been disabled");
     }
 }
