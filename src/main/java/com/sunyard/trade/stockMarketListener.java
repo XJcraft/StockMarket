@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -31,6 +32,16 @@ public class StockMarketListener implements Listener {
 
     public StockMarketListener(StockMarket stockMarket) {
         plugin = stockMarket;
+    }
+
+    @EventHandler
+    public void onSignChange(SignChangeEvent event) {
+        plugin.getLogger().info("SignChangeEvent");
+    }
+
+    @EventHandler
+    public void onSignBreak(BlockBreakEvent event) {
+        plugin.getLogger().info("BlockBreakEvent");
     }
 
 
@@ -340,6 +351,7 @@ public class StockMarketListener implements Listener {
     }
 
     public void trade(Plugin plugin, Player player, Material shopType) {
+        plugin.getLogger().info(player.getDisplayName() + " start trade.");
         List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("player", player.getDisplayName()).orderBy().asc("price").findList();
         List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("player", player.getDisplayName()).orderBy().desc("price").findList();
         List<History> histories = new ArrayList<>();
@@ -363,6 +375,7 @@ public class StockMarketListener implements Listener {
             } else {
                 multi = sell.getTradeNumber() / sell.getItemPrice();
             }
+
             plugin.getLogger().info("multi:" + multi);
             sell.setTradeNumber(sell.getTradeNumber() - sell.getItemPrice() * multi);
             paid.setTradeNumber(paid.getTradeNumber() - sell.getMoneyPrice() * multi);
