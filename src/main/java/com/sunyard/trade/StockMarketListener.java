@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -34,6 +33,7 @@ public class StockMarketListener implements Listener {
         plugin = stockMarket;
     }
 
+/*
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         plugin.getLogger().info("SignChangeEvent");
@@ -43,6 +43,7 @@ public class StockMarketListener implements Listener {
     public void onSignBreak(BlockBreakEvent event) {
         plugin.getLogger().info("BlockBreakEvent");
     }
+*/
 
 
     @EventHandler
@@ -72,6 +73,39 @@ public class StockMarketListener implements Listener {
                 BagGUI.BagGUI(plugin, (Player) event.getWhoClicked());
             }
         } else {
+        }
+    }
+
+    @EventHandler
+    public void cancelTrade(InventoryClickEvent event) {
+        if (!event.getInventory().getName().equals(plugin.getConfig().getString("shop.offerName"))) {
+            return;
+        }
+        if (event.getRawSlot() < 54) {
+            if (event.getAction() == InventoryAction.PICKUP_ALL) {
+                ItemStack itemStack = event.getCurrentItem();
+                String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
+                List<String> lores = itemStack.getItemMeta().getLore();
+                Trade trade = plugin.getDatabase().find(Trade.class).where().ieq("id", strings[1]).findUnique();
+                Storage storage = new Storage();
+                storage.setPlayername(trade.getPlayer());
+                storage.setShopType(trade.getMaterial());
+                if (trade.isSell()) {
+                    storage.setItemName(trade.getMaterial());
+                } else {
+                    storage.setItemName(ItemUtil.getCurrency().name());
+                }
+                storage.setItemNumber(trade.getTradeNumber());
+                storage.setPaidFrom(trade.getPlayer());
+                storage.setOrderDate(trade.getTradeDate());
+                storage.setBargainDate(null);
+
+                plugin.getDatabase().save(storage);
+                plugin.getDatabase().delete(trade);
+
+            }
+            event.setCancelled(true);
+            OfferGUI.OfferGUI(plugin, (Player) event.getWhoClicked());
         }
     }
 

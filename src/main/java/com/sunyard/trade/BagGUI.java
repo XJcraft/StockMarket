@@ -19,7 +19,7 @@ import static com.sunyard.util.ItemUtil.getCurrency;
  */
 public class BagGUI {
     public static void BagGUI(Plugin plugin, Player player) {
-        List<Storage> list = plugin.getDatabase().find(Storage.class).where().ieq("playername", player.getDisplayName()).findList();
+        List<Storage> list = plugin.getDatabase().find(Storage.class).where().ieq("playername", player.getDisplayName()).orderBy().asc("id").findList();
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.bagName"));
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;

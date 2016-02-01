@@ -1,6 +1,7 @@
 package com.sunyard.trade;
 
 import com.sunyard.database.History;
+import com.sunyard.database.Trade;
 import com.sunyard.util.InfoUtil;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -8,7 +9,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Weiyuan on 2016/1/8.
@@ -46,11 +50,34 @@ public class StockMarketCommandExecutor implements CommandExecutor {
 
                     break;
                 case "list":
-                    //TODO get price list
-                    commandSender.sendMessage("Not implement");
+                    //get price list
+                    commandSender.sendMessage("==Offers=======================");
+                    List<Trade> Tradelist = plugin.getDatabase().find(Trade.class).setDistinct(true).where().orderBy().asc("material").findList();
+                    HashMap<String, int[]> map = new HashMap<>();
+                    for (Trade trade : Tradelist) {
+                        if (!map.containsKey(trade.getMaterial())) {
+                            int[] ints = {0, 0};
+                            map.put(trade.getMaterial(), ints);
+                        }
+                        int[] a = map.get(trade.getMaterial());
+                        if (trade.isSell()) {
+                            a[0]++;
+                        } else {
+                            a[1]++;
+                        }
+                        map.put(trade.getMaterial(), a);
+                    }
+                    Iterator iterator = map.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iterator.next();
+                        String a = (String) entry.getKey();
+                        int[] b = (int[]) entry.getValue();
+                        commandSender.sendMessage(String.format("%d sales and %d purchases for %s.", b[0], b[1], a));
+                    }
+
                     break;
                 case "price":
-                    //TODO get specific price detail
+                    //get specific price detail
                     if (strings.length != 2) {
                         commandSender.sendMessage("Check your input!");
                     } else {
@@ -87,7 +114,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     commandSender.sendMessage("Item name:" + ((Player) commandSender).getItemInHand().getType().name());
                     break;
                 case "mine":
-                    //TODO show my trades and cancel it
+                    OfferGUI.OfferGUI(plugin, (Player) commandSender);
                     break;
                 default:
                     return false;

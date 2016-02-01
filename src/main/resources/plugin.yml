@@ -1,6 +1,6 @@
 name: StockMarket
 main: com.sunyard.trade.StockMarket
-version: 1.01
+version: 1.1
 author: Ree
 description: This plugin is used to simulated a stock market
 website: http://mc.0ydy.com/
@@ -20,7 +20,6 @@ permissions:
     trade.enable:
         description: Allow user to use trade plugin
         default: true
-
     trade.create:
         description: Allow user to create shop
         default: op

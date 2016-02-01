@@ -3,6 +3,7 @@ shop:
   enable: true
   name: [Stock Market]
   bagName: [Stock Storage]
+  offerName: [My offers]
   sql:
     prefix: StockMarket_
 message:
