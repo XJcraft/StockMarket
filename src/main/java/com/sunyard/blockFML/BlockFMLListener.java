@@ -19,10 +19,9 @@ public class BlockFMLListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockFML(PlayerLoginEvent event) {
-        if (event.getHostname().contains("FML")) {
+        if (event.getHostname().matches("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,5}$")) {
             plugin.getLogger().info(String.format("%s tried to connect with modded client", event.getPlayer().getName()));
-            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(plugin.getConfig().getString("message.blockFML"));
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, plugin.getConfig().getString("message.blockFML"));
         }
     }
 }
