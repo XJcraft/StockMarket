@@ -17,6 +17,7 @@ public class JavaPluginFix extends JavaPlugin {
 
     private FileConfiguration newConfig;
 
+    @Override
     public FileConfiguration getConfig() {
         if (newConfig == null) {
             reloadConfig();
