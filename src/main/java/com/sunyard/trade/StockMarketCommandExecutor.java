@@ -67,9 +67,9 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                         }
                         map.put(trade.getMaterial(), a);
                     }
-                    Iterator iterator = map.entrySet().iterator();
+                    Iterator<Map.Entry<String, int[]>> iterator = map.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iterator.next();
+                        Map.Entry<String, int[]> entry = iterator.next();
                         String a = (String) entry.getKey();
                         int[] b = (int[]) entry.getValue();
                         commandSender.sendMessage(String.format("%d sales and %d purchases for %s.", b[0], b[1], a));

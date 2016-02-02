@@ -74,7 +74,7 @@ public class ShopGUI {
 
         itemStacks[13] = ItemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, shopType.name(), moneyPrice));
         ItemMeta itemMeta13 = itemStacks[13].getItemMeta();
-        List<String> list13 = new ArrayList();
+        List<String> list13 = new ArrayList<String>();
         list13.add(getLowest(plugin, shopType));
         list13.add(getHighest(plugin, shopType));
         itemMeta13.setLore(list13);

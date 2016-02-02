@@ -15,8 +15,8 @@ import java.util.List;
  * Created by Weiyuan on 2016/1/7.
  */
 public class StockMarket extends JavaPluginFix {
-    //    public final String prefix = getConfig().getString("shop.sql.prefix");
-    //TODO add dynamic prefix for sql tables
+    // public final String prefix = getConfig().getString("shop.sql.prefix");
+    // TODO add dynamic prefix for sql tables
     Plugin plugin;
     boolean isEnabled;
 
