@@ -13,31 +13,31 @@ import java.util.Calendar;
 @Table(name = "StockMarket_storages")
 public class Storage {
     @Id
-    int id;
+    private int id;
 
     @Column
-    String playername;
+    private String playername;
 
     @Column
-    String itemName;
+    private String itemName;
 
     @Column
-    int itemNumber;
+    private int itemNumber;
 
     @Column
-    String paidFrom;
+    private String paidFrom;
 
     @Column
-    String shopType;
+    private String shopType;
 
     @Column
-    Calendar orderDate;
+    private Calendar orderDate;
 
     @Column
-    Calendar bargainDate;
+    private Calendar bargainDate;
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -45,7 +45,7 @@ public class Storage {
     }
 
     public String getPlayername() {
-        return playername;
+        return this.playername;
     }
 
     public void setPlayername(String playername) {
@@ -53,7 +53,7 @@ public class Storage {
     }
 
     public String getItemName() {
-        return itemName;
+        return this.itemName;
     }
 
     public void setItemName(String itemName) {
@@ -61,7 +61,7 @@ public class Storage {
     }
 
     public int getItemNumber() {
-        return itemNumber;
+        return this.itemNumber;
     }
 
     public void setItemNumber(int itemNumber) {
@@ -69,7 +69,7 @@ public class Storage {
     }
 
     public String getPaidFrom() {
-        return paidFrom;
+        return this.paidFrom;
     }
 
     public void setPaidFrom(String paidFrom) {
@@ -77,7 +77,7 @@ public class Storage {
     }
 
     public String getShopType() {
-        return shopType;
+        return this.shopType;
     }
 
     public void setShopType(String shopType) {
@@ -85,7 +85,7 @@ public class Storage {
     }
 
     public Calendar getOrderDate() {
-        return orderDate;
+        return this.orderDate;
     }
 
     public void setOrderDate(Calendar orderDate) {
@@ -93,7 +93,7 @@ public class Storage {
     }
 
     public Calendar getBargainDate() {
-        return bargainDate;
+        return this.bargainDate;
     }
 
     public void setBargainDate(Calendar bargainDate) {

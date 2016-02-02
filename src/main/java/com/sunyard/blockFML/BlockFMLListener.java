@@ -11,17 +11,17 @@ import org.bukkit.plugin.Plugin;
  * Created by Weiyuan on 2016/1/19.
  */
 public class BlockFMLListener implements Listener {
-    Plugin plugin;
+    private Plugin plugin;
 
     public BlockFMLListener(StockMarket stockMarket) {
-        plugin = stockMarket;
+        this.plugin = stockMarket;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void blockFML(PlayerLoginEvent event) {
         if (event.getHostname().matches("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,5}$")) {
-            plugin.getLogger().info(String.format("%s tried to connect with modded client", event.getPlayer().getName()));
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, plugin.getConfig().getString("message.blockFML"));
+            this.plugin.getLogger().info(String.format("%s tried to connect with modded client", event.getPlayer().getName()));
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, this.plugin.getConfig().getString("message.blockFML"));
         }
     }
 }

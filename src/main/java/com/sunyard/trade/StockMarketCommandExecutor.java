@@ -47,13 +47,13 @@ public class StockMarketCommandExecutor implements CommandExecutor {
 
                     break;
                 case "on":
-                    BagGUI.BagGUI(plugin, (Player) commandSender);
+                    BagGUI.BagGUI(this.plugin, (Player) commandSender);
 
                     break;
                 case "list":
                     //get price list
                     commandSender.sendMessage("==Offers=======================");
-                    List<Trade> Tradelist = plugin.getDatabase().find(Trade.class).setDistinct(true).where().orderBy().asc("material").findList();
+                    List<Trade> Tradelist = this.plugin.getDatabase().find(Trade.class).setDistinct(true).where().orderBy().asc("material").findList();
                     HashMap<String, int[]> map = new HashMap<>();
                     for (Trade trade : Tradelist) {
                         if (!map.containsKey(trade.getMaterial())) {
@@ -85,8 +85,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                         String materialInput = strings[1];
                         try {
                             Material material = Material.getMaterial(materialInput.toUpperCase());
-                            plugin.getLogger().info(material.name());
-                            List<History> list = plugin.getDatabase().find(History.class).where().ieq("material", material.name()).orderBy().asc("id").findList();
+                            this.plugin.getLogger().info(material.name());
+                            List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).orderBy().asc("id").findList();
                             int total = 0;
                             int itemP = 0;
                             int moneyP = 0;
@@ -107,7 +107,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                                 commandSender.sendMessage("Time:" + list.get(0).getDealDate().getTime().toString());
                             }
                         } catch (Exception e) {
-                            plugin.getLogger().info("Incorrect name! Use /trade hand to see the correct item name on hand.");
+                            this.plugin.getLogger().info("Incorrect name! Use /trade hand to see the correct item name on hand.");
                         }
                     }
                     break;
@@ -115,7 +115,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     commandSender.sendMessage("Item name:" + ((Player) commandSender).getItemInHand().getType().name());
                     break;
                 case "mine":
-                    OfferGUI.OfferGUI(plugin, (Player) commandSender);
+                    OfferGUI.OfferGUI(this.plugin, (Player) commandSender);
                     break;
                 default:
                     return false;

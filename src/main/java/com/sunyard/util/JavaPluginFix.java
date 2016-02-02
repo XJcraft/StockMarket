@@ -19,21 +19,21 @@ public class JavaPluginFix extends JavaPlugin {
 
     @Override
     public FileConfiguration getConfig() {
-        if (newConfig == null) {
+        if (this.newConfig == null) {
             reloadConfig();
         }
-        return newConfig;
+        return this.newConfig;
     }
 
     @Override
     public void reloadConfig() {
-        newConfig = YamlFix.loadConfigurationFix(getConfigFile());
+        this.newConfig = YamlFix.loadConfigurationFix(getConfigFile());
 
         InputStream defConfigStream = getResource("config.yml");
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlFix
                     .loadConfigurationFix(defConfigStream);
-            newConfig.setDefaults(defConfig);
+            this.newConfig.setDefaults(defConfig);
         }
     }
 

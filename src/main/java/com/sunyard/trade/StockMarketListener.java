@@ -30,7 +30,7 @@ public class StockMarketListener implements Listener {
     private Plugin plugin;
 
     public StockMarketListener(StockMarket stockMarket) {
-        plugin = stockMarket;
+        this.plugin = stockMarket;
     }
 
 /*
@@ -48,7 +48,7 @@ public class StockMarketListener implements Listener {
 
     @EventHandler
     public void useStorage(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(plugin.getConfig().getString("shop.bagName"))) {
+        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.bagName"))) {
             return;
         }
         if (event.getRawSlot() < 54) {
@@ -57,12 +57,12 @@ public class StockMarketListener implements Listener {
 
                 String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
                 String[] lores = itemStack.getItemMeta().getLore().get(4).split("/");
-                Storage storage = plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
+                Storage storage = this.plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
                 if (lores[1].equals("1")) {
-                    plugin.getDatabase().delete(storage);
+                    this.plugin.getDatabase().delete(storage);
                 } else {
                     storage.setItemNumber(storage.getItemNumber() - itemStack.getAmount());
-                    plugin.getDatabase().save(storage);
+                    this.plugin.getDatabase().save(storage);
                 }
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 itemMeta.setLore(null);
@@ -70,7 +70,7 @@ public class StockMarketListener implements Listener {
                 itemStack.setItemMeta(itemMeta);
             } else {
                 event.setCancelled(true);
-                BagGUI.BagGUI(plugin, (Player) event.getWhoClicked());
+                BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
             }
         } else {
         }
@@ -78,7 +78,7 @@ public class StockMarketListener implements Listener {
 
     @EventHandler
     public void cancelTrade(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(plugin.getConfig().getString("shop.offerName"))) {
+        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.offerName"))) {
             return;
         }
         if (event.getRawSlot() < 54) {
@@ -86,7 +86,7 @@ public class StockMarketListener implements Listener {
                 ItemStack itemStack = event.getCurrentItem();
                 String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
                 List<String> lores = itemStack.getItemMeta().getLore();
-                Trade trade = plugin.getDatabase().find(Trade.class).where().ieq("id", strings[1]).findUnique();
+                Trade trade = this.plugin.getDatabase().find(Trade.class).where().ieq("id", strings[1]).findUnique();
                 Storage storage = new Storage();
                 storage.setPlayername(trade.getPlayer());
                 storage.setShopType(trade.getMaterial());
@@ -100,33 +100,33 @@ public class StockMarketListener implements Listener {
                 storage.setOrderDate(trade.getTradeDate());
                 storage.setBargainDate(null);
 
-                plugin.getDatabase().save(storage);
-                plugin.getDatabase().delete(trade);
+                this.plugin.getDatabase().save(storage);
+                this.plugin.getDatabase().delete(trade);
 
             }
             event.setCancelled(true);
-            OfferGUI.OfferGUI(plugin, (Player) event.getWhoClicked());
+            OfferGUI.OfferGUI(this.plugin, (Player) event.getWhoClicked());
         }
     }
 
     @EventHandler
     public void createShop(SignChangeEvent event) {
 
-        if (InfoUtil.matchPattern(plugin.getConfig().getString("shop.name"), event.getLine(1))) {
+        if (InfoUtil.matchPattern(this.plugin.getConfig().getString("shop.name"), event.getLine(1))) {
             if (event.getPlayer().hasPermission("trade.create")) {
-                event.setLine(1, plugin.getConfig().getString("shop.name"));
+                event.setLine(1, this.plugin.getConfig().getString("shop.name"));
                 try {
                     event.setLine(2, Material.getMaterial(event.getLine(2).toUpperCase()).name());
                     event.getPlayer().setItemInHand(new ItemStack(Material.getMaterial(event.getLine(2).toUpperCase())));
-                    event.getPlayer().sendMessage(String.format(plugin.getConfig().getString("message.createShop"), Material.getMaterial(event.getLine(2).toUpperCase()).toString()));
+                    event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.createShop"), Material.getMaterial(event.getLine(2).toUpperCase()).toString()));
 
                 } catch (Exception e) {
-                    event.getPlayer().sendMessage(plugin.getConfig().getString("message.itemMiss"));
+                    event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.itemMiss"));
                 }
 
             } else {
                 event.setLine(1, "");
-                event.getPlayer().sendMessage(plugin.getConfig().getString("message.noCreatePermission"));
+                event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.noCreatePermission"));
             }
         }
     }
@@ -136,15 +136,15 @@ public class StockMarketListener implements Listener {
         if (event.getPlayer() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
             if (event.getClickedBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock().getState();
-                if (sign.getLine(1).equalsIgnoreCase(plugin.getConfig().getString("shop.name"))) {
+                if (sign.getLine(1).equalsIgnoreCase(this.plugin.getConfig().getString("shop.name"))) {
                     try {
                         Material shopType = Material.getMaterial(sign.getLine(2).toUpperCase());
-                        event.getPlayer().sendMessage(String.format(plugin.getConfig().getString("message.enterShop"), shopType.name()));
-                        ShopGUI.shopGUI(plugin, event.getPlayer(), shopType, 1, 1, 1, 1, false, false);
-                        //open shop gui
+                        event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.enterShop"), shopType.name()));
+                        ShopGUI.shopGUI(this.plugin, event.getPlayer(), shopType, 1, 1, 1, 1, false, false);
+                        // open shop gui
                     } catch (Exception e) {
-                        plugin.getLogger().info(e.toString());
-                        event.getPlayer().sendMessage(plugin.getConfig().getString("message.invalidShop"));
+                        this.plugin.getLogger().info(e.toString());
+                        event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.invalidShop"));
                     }
                 }
             }
@@ -153,7 +153,7 @@ public class StockMarketListener implements Listener {
 
     @EventHandler
     public void useShop(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(plugin.getConfig().getString("shop.name"))) {
+        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.name"))) {
             return;
         }
         event.setCancelled(true);
@@ -285,11 +285,11 @@ public class StockMarketListener implements Listener {
                 break;
 
             case 48:
-                sell(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                sell(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
             case 50:
-                buy(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                buy(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
         }
@@ -298,7 +298,7 @@ public class StockMarketListener implements Listener {
         sellNumber = sellNumber + 1000;
         buyNumber = buyNumber + 1000;
 
-        ShopGUI.shopGUI(plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+        ShopGUI.shopGUI(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
     }
 
     private void buy(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
