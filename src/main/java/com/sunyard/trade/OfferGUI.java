@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class OfferGUI {
     public static void OfferGUI(Plugin plugin, Player player) {
-        List<Trade> list = plugin.getDatabase().find(Trade.class).where().ieq("player", player.getDisplayName()).orderBy().asc("id").findList();
+        List<Trade> list = plugin.getDatabase().find(Trade.class).where().ieq("player", player.getName()).orderBy().asc("id").findList();
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.offerName"));
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;
