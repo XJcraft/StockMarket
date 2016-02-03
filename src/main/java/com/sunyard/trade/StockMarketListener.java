@@ -385,7 +385,6 @@ public class StockMarketListener implements Listener {
     }
 
     public void trade(Plugin plugin, Player player, Material shopType) {
-        plugin.getLogger().info(player.getDisplayName() + " start trade.");
         List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("player", player.getName()).orderBy().asc("price").findList();
         List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("player", player.getName()).orderBy().desc("price").findList();
         List<History> histories = new ArrayList<>();
@@ -410,7 +409,6 @@ public class StockMarketListener implements Listener {
                 multi = sell.getTradeNumber() / sell.getItemPrice();
             }
 
-            plugin.getLogger().info("multi:" + multi);
             sell.setTradeNumber(sell.getTradeNumber() - sell.getItemPrice() * multi);
             paid.setTradeNumber(paid.getTradeNumber() - sell.getMoneyPrice() * multi);
 
@@ -444,8 +442,6 @@ public class StockMarketListener implements Listener {
             histories.add(history);
             player.sendMessage(String.format("Get %d %s with $%d from %s", sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));
 
-            plugin.getLogger().info("trade:" + paid.getTradeNumber());
-            plugin.getLogger().info("money price:" + paid.getMoneyPrice());
             if (paid.getTradeNumber() == 0) {
                 paids.remove(paid);
                 plugin.getDatabase().delete(paid);
