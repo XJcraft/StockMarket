@@ -14,34 +14,34 @@ import java.util.Calendar;
 public class Trade {
 
     @Id
-    int id;
+    private int id;
 
     @Column
-    String player;
+    private String player;
 
     @Column
-    boolean sell;
+    private boolean sell;
 
     @Column
-    String material;
+    private String material;
 
     @Column
-    int itemPrice;
+    private int itemPrice;
 
     @Column
-    int moneyPrice;
+    private int moneyPrice;
 
     @Column
-    int tradeNumber;
+    private int tradeNumber;
 
     @Column
-    double price;
+    private double price;
 
     @Column
-    Calendar tradeDate;
+    private Calendar tradeDate;
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -49,7 +49,7 @@ public class Trade {
     }
 
     public String getPlayer() {
-        return player;
+        return this.player;
     }
 
     public void setPlayer(String player) {
@@ -57,7 +57,7 @@ public class Trade {
     }
 
     public boolean isSell() {
-        return sell;
+        return this.sell;
     }
 
     public void setSell(boolean sell) {
@@ -65,7 +65,7 @@ public class Trade {
     }
 
     public String getMaterial() {
-        return material;
+        return this.material;
     }
 
     public void setMaterial(String material) {
@@ -73,7 +73,7 @@ public class Trade {
     }
 
     public int getItemPrice() {
-        return itemPrice;
+        return this.itemPrice;
     }
 
     public void setItemPrice(int itemPrice) {
@@ -81,7 +81,7 @@ public class Trade {
     }
 
     public int getMoneyPrice() {
-        return moneyPrice;
+        return this.moneyPrice;
     }
 
     public void setMoneyPrice(int moneyPrice) {
@@ -89,7 +89,7 @@ public class Trade {
     }
 
     public int getTradeNumber() {
-        return tradeNumber;
+        return this.tradeNumber;
     }
 
     public void setTradeNumber(int tradeNumber) {
@@ -97,7 +97,7 @@ public class Trade {
     }
 
     public double getPrice() {
-        return price;
+        return this.price;
     }
 
     public void setPrice(double price) {
@@ -105,7 +105,7 @@ public class Trade {
     }
 
     public Calendar getTradeDate() {
-        return tradeDate;
+        return this.tradeDate;
     }
 
     public void setTradeDate(Calendar tradeDate) {

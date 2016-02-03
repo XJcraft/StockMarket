@@ -5,8 +5,9 @@ package com.sunyard.util;
  */
 public class InfoUtil {
     public static String removeColor(String str) {
-        if (str == null)
+        if (str == null) {
             return null;
+        }
         str = str.replaceAll("(?i)&[0-F]", "");
         return str;
     }

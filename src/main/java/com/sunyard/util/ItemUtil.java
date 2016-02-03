@@ -20,7 +20,6 @@ public class ItemUtil {
         BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
         bannerMeta.setBaseColor(DyeColor.WHITE);
 
-
         switch (i) {
             case 0:
                 bannerMeta.setDisplayName("0");

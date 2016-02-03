@@ -15,15 +15,15 @@ import java.util.List;
  * Created by Weiyuan on 2016/1/7.
  */
 public class StockMarket extends JavaPluginFix {
-    //    public final String prefix = getConfig().getString("shop.sql.prefix");
-    //TODO add dynamic prefix for sql tables
+    // public final String prefix = getConfig().getString("shop.sql.prefix");
+    // TODO add dynamic prefix for sql tables
     Plugin plugin;
     boolean isEnabled;
 
     @Override
     public void onEnable() {
         super.onEnable();
-        plugin = this;
+        this.plugin = this;
         setupConfig();
         setupDatabase();
         setupListeners();
@@ -32,11 +32,11 @@ public class StockMarket extends JavaPluginFix {
     }
 
     private void setupListeners() {
-        isEnabled = getConfig().getBoolean("shop.enable");
-        if (isEnabled) {
+        this.isEnabled = getConfig().getBoolean("shop.enable");
+        if (this.isEnabled) {
             getServer().getPluginManager().registerEvents(new StockMarketListener(this), this);
         }
-        if (plugin.getConfig().getBoolean("blockFML")) {
+        if (this.plugin.getConfig().getBoolean("blockFML")) {
             getServer().getPluginManager().registerEvents(new BlockFMLListener(this), this);
         }
     }
@@ -50,7 +50,7 @@ public class StockMarket extends JavaPluginFix {
         getConfig();
         saveConfig();
         YamlConfiguration conf = (YamlConfiguration) getConfig();
-        //TODO encode problems
+        // TODO encode problems
     }
 
     private void setupDatabase() {
@@ -67,7 +67,7 @@ public class StockMarket extends JavaPluginFix {
                 getLogger().info("Successful import database structure.");
             } catch (Exception e2) {
                 getLogger().warning("Fail to create database structure, please make sure the clear of database!");
-                isEnabled = false;
+                this.isEnabled = false;
                 e2.printStackTrace();
             }
         }

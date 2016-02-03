@@ -13,31 +13,31 @@ import java.util.Calendar;
 @Table(name = "StockMarket_history")
 public class History {
     @Id
-    int id;
+    private int id;
 
     @Column
-    String seller;
+    private String seller;
 
     @Column
-    String buyer;
+    private String buyer;
 
     @Column
-    String material;
+    private String material;
 
     @Column
-    int itemPrice;
+    private int itemPrice;
 
     @Column
-    int moneyPrice;
+    private int moneyPrice;
 
     @Column
-    int sold;
+    private int sold;
 
     @Column
-    Calendar dealDate;
+    private Calendar dealDate;
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -45,7 +45,7 @@ public class History {
     }
 
     public String getSeller() {
-        return seller;
+        return this.seller;
     }
 
     public void setSeller(String seller) {
@@ -53,7 +53,7 @@ public class History {
     }
 
     public String getBuyer() {
-        return buyer;
+        return this.buyer;
     }
 
     public void setBuyer(String buyer) {
@@ -61,7 +61,7 @@ public class History {
     }
 
     public String getMaterial() {
-        return material;
+        return this.material;
     }
 
     public void setMaterial(String material) {
@@ -69,7 +69,7 @@ public class History {
     }
 
     public int getItemPrice() {
-        return itemPrice;
+        return this.itemPrice;
     }
 
     public void setItemPrice(int itemPrice) {
@@ -77,7 +77,7 @@ public class History {
     }
 
     public int getMoneyPrice() {
-        return moneyPrice;
+        return this.moneyPrice;
     }
 
     public void setMoneyPrice(int moneyPrice) {
@@ -85,7 +85,7 @@ public class History {
     }
 
     public int getSold() {
-        return sold;
+        return this.sold;
     }
 
     public void setSold(int sold) {
@@ -93,7 +93,7 @@ public class History {
     }
 
     public Calendar getDealDate() {
-        return dealDate;
+        return this.dealDate;
     }
 
     public void setDealDate(Calendar dealDate) {

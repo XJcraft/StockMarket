@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ShopGUI {
     public static void shopGUI(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice,
-                               int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+            int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         itemPrice = itemPrice % 10000;
         moneyPrice = moneyPrice % 10000;
         if (itemPrice == 0) {
@@ -50,8 +50,7 @@ public class ShopGUI {
         }
 
         int[] upArrow = {0, 1, 2, 3, 5, 6, 7, 8, 27, 28, 29, 33, 34, 35};
-        for (int i : upArrow
-                ) {
+        for (int i : upArrow) {
             itemStacks[i] = ItemUtil.getUpArrow();
         }
 
@@ -74,12 +73,11 @@ public class ShopGUI {
 
         itemStacks[13] = ItemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, shopType.name(), moneyPrice));
         ItemMeta itemMeta13 = itemStacks[13].getItemMeta();
-        List<String> list13 = new ArrayList();
+        List<String> list13 = new ArrayList<String>();
         list13.add(getLowest(plugin, shopType));
         list13.add(getHighest(plugin, shopType));
         itemMeta13.setLore(list13);
         itemStacks[13].setItemMeta(itemMeta13);
-
 
         itemStacks[40] = ItemUtil.getDetail(shopType.name(), moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
 
@@ -90,22 +88,22 @@ public class ShopGUI {
             buyNumber = buyNumber * ItemUtil.getCurrency().getMaxStackSize();
         }
 
-        //买卖键
+        // 买卖键
         itemStacks[48] = ItemUtil.sell(shopType,
                 String.format(plugin.getConfig().getString("message.sellButton"), sellNumber, shopType.name(), sellNumber * moneyPrice / itemPrice));
         itemStacks[50] = ItemUtil.buy(
                 String.format(plugin.getConfig().getString("message.buyButton"), shopType.name(), moneyPrice * buyNumber, itemPrice, moneyPrice));
 
-        //库存显示
+        // 库存显示
         itemStacks[30] = ItemUtil.sell(shopType,
                 String.format(plugin.getConfig().getString("message.itemOwned"), ItemUtil.getItemNumber(player, shopType), shopType.name()));
         itemStacks[32] = ItemUtil.buy(
                 String.format(plugin.getConfig().getString("message.moneyOwned"), ItemUtil.getItemNumber(player, ItemUtil.getCurrency())));
 
-//        //最低卖价
+//        // 最低卖价
 //        itemStacks[4] = getLowest(plugin, shopType);
 //
-//        //最高售价
+//        // 最高售价
 //        itemStacks[22] = getHighest(plugin, shopType);
 
         menu.setContents(itemStacks);

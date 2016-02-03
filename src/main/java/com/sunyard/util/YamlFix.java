@@ -59,10 +59,9 @@ public class YamlFix extends YamlConfiguration {
     @Override
     public void load(InputStream stream) throws IOException,
             InvalidConfigurationException {
-        InputStreamReader reader = new InputStreamReader(stream, charset);
+        InputStreamReader reader = new InputStreamReader(stream, this.charset);
         StringBuilder builder = new StringBuilder();
         BufferedReader input = new BufferedReader(reader);
-
 
         try {
             String line;
@@ -86,7 +85,7 @@ public class YamlFix extends YamlConfiguration {
 
         String data = saveToString();
 
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), charset);
+        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), this.charset);
 
         try {
             writer.write(data);
