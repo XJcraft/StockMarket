@@ -122,8 +122,9 @@ public class StockMarketListener implements Listener {
                     short damage = 0;
                     if (item.length > 1) {
                         damage = Short.parseShort(item[1]);
-                        plugin.getLogger().info("damage:" + damage + "   Maxdamage:" + material.getMaxDurability());
-                        if (damage < 0 || damage > material.getMaxDurability()) {
+                        //plugin.getLogger().info("damage:" + damage + "   Maxdamage:" + material.getMaxDurability());
+                        //TODO can't get max durability for items correctly, so remove this limit temporarily
+                        if (damage < 0) {
                             throw new Exception();
                         }
                         display = display + ":" + damage;
