@@ -30,14 +30,14 @@ public class OfferGUI {
             itemMeta.setDisplayName(String.format("Flow number:" + trade.getId()));
             List<String> stringList = new ArrayList<String>();
             if (trade.isSell()) {
-                stringList.add(String.format("Sell:"));
+                stringList.add(String.format("Sell %s:", material.name()));
                 stringList.add(String.format("%d %s", trade.getTradeNumber(), trade.getMaterial()));
             } else {
-                stringList.add(String.format("Buy:"));
+                stringList.add(String.format("Buy: %s", material.name()));
                 stringList.add(String.format("%d %s", trade.getTradeNumber(), ItemUtil.getCurrency()));
             }
             stringList.add(String.format("Price: %d:%d", trade.getItemPrice(), trade.getMoneyPrice()));
-            stringList.add(String.format("Number: %d", trade.getTradeNumber()));
+//            stringList.add(String.format("Number: %d", trade.getTradeNumber()));
             stringList.add(String.format("Click to CANCEL!"));
 
             itemMeta.setLore(stringList);
@@ -50,5 +50,8 @@ public class OfferGUI {
 
         menu.setContents(itemStacks);
         player.openInventory(menu);
+
+        //test
+
     }
 }

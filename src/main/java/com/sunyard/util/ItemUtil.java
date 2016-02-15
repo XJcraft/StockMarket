@@ -143,16 +143,7 @@ public class ItemUtil {
         return detailPaper;
     }
 
-    public static ItemStack buy(String info) {
-        ItemStack buy = new ItemStack(Material.EMERALD, 1);
-        ItemMeta im;
-        im = buy.getItemMeta();
-        im.setDisplayName(info);
-        buy.setItemMeta(im);
-        return buy;
-    }
-
-    public static ItemStack sell(Material shopType, String info) {
+    public static ItemStack button(Material shopType, String info) {
         ItemStack sell = new ItemStack(shopType, 1);
         ItemMeta im;
         im = sell.getItemMeta();

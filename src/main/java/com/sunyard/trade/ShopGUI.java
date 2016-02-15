@@ -71,7 +71,7 @@ public class ShopGUI {
             itemStacks[41] = new ItemStack(ItemUtil.getCurrency(), 1);
         }
 
-        itemStacks[13] = ItemUtil.sell(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, shopType.name(), moneyPrice));
+        itemStacks[13] = ItemUtil.button(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, shopType.name(), moneyPrice));
         ItemMeta itemMeta13 = itemStacks[13].getItemMeta();
         List<String> list13 = new ArrayList<String>();
         list13.add(getLowest(plugin, shopType));
@@ -89,15 +89,15 @@ public class ShopGUI {
         }
 
         // 买卖键
-        itemStacks[48] = ItemUtil.sell(shopType,
+        itemStacks[48] = ItemUtil.button(shopType,
                 String.format(plugin.getConfig().getString("message.sellButton"), sellNumber, shopType.name(), sellNumber * moneyPrice / itemPrice));
-        itemStacks[50] = ItemUtil.buy(
-                String.format(plugin.getConfig().getString("message.buyButton"), shopType.name(), moneyPrice * buyNumber, itemPrice, moneyPrice));
+        itemStacks[50] = ItemUtil.button(ItemUtil.getCurrency(),
+                String.format(plugin.getConfig().getString("message.buyButton"), shopType.name(), buyNumber, itemPrice, moneyPrice));
 
         // 库存显示
-        itemStacks[30] = ItemUtil.sell(shopType,
+        itemStacks[30] = ItemUtil.button(Material.CHEST,
                 String.format(plugin.getConfig().getString("message.itemOwned"), ItemUtil.getItemNumber(player, shopType), shopType.name()));
-        itemStacks[32] = ItemUtil.buy(
+        itemStacks[32] = ItemUtil.button(Material.TRAPPED_CHEST,
                 String.format(plugin.getConfig().getString("message.moneyOwned"), ItemUtil.getItemNumber(player, ItemUtil.getCurrency())));
 
 //        // 最低卖价
