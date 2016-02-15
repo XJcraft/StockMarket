@@ -51,7 +51,6 @@ public class OfferGUI {
         menu.setContents(itemStacks);
         player.openInventory(menu);
 
-        //test
 
     }
 }

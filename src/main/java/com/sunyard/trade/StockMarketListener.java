@@ -116,12 +116,25 @@ public class StockMarketListener implements Listener {
             if (event.getPlayer().hasPermission("trade.create")) {
                 event.setLine(1, this.plugin.getConfig().getString("shop.name"));
                 try {
-                    event.setLine(2, Material.getMaterial(event.getLine(2).toUpperCase()).name());
-                    event.getPlayer().setItemInHand(new ItemStack(Material.getMaterial(event.getLine(2).toUpperCase())));
+                    String[] item = event.getLine(2).split(":");
+                    Material material = Material.getMaterial(item[0].toUpperCase());
+                    String display = material.name();
+                    short damage = 0;
+                    if (item.length > 1) {
+                        damage = Short.parseShort(item[1]);
+                        plugin.getLogger().info("damage:" + damage + "   Maxdamage:" + material.getMaxDurability());
+                        if (damage < 0 || damage > material.getMaxDurability()) {
+                            throw new Exception();
+                        }
+                        display = display + ":" + damage;
+                    }
+                    event.setLine(2, display);
+                    event.getPlayer().setItemInHand(new ItemStack(material, 1, damage));
                     event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.createShop"), Material.getMaterial(event.getLine(2).toUpperCase()).toString()));
 
                 } catch (Exception e) {
                     event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.itemMiss"));
+                    event.setLine(1, "");
                 }
 
             } else {

@@ -113,6 +113,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     break;
                 case "hand":
                     commandSender.sendMessage("Item name:" + ((Player) commandSender).getItemInHand().getType().name());
+                    commandSender.sendMessage("Item :" + ((Player) commandSender).getItemInHand().getType().getData().toString());
                     break;
                 case "mine":
                     OfferGUI.OfferGUI(this.plugin, (Player) commandSender);

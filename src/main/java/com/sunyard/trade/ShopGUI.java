@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ShopGUI {
     public static void shopGUI(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice,
-            int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+                               int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         itemPrice = itemPrice % 10000;
         moneyPrice = moneyPrice % 10000;
         if (itemPrice == 0) {

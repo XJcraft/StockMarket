@@ -60,7 +60,7 @@ public class BagGUI {
                 itemStacks[slot].setItemMeta(itemMeta);
                 slot++;
                 i++;
-                if (slot >= 53) {
+                if (slot >= 54) {
                     isFull = true;
                     break;
                 }
@@ -69,11 +69,11 @@ public class BagGUI {
                 break;
             }
         }
-        if (list.size() > 0) {
+        /*if (list.size() > 0) {
             ItemMeta itemMeta = new ItemStack(Material.CHEST, 1).getItemMeta();
             itemStacks[54].setItemMeta(itemMeta);
             //under building
-        }
+        }*/
         menu.setContents(itemStacks);
         player.openInventory(menu);
 
