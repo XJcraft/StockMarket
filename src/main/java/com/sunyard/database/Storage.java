@@ -22,6 +22,9 @@ public class Storage {
     private String itemName;
 
     @Column
+    private short durability;
+
+    @Column
     private int itemNumber;
 
     @Column
@@ -58,6 +61,14 @@ public class Storage {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+    public short getDurability() {
+        return durability;
+    }
+
+    public void setDurability(short durability) {
+        this.durability = durability;
     }
 
     public int getItemNumber() {

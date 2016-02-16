@@ -26,6 +26,7 @@ public class BagGUI {
         boolean isFull = false;
         for (Storage storage : list) {
             Material material = Material.getMaterial(storage.getItemName());
+            short durability = storage.getDurability();
             int number = storage.getItemNumber();
             int i = 1;
             int all = number / getCurrency().getMaxStackSize();
@@ -34,23 +35,23 @@ public class BagGUI {
             }
             while (number > 0) {
                 if (number > material.getMaxStackSize()) {
-                    itemStacks[slot] = new ItemStack(material, material.getMaxStackSize());
+                    itemStacks[slot] = new ItemStack(material, material.getMaxStackSize(), durability);
                     number = number - material.getMaxStackSize();
                 } else {
-                    itemStacks[slot] = new ItemStack(material, number);
+                    itemStacks[slot] = new ItemStack(material, number, durability);
                     number = number - number;
                 }
                 ItemMeta itemMeta = itemStacks[slot].getItemMeta();
                 itemMeta.setDisplayName(String.format("Flow number:" + storage.getId()));
                 List<String> stringList = new ArrayList<String>();
                 stringList.add(String.format("Paid by %s", storage.getPaidFrom()));
-                stringList.add(String.format("Market:%s", storage.getShopType()));
+                stringList.add(String.format("Market from %s", storage.getShopType()));
                 if (storage.getBargainDate() != null) {
-                    stringList.add(String.format("Sold in: %s", storage.getBargainDate().getTime().toString()));
+                    stringList.add(String.format("Sold in %s", storage.getBargainDate().getTime().toString()));
                 } else {
                     stringList.add(String.format("Never sold"));
                 }
-                stringList.add(String.format("Bought in: %s", storage.getOrderDate().getTime().toString()));
+                stringList.add(String.format("Bought in %s", storage.getOrderDate().getTime().toString()));
                 stringList.add(String.format("Package %d/%d", i, all));
 
                 if (storage.getBargainDate() == null) {
@@ -60,7 +61,7 @@ public class BagGUI {
                 itemStacks[slot].setItemMeta(itemMeta);
                 slot++;
                 i++;
-                if (slot >= 54) {
+                if (slot >= 53) {
                     isFull = true;
                     break;
                 }
@@ -69,14 +70,15 @@ public class BagGUI {
                 break;
             }
         }
-        /*if (list.size() > 0) {
-            ItemMeta itemMeta = new ItemStack(Material.CHEST, 1).getItemMeta();
-            itemStacks[54].setItemMeta(itemMeta);
-            //under building
-        }*/
+        if (list.size() > 0) {
+            itemStacks[53] = new ItemStack(Material.ENDER_CHEST, 1);
+            ItemMeta itemMeta = itemStacks[53].getItemMeta();
+            itemMeta.setDisplayName("Collect All!");
+            itemStacks[53].setItemMeta(itemMeta);
+        }
         menu.setContents(itemStacks);
         player.openInventory(menu);
 
-        // TODO: 2016/2/3 one button collect
+
     }
 }

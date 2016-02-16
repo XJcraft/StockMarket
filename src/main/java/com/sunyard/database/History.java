@@ -25,6 +25,9 @@ public class History {
     private String material;
 
     @Column
+    private short durability;
+
+    @Column
     private int itemPrice;
 
     @Column
@@ -66,6 +69,14 @@ public class History {
 
     public void setMaterial(String material) {
         this.material = material;
+    }
+
+    public short getDurability() {
+        return durability;
+    }
+
+    public void setDurability(short durability) {
+        this.durability = durability;
     }
 
     public int getItemPrice() {

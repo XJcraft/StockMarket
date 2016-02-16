@@ -51,7 +51,7 @@ public class StockMarketListener implements Listener {
         if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.bagName"))) {
             return;
         }
-        if (event.getRawSlot() < 54) {
+        if (event.getRawSlot() < 53) {
             if (event.getAction() == InventoryAction.PICKUP_ALL || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                 ItemStack itemStack = event.getCurrentItem();
 
@@ -72,7 +72,34 @@ public class StockMarketListener implements Listener {
                 event.setCancelled(true);
                 BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
             }
-        } else {
+        } else if (event.getRawSlot() == 53) {
+            for (ItemStack get : event.getInventory().getContents()) {
+                if (get == null) {
+                    break;
+                } else if (ItemUtil.hasEmptySlot((Player) event.getWhoClicked())) {
+                    String[] strings = get.getItemMeta().getDisplayName().split(":");
+                    String[] lores = get.getItemMeta().getLore().get(4).split(" ");
+                    String[] packs = lores[1].split("/");
+                    Storage storage = this.plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
+                    if (packs[0].equals(packs[1])) {
+                        this.plugin.getDatabase().delete(storage);
+                    } else {
+                        storage.setItemNumber(storage.getItemNumber() - get.getAmount());
+                        this.plugin.getDatabase().save(storage);
+                    }
+                    ItemMeta itemMeta = get.getItemMeta();
+                    itemMeta.setLore(null);
+                    itemMeta.setDisplayName(null);
+                    get.setItemMeta(itemMeta);
+                    event.getWhoClicked().getInventory().addItem(get);
+                } else {
+                    break;
+                }
+            }
+            event.setCancelled(true);
+            BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
+
+
         }
     }
 
@@ -92,6 +119,7 @@ public class StockMarketListener implements Listener {
                 storage.setShopType(trade.getMaterial());
                 if (trade.isSell()) {
                     storage.setItemName(trade.getMaterial());
+                    storage.setDurability(trade.getDurability());
                 } else {
                     storage.setItemName(ItemUtil.getCurrency().name());
                 }
@@ -112,11 +140,20 @@ public class StockMarketListener implements Listener {
     @EventHandler
     public void createShop(SignChangeEvent event) {
 
-        if (InfoUtil.matchPattern(this.plugin.getConfig().getString("shop.name"), event.getLine(1))) {
+        if (InfoUtil.matchPattern(this.plugin.getConfig().getString("shop.name"), event.getLine(1)) || event.getLine(1).equals("[s]")) {
             if (event.getPlayer().hasPermission("trade.create")) {
                 event.setLine(1, this.plugin.getConfig().getString("shop.name"));
                 try {
                     String[] item = event.getLine(2).split(":");
+
+                    try {
+                        int i = Integer.parseInt(item[0]);
+
+                        item[0] = Material.getMaterial(i).name();
+//                        event.getPlayer().sendMessage("Int accepted!");
+                    } catch (Exception e) {
+//                        event.getPlayer().sendMessage("Fail convert");
+                    }
                     Material material = Material.getMaterial(item[0].toUpperCase());
                     String display = material.name();
                     short damage = 0;
@@ -125,15 +162,16 @@ public class StockMarketListener implements Listener {
                         //plugin.getLogger().info("damage:" + damage + "   Maxdamage:" + material.getMaxDurability());
                         //TODO can't get max durability for items correctly, so remove this limit temporarily
                         if (damage < 0) {
-                            throw new Exception();
+                            throw new Exception("damage<0");
                         }
                         display = display + ":" + damage;
                     }
                     event.setLine(2, display);
                     event.getPlayer().setItemInHand(new ItemStack(material, 1, damage));
-                    event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.createShop"), Material.getMaterial(event.getLine(2).toUpperCase()).toString()));
+                    event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.createShop"), event.getLine(2)));
 
                 } catch (Exception e) {
+//                    e.printStackTrace();
                     event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.itemMiss"));
                     event.setLine(1, "");
                 }
@@ -152,14 +190,23 @@ public class StockMarketListener implements Listener {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 if (sign.getLine(1).equalsIgnoreCase(this.plugin.getConfig().getString("shop.name"))) {
                     try {
-                        Material shopType = Material.getMaterial(sign.getLine(2).toUpperCase());
+                        String[] names = sign.getLine(2).toUpperCase().split(":");
+                        Material shopType = Material.getMaterial(names[0]);
+                        short durability = 0;
+                        if (names.length > 1) {
+                            durability = Short.parseShort(names[1]);
+                        }
                         event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.enterShop"), shopType.name()));
-                        ShopGUI.shopGUI(this.plugin, event.getPlayer(), shopType, 1, 1, 1, 1, false, false);
+                        ShopGUI.shopGUI(this.plugin, event.getPlayer(), shopType, durability, 1, 1, 1, 1, false, false);
                         // open shop gui
                     } catch (Exception e) {
                         this.plugin.getLogger().info(e.toString());
                         event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.invalidShop"));
                     }
+                } else if (sign.getLine(1).equalsIgnoreCase(this.plugin.getConfig().getString("shop.bagName"))) {
+                    BagGUI.BagGUI(plugin, event.getPlayer());
+                } else if (sign.getLine(1).equalsIgnoreCase(this.plugin.getConfig().getString("shop.offerName"))) {
+                    OfferGUI.OfferGUI(plugin, event.getPlayer());
                 }
             }
         }
@@ -181,13 +228,14 @@ public class StockMarketListener implements Listener {
         String bill = event.getInventory().getItem(40).getItemMeta().getDisplayName();
         String[] bills = bill.split(";");
         Material shopType = Material.getMaterial(bills[0]);
-        int moneyPrice = Integer.parseInt(bills[1]);
-        int itemPrice = Integer.parseInt(bills[2]);
-        int sellNumber = Integer.parseInt(bills[3]);
-        int buyNumber = Integer.parseInt(bills[4]);
-        boolean itemSize = Boolean.parseBoolean(bills[5]);
-        boolean moneySize = Boolean.parseBoolean(bills[6]);
-        int ownedItem = ItemUtil.getItemNumber(player, shopType);
+        short durability = Short.parseShort(bills[1]);
+        int moneyPrice = Integer.parseInt(bills[2]);
+        int itemPrice = Integer.parseInt(bills[3]);
+        int sellNumber = Integer.parseInt(bills[4]);
+        int buyNumber = Integer.parseInt(bills[5]);
+        boolean itemSize = Boolean.parseBoolean(bills[6]);
+        boolean moneySize = Boolean.parseBoolean(bills[7]);
+        int ownedItem = ItemUtil.getItemNumber(player, shopType, durability);
 
         switch (event.getSlot()) {
             case 0:
@@ -299,11 +347,11 @@ public class StockMarketListener implements Listener {
                 break;
 
             case 48:
-                sell(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                sell(this.plugin, player, shopType, durability, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
             case 50:
-                buy(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+                buy(this.plugin, player, shopType, durability, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
                 break;
 
         }
@@ -312,10 +360,10 @@ public class StockMarketListener implements Listener {
         sellNumber = sellNumber + 1000;
         buyNumber = buyNumber + 1000;
 
-        ShopGUI.shopGUI(this.plugin, player, shopType, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
+        ShopGUI.shopGUI(this.plugin, player, shopType, durability, moneyPrice, itemPrice, sellNumber, buyNumber, itemSize, moneySize);
     }
 
-    private void buy(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+    private void buy(Plugin plugin, Player player, Material shopType, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
 
         if (moneySize) {
             buyNumber = buyNumber * ItemUtil.getCurrency().getMaxStackSize();
@@ -326,15 +374,11 @@ public class StockMarketListener implements Listener {
         } else if (buyNumber < moneyPrice) {
             player.sendMessage("You offer is not enough for a single trade");
             return;
-        } else if (!(ItemUtil.getItemNumber(player, ItemUtil.getCurrency()) >= buyNumber)) {
-            player.sendMessage(String.format("You don't have enough %s!", ItemUtil.getCurrency()));
-            return;
         }
-
         try {
             player.getInventory().setContents(ItemUtil.removeItem(player, ItemUtil.getCurrency(), buyNumber));
         } catch (Exception e) {
-            player.sendMessage("Trade failed!");
+            player.sendMessage(String.format("You don't have enough %s!", ItemUtil.getCurrency()));
             return;
         }
 
@@ -342,6 +386,7 @@ public class StockMarketListener implements Listener {
         trade.setPlayer(player.getName());
         trade.setSell(false);
         trade.setMaterial(shopType.name());
+        trade.setDurability(durability);
         trade.setMoneyPrice(moneyPrice);
         trade.setItemPrice(itemPrice);
         trade.setPrice(((double) moneyPrice) / (double) itemPrice);
@@ -355,10 +400,10 @@ public class StockMarketListener implements Listener {
         plugin.getDatabase().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createBuy"), buyNumber, shopType.name(), itemPrice, moneyPrice));
-        trade(plugin, player, shopType);
+        trade(plugin, player, shopType, durability);
     }
 
-    private void sell(Plugin plugin, Player player, Material shopType, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+    private void sell(Plugin plugin, Player player, Material shopType, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         if (itemSize) {
             sellNumber = sellNumber * shopType.getMaxStackSize();
         }
@@ -366,14 +411,10 @@ public class StockMarketListener implements Listener {
         if (sellNumber == 0) {
             player.sendMessage("You will need to sell more items than price");
         }
-        if (!(ItemUtil.getItemNumber(player, shopType) >= sellNumber)) {
-            player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
-            return;
-        }
         try {
-            player.getInventory().setContents(ItemUtil.removeItem(player, shopType, sellNumber));
+            player.getInventory().setContents(ItemUtil.removeItem(player, shopType, durability, sellNumber));
         } catch (Exception e) {
-            player.sendMessage("Trade failed!");
+            player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
             return;
         }
 
@@ -381,6 +422,7 @@ public class StockMarketListener implements Listener {
         trade.setPlayer(player.getName());
         trade.setSell(true);
         trade.setMaterial(shopType.name());
+        trade.setDurability(durability);
         trade.setMoneyPrice(moneyPrice);
         trade.setItemPrice(itemPrice);
         trade.setPrice(((double) moneyPrice) / (double) itemPrice);
@@ -394,13 +436,13 @@ public class StockMarketListener implements Listener {
         plugin.getDatabase().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
-        trade(plugin, player, shopType);
+        trade(plugin, player, shopType, durability);
 
     }
 
-    public void trade(Plugin plugin, Player player, Material shopType) {
-        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("player", player.getName()).orderBy().asc("price").findList();
-        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("player", player.getName()).orderBy().desc("price").findList();
+    public void trade(Plugin plugin, Player player, Material shopType, short durability) {
+        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("durability", durability + "").ieq("player", player.getName()).orderBy().asc("price").findList();
+        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("durability", durability + "").ieq("player", player.getName()).orderBy().desc("price").findList();
         List<History> histories = new ArrayList<>();
 
         boolean isNotFinish = true;
@@ -431,6 +473,7 @@ public class StockMarketListener implements Listener {
             getMoney.setPlayername(sell.getPlayer());
             getMoney.setPaidFrom(paid.getPlayer());
             getMoney.setItemName(ItemUtil.getCurrency().name());
+            getMoney.setDurability((short) 0);
             getMoney.setShopType(sell.getMaterial());
             getMoney.setBargainDate(Calendar.getInstance());
             getMoney.setOrderDate(sell.getTradeDate());
@@ -441,6 +484,7 @@ public class StockMarketListener implements Listener {
             getItem.setPlayername(paid.getPlayer());
             getItem.setPaidFrom(sell.getPlayer());
             getItem.setItemName(sell.getMaterial());
+            getItem.setDurability(sell.getDurability());
             getItem.setShopType(sell.getMaterial());
             getItem.setBargainDate(getMoney.getBargainDate());
             getItem.setOrderDate(paid.getTradeDate());
@@ -453,6 +497,7 @@ public class StockMarketListener implements Listener {
             history.setMoneyPrice(sell.getMoneyPrice());
             history.setDealDate(Calendar.getInstance());
             history.setMaterial(sell.getMaterial());
+            history.setDurability(sell.getDurability());
             histories.add(history);
             player.sendMessage(String.format("Get %d %s with $%d from %s", sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));
 

@@ -135,12 +135,18 @@ public class ItemUtil {
         return Highest;
     }
 
-    public static ItemStack getDetail(String name, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+    public static ItemStack getDetail(String name, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
         ItemStack detailPaper = new ItemStack(Material.NAME_TAG, 1);
         ItemMeta im = detailPaper.getItemMeta();
-        im.setDisplayName(name + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
+        im.setDisplayName(name + ";" + durability + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
         detailPaper.setItemMeta(im);
         return detailPaper;
+    }
+
+    public static ItemStack button(Material shopType, short durability, String info) {
+        ItemStack button = button(shopType, info);
+        button.setDurability(durability);
+        return button;
     }
 
     public static ItemStack button(Material shopType, String info) {
@@ -157,11 +163,15 @@ public class ItemUtil {
     }
 
     public static int getItemNumber(Player player, Material type) {
+        return getItemNumber(player, type, (short) 0);
+    }
+
+    public static int getItemNumber(Player player, Material type, short durability) {
         ItemStack[] bag = player.getInventory().getContents();
         int itemCount = 0;
         for (ItemStack i : bag) {
             if (i != null) {
-                if (i.getType().equals(type)) {
+                if (i.getType().equals(type) && i.getDurability() == durability) {
                     itemCount = i.getAmount() + itemCount;
                 }
             }
@@ -170,11 +180,16 @@ public class ItemUtil {
     }
 
     public static ItemStack[] removeItem(Player player, Material material, int number) throws Exception {
+        return removeItem(player, material, (short) 0, number);
+    }
+
+
+    public static ItemStack[] removeItem(Player player, Material material, short durability, int number) throws Exception {
         ItemStack[] itemStacks = player.getInventory().getContents();
 
         for (ItemStack i : itemStacks) {
             if (i != null) {
-                if (i.getType().equals(material)) {
+                if (i.getType().equals(material) && i.getDurability() == durability) {
                     if (i.getAmount() <= number) {
                         number = number - i.getAmount();
                         i.setType(Material.AIR);
@@ -191,7 +206,7 @@ public class ItemUtil {
 
         }
         if (number != 0) {
-            throw new Exception();
+            throw new Exception("not enough items!");
         }
         return itemStacks;
     }
@@ -230,5 +245,15 @@ public class ItemUtil {
             throw new Exception();
         }
         return itemStacks;
+    }
+
+    public static boolean hasEmptySlot(Player player) {
+        ItemStack[] itemStacks = player.getInventory().getContents();
+        for (ItemStack itemStack : itemStacks) {
+            if (itemStack == null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

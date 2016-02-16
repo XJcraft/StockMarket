@@ -25,7 +25,7 @@ public class OfferGUI {
         boolean isFull = false;
         for (Trade trade : list) {
             Material material = Material.getMaterial(trade.getMaterial());
-            itemStacks[slot] = new ItemStack(material, 1);
+            itemStacks[slot] = new ItemStack(material, 1, trade.getDurability());
             ItemMeta itemMeta = itemStacks[slot].getItemMeta();
             itemMeta.setDisplayName(String.format("Flow number:" + trade.getId()));
             List<String> stringList = new ArrayList<String>();

@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     commandSender.sendMessage("/trade price <item> --show the price detail of a specific product");
                     commandSender.sendMessage("/trade hand --show the name of item on hand");
 
+                    ((Player) commandSender).getInventory().addItem(new ItemStack(Material.DIAMOND, 64));
                     break;
                 case "on":
                     BagGUI.BagGUI(this.plugin, (Player) commandSender);
@@ -112,8 +114,12 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     }
                     break;
                 case "hand":
-                    commandSender.sendMessage("Item name:" + ((Player) commandSender).getItemInHand().getType().name());
-                    commandSender.sendMessage("Item :" + ((Player) commandSender).getItemInHand().getType().getData().toString());
+                    ItemStack hand = ((Player) commandSender).getItemInHand();
+                    String display = "Item name:" + hand.getType().name();
+                    if (hand.getDurability() != 0) {
+                        display = display + ":" + hand.getDurability();
+                    }
+                    commandSender.sendMessage(display);
                     break;
                 case "mine":
                     OfferGUI.OfferGUI(this.plugin, (Player) commandSender);
