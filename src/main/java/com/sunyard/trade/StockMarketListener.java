@@ -497,6 +497,7 @@ public class StockMarketListener implements Listener {
             history.setMoneyPrice(sell.getMoneyPrice());
             history.setDealDate(Calendar.getInstance());
             history.setMaterial(sell.getMaterial());
+            history.setSold(sell.getItemPrice() * multi);
             history.setDurability(sell.getDurability());
             histories.add(history);
             player.sendMessage(String.format("Get %d %s with $%d from %s", sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));

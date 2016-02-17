@@ -81,36 +81,19 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     break;
                 case "price":
                     //get specific price detail
-                    if (strings.length != 2) {
-                        commandSender.sendMessage("Check your input!");
-                    } else {
+                    if (strings.length == 1) {
+                        ItemStack itemStack = ((Player) commandSender).getItemInHand();
+                        sendDetail(commandSender, ((Player) commandSender).getItemInHand());
+                    } else if (strings.length == 2) {
                         String materialInput = strings[1];
                         try {
                             Material material = Material.getMaterial(materialInput.toUpperCase());
-                            this.plugin.getLogger().info(material.name());
-                            List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).orderBy().asc("id").findList();
-                            int total = 0;
-                            int itemP = 0;
-                            int moneyP = 0;
-                            for (History history : list) {
-                                total = total + history.getSold();
-                                itemP = itemP + history.getItemPrice();
-                                moneyP = moneyP + history.getMoneyPrice();
-                            }
-                            commandSender.sendMessage("========" + material.name() + "========");
-                            if (list.size() == 0) {
-                                commandSender.sendMessage("No trade record found!");
-                            } else {
-                                commandSender.sendMessage("Total sold:" + total);
-                                commandSender.sendMessage("Average price:" + InfoUtil.average(itemP, moneyP));
-                                commandSender.sendMessage("-----Latest sold-----");
-                                commandSender.sendMessage("Price:" + list.get(0).getItemPrice() + ":" + list.get(0).getMoneyPrice());
-                                commandSender.sendMessage("From:" + list.get(0).getSeller() + " to " + list.get(0).getBuyer());
-                                commandSender.sendMessage("Time:" + list.get(0).getDealDate().getTime().toString());
-                            }
+                            sendDetail(commandSender, new ItemStack(material, 1, (short) 0));
                         } catch (Exception e) {
                             this.plugin.getLogger().info("Incorrect name! Use /trade hand to see the correct item name on hand.");
                         }
+                    } else {
+                        commandSender.sendMessage("Check your input!");
                     }
                     break;
                 case "hand":
@@ -130,5 +113,30 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             return true;
         }
         return false;
+    }
+
+    private void sendDetail(CommandSender commandSender, ItemStack itemStack) {
+        Material material = itemStack.getType();
+        short durability = itemStack.getDurability();
+        List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().asc("id").findList();
+        int total = 0;
+        int itemP = 0;
+        int moneyP = 0;
+        for (History history : list) {
+            total = total + history.getSold();
+            itemP = itemP + history.getItemPrice();
+            moneyP = moneyP + history.getMoneyPrice();
+        }
+        commandSender.sendMessage("========" + material.name() + "========");
+        if (list.size() == 0) {
+            commandSender.sendMessage("No trade record found!");
+        } else {
+            commandSender.sendMessage("Total sold:" + total);
+            commandSender.sendMessage("Average price:" + InfoUtil.average(itemP, moneyP));
+            commandSender.sendMessage("-----Latest sold-----");
+            commandSender.sendMessage("Price:" + list.get(0).getItemPrice() + ":" + list.get(0).getMoneyPrice());
+            commandSender.sendMessage("From:" + list.get(0).getSeller() + " to " + list.get(0).getBuyer());
+            commandSender.sendMessage("Time:" + list.get(0).getDealDate().getTime().toString());
+        }
     }
 }
