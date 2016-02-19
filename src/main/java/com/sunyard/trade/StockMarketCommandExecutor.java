@@ -46,7 +46,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     commandSender.sendMessage("/trade price <item> --show the price detail of a specific product");
                     commandSender.sendMessage("/trade hand --show the name of item on hand");
 
-                    ((Player) commandSender).getInventory().addItem(new ItemStack(Material.DIAMOND, 64));
+//                    ((Player) commandSender).getInventory().addItem(new ItemStack(Material.DIAMOND, 64));
                     break;
                 case "on":
                     BagGUI.BagGUI(this.plugin, (Player) commandSender);

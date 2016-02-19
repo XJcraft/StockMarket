@@ -33,17 +33,6 @@ public class StockMarketListener implements Listener {
         this.plugin = stockMarket;
     }
 
-/*
-    @EventHandler
-    public void onSignChange(SignChangeEvent event) {
-        plugin.getLogger().info("SignChangeEvent");
-    }
-
-    @EventHandler
-    public void onSignBreak(BlockBreakEvent event) {
-        plugin.getLogger().info("BlockBreakEvent");
-    }
-*/
 
 
     @EventHandler
