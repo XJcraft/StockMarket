@@ -136,11 +136,7 @@ public class ItemUtil {
     }
 
     public static ItemStack getDetail(String name, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
-        ItemStack detailPaper = new ItemStack(Material.NAME_TAG, 1);
-        ItemMeta im = detailPaper.getItemMeta();
-        im.setDisplayName(name + ";" + durability + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
-        detailPaper.setItemMeta(im);
-        return detailPaper;
+        return button(Material.NAME_TAG, name + ";" + durability + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
     }
 
     public static ItemStack button(Material shopType, short durability, String info) {

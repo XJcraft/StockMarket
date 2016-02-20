@@ -430,8 +430,8 @@ public class StockMarketListener implements Listener {
     }
 
     public void trade(Plugin plugin, Player player, Material shopType, short durability) {
-        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("durability", durability + "").ieq("player", player.getName()).orderBy().asc("price").findList();
-        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("durability", durability + "").ieq("player", player.getName()).orderBy().desc("price").findList();
+        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().asc("id").orderBy().asc("price").findList();
+        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().asc("id").orderBy().desc("price").findList();
         List<History> histories = new ArrayList<>();
 
         boolean isNotFinish = true;
