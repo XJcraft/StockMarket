@@ -1,12 +1,12 @@
-package com.sunyard.trade;
+package org.xjcraft.trade;
 
-import com.sunyard.blockFML.BlockFMLListener;
-import com.sunyard.database.History;
-import com.sunyard.database.Storage;
-import com.sunyard.database.Trade;
-import com.sunyard.util.JavaPluginFix;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.blockFML.BlockFMLListener;
+import org.xjcraft.database.History;
+import org.xjcraft.database.Storage;
+import org.xjcraft.database.Trade;
+import org.xjcraft.util.JavaPluginFix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,7 @@ public class StockMarket extends JavaPluginFix {
 
     private void setupCommand() {
         getCommand("trade").setExecutor(new StockMarketCommandExecutor(this));
+        getCommand("tr").setExecutor(new StockMarketCommandExecutor(this));
     }
 
     private void setupConfig() {

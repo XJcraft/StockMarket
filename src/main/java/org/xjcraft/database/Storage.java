@@ -1,4 +1,4 @@
-package com.sunyard.database;
+package org.xjcraft.database;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,17 +1,22 @@
 name: StockMarket
-main: com.sunyard.trade.StockMarket
-version: 1.11
+main: org.xjcraft.trade.StockMarket
+version: 1.15
 author: Ree
 description: This plugin is used to simulated a stock market
-website: http://mc.0ydy.com/
+website: http://www.xjcraft.org/
 database: true
 
 commands:
     trade:
-        description: This is a demo command.
+        description: Contains all commands in [StockMarket],can be shorted as /tr.
         usage: use /<command> help to show all commands avaliable in plugin
         permission: trade.command
         permission-message: You don't have <permission>
+    tr:
+            description: Contains all commands in [StockMarket].
+            usage: use /<command> h to show all commands avaliable in plugin
+            permission: trade.command
+            permission-message: You don't have <permission>
 
 permissions:
     trade.command:
@@ -23,4 +28,5 @@ permissions:
     trade.create:
         description: Allow user to create shop
         default: op
+
 

@@ -1,4 +1,4 @@
-package com.sunyard.util;
+package org.xjcraft.util;
 
 /**
  * Created by Weiyuan on 2016/1/27.

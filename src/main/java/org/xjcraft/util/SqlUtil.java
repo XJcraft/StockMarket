@@ -1,6 +1,6 @@
-package com.sunyard.util;
+package org.xjcraft.util;
 
-import com.sunyard.database.Trade;
+import org.xjcraft.database.Trade;
 
 import java.util.List;
 

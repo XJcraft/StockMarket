@@ -1,4 +1,4 @@
-package com.sunyard.util;
+package org.xjcraft.util;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

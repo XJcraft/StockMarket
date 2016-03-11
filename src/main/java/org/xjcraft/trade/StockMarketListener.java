@@ -1,10 +1,5 @@
-package com.sunyard.trade;
+package org.xjcraft.trade;
 
-import com.sunyard.database.History;
-import com.sunyard.database.Storage;
-import com.sunyard.database.Trade;
-import com.sunyard.util.InfoUtil;
-import com.sunyard.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -18,6 +13,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.database.History;
+import org.xjcraft.database.Storage;
+import org.xjcraft.database.Trade;
+import org.xjcraft.util.InfoUtil;
+import org.xjcraft.util.ItemUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,6 @@ public class StockMarketListener implements Listener {
     public StockMarketListener(StockMarket stockMarket) {
         this.plugin = stockMarket;
     }
-
 
 
     @EventHandler
@@ -61,6 +60,7 @@ public class StockMarketListener implements Listener {
                 event.setCancelled(true);
                 BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
             }
+
         } else if (event.getRawSlot() == 53) {
             for (ItemStack get : event.getInventory().getContents()) {
                 if (get == null) {
@@ -87,8 +87,10 @@ public class StockMarketListener implements Listener {
             }
             event.setCancelled(true);
             BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
-
-
+        }
+        List<Storage> storages = this.plugin.getDatabase().find(Storage.class).where().ieq("item_number", "0").findList();
+        for (Storage storage : storages) {
+            this.plugin.getDatabase().delete(storage);
         }
     }
 
@@ -389,7 +391,7 @@ public class StockMarketListener implements Listener {
         plugin.getDatabase().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createBuy"), buyNumber, shopType.name(), itemPrice, moneyPrice));
-        trade(plugin, player, shopType, durability);
+        onTrade(plugin, player, shopType, durability);
     }
 
     private void sell(Plugin plugin, Player player, Material shopType, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
@@ -425,14 +427,25 @@ public class StockMarketListener implements Listener {
         plugin.getDatabase().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, shopType.name(), itemPrice, moneyPrice));
-        trade(plugin, player, shopType, durability);
+        onTrade(plugin, player, shopType, durability);
 
     }
 
-    public void trade(Plugin plugin, Player player, Material shopType, short durability) {
-        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().asc("id").orderBy().asc("price").findList();
-        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().asc("id").orderBy().desc("price").findList();
+    public void onTrade(Plugin plugin, Player player, Material shopType, short durability) {
+        List<Trade> sells = plugin.getDatabase().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().asc("price").orderBy().asc("id").findList();
+        List<Trade> paids = plugin.getDatabase().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType.name()).ieq("durability", durability + "").orderBy().desc("price").orderBy().asc("id").findList();
         List<History> histories = new ArrayList<>();
+
+        /*plugin.getLogger().info("sell list=====");
+        for (int i = 0; i < sells.size(); i++) {
+            Trade t = sells.get(i);
+            plugin.getLogger().info(t.getPlayer()+";"+t.isSell()+";"+t.getTradeNumber()+";"+t.getPrice());
+        }
+        plugin.getLogger().info("buy list=======");
+        for (int i = 0; i < paids.size(); i++) {
+            Trade t = paids.get(i);
+            plugin.getLogger().info(t.getPlayer()+";"+t.isSell()+";"+t.getTradeNumber()+";"+t.getPrice());
+        }*/
 
         boolean isNotFinish = true;
         boolean hasTrade = false;
@@ -443,7 +456,11 @@ public class StockMarketListener implements Listener {
             }
             Trade sell = sells.get(0);
             Trade paid = paids.get(0);
+//            plugin.getLogger().info("picked:=======");
+//            plugin.getLogger().info(sell.getPlayer()+";"+sell.isSell()+";"+sell.getTradeNumber()+";"+sell.getPrice());
+//            plugin.getLogger().info(paid.getPlayer()+";"+paid.isSell()+";"+paid.getTradeNumber()+";"+paid.getPrice());
             if (sell.getPrice() > paid.getPrice()) {
+//                plugin.getLogger().info("price mismatch:=======");
                 isNotFinish = false;
                 break;
             }
@@ -453,6 +470,8 @@ public class StockMarketListener implements Listener {
             } else {
                 multi = sell.getTradeNumber() / sell.getItemPrice();
             }
+
+//            plugin.getLogger().info("deal:"+multi);
 
             sell.setTradeNumber(sell.getTradeNumber() - sell.getItemPrice() * multi);
             paid.setTradeNumber(paid.getTradeNumber() - sell.getMoneyPrice() * multi);

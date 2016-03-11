@@ -1,4 +1,4 @@
-package com.sunyard.database;
+package org.xjcraft.database;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,20 +7,19 @@ import javax.persistence.Table;
 import java.util.Calendar;
 
 /**
- * Created by Weiyuan on 2016/1/20.
+ * Created by Weiyuan on 2016/1/25.
  */
 @Entity
-@Table(name = "StockMarket_trades")
-public class Trade {
-
+@Table(name = "StockMarket_history")
+public class History {
     @Id
     private int id;
 
     @Column
-    private String player;
+    private String seller;
 
     @Column
-    private boolean sell;
+    private String buyer;
 
     @Column
     private String material;
@@ -35,13 +34,10 @@ public class Trade {
     private int moneyPrice;
 
     @Column
-    private int tradeNumber;
+    private int sold;
 
     @Column
-    private double price;
-
-    @Column
-    private Calendar tradeDate;
+    private Calendar dealDate;
 
     public int getId() {
         return this.id;
@@ -51,20 +47,20 @@ public class Trade {
         this.id = id;
     }
 
-    public String getPlayer() {
-        return this.player;
+    public String getSeller() {
+        return this.seller;
     }
 
-    public void setPlayer(String player) {
-        this.player = player;
+    public void setSeller(String seller) {
+        this.seller = seller;
     }
 
-    public boolean isSell() {
-        return this.sell;
+    public String getBuyer() {
+        return this.buyer;
     }
 
-    public void setSell(boolean sell) {
-        this.sell = sell;
+    public void setBuyer(String buyer) {
+        this.buyer = buyer;
     }
 
     public String getMaterial() {
@@ -99,27 +95,19 @@ public class Trade {
         this.moneyPrice = moneyPrice;
     }
 
-    public int getTradeNumber() {
-        return this.tradeNumber;
+    public int getSold() {
+        return this.sold;
     }
 
-    public void setTradeNumber(int tradeNumber) {
-        this.tradeNumber = tradeNumber;
+    public void setSold(int sold) {
+        this.sold = sold;
     }
 
-    public double getPrice() {
-        return this.price;
+    public Calendar getDealDate() {
+        return this.dealDate;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public Calendar getTradeDate() {
-        return this.tradeDate;
-    }
-
-    public void setTradeDate(Calendar tradeDate) {
-        this.tradeDate = tradeDate;
+    public void setDealDate(Calendar dealDate) {
+        this.dealDate = dealDate;
     }
 }

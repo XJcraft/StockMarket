@@ -1,4 +1,4 @@
-package com.sunyard.database;
+package org.xjcraft.database;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,19 +7,20 @@ import javax.persistence.Table;
 import java.util.Calendar;
 
 /**
- * Created by Weiyuan on 2016/1/25.
+ * Created by Weiyuan on 2016/1/20.
  */
 @Entity
-@Table(name = "StockMarket_history")
-public class History {
+@Table(name = "StockMarket_trades")
+public class Trade {
+
     @Id
     private int id;
 
     @Column
-    private String seller;
+    private String player;
 
     @Column
-    private String buyer;
+    private boolean sell;
 
     @Column
     private String material;
@@ -34,10 +35,13 @@ public class History {
     private int moneyPrice;
 
     @Column
-    private int sold;
+    private int tradeNumber;
 
     @Column
-    private Calendar dealDate;
+    private double price;
+
+    @Column
+    private Calendar tradeDate;
 
     public int getId() {
         return this.id;
@@ -47,20 +51,20 @@ public class History {
         this.id = id;
     }
 
-    public String getSeller() {
-        return this.seller;
+    public String getPlayer() {
+        return this.player;
     }
 
-    public void setSeller(String seller) {
-        this.seller = seller;
+    public void setPlayer(String player) {
+        this.player = player;
     }
 
-    public String getBuyer() {
-        return this.buyer;
+    public boolean isSell() {
+        return this.sell;
     }
 
-    public void setBuyer(String buyer) {
-        this.buyer = buyer;
+    public void setSell(boolean sell) {
+        this.sell = sell;
     }
 
     public String getMaterial() {
@@ -95,19 +99,27 @@ public class History {
         this.moneyPrice = moneyPrice;
     }
 
-    public int getSold() {
-        return this.sold;
+    public int getTradeNumber() {
+        return this.tradeNumber;
     }
 
-    public void setSold(int sold) {
-        this.sold = sold;
+    public void setTradeNumber(int tradeNumber) {
+        this.tradeNumber = tradeNumber;
     }
 
-    public Calendar getDealDate() {
-        return this.dealDate;
+    public double getPrice() {
+        return this.price;
     }
 
-    public void setDealDate(Calendar dealDate) {
-        this.dealDate = dealDate;
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public Calendar getTradeDate() {
+        return this.tradeDate;
+    }
+
+    public void setTradeDate(Calendar tradeDate) {
+        this.tradeDate = tradeDate;
     }
 }

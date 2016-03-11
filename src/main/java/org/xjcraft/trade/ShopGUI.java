@@ -1,8 +1,5 @@
-package com.sunyard.trade;
+package org.xjcraft.trade;
 
-import com.sunyard.database.Trade;
-import com.sunyard.util.ItemUtil;
-import com.sunyard.util.SqlUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,6 +7,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.database.Trade;
+import org.xjcraft.util.ItemUtil;
+import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.List;

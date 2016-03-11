@@ -1,6 +1,5 @@
-package com.sunyard.trade;
+package org.xjcraft.trade;
 
-import com.sunyard.database.Storage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,11 +7,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.database.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sunyard.util.ItemUtil.getCurrency;
 
 /**
  * Created by Weiyuan on 2016/1/24.
@@ -29,8 +27,8 @@ public class BagGUI {
             short durability = storage.getDurability();
             int number = storage.getItemNumber();
             int i = 1;
-            int all = number / getCurrency().getMaxStackSize();
-            if (number % getCurrency().getMaxStackSize() != 0) {
+            int all = number / material.getMaxStackSize();
+            if (number % material.getMaxStackSize() != 0) {
                 all++;
             }
             while (number > 0) {

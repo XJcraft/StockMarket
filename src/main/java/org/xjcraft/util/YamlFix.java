@@ -1,4 +1,4 @@
-package com.sunyard.util;
+package org.xjcraft.util;
 
 import com.google.common.io.Files;
 import org.apache.commons.lang.Validate;
