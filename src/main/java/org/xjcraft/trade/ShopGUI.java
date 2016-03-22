@@ -117,9 +117,9 @@ public class ShopGUI {
         Trade tradeH = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("durability", durability + "").ieq("sell", "0").orderBy().asc("id").orderBy().desc("price").findList());
         if (tradeH != null) {
-            itemMetaH.setDisplayName(String.format("Highest buy price: %d:%d by %s", tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
+            itemMetaH.setDisplayName(String.format(plugin.getConfig().getString("message.highest"), tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
         } else {
-            itemMetaH.setDisplayName("Nobody buying");
+            itemMetaH.setDisplayName(plugin.getConfig().getString("message.nohighest"));
         }
         itemStack.setItemMeta(itemMetaH);
         return itemMetaH.getDisplayName();
@@ -131,9 +131,9 @@ public class ShopGUI {
         Trade trade = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", shopType.name()).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("id").orderBy().asc("price").findList());
         if (trade != null) {
-            itemMeta.setDisplayName(String.format("Lowest sell price: %d:%d by %s", trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
+            itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lowest"), trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
         } else {
-            itemMeta.setDisplayName("Nobody selling");
+            itemMeta.setDisplayName(plugin.getConfig().getString("message.nolowest"));
         }
         itemStack.setItemMeta(itemMeta);
         return itemMeta.getDisplayName();

@@ -10,6 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.xjcraft.database.Storage;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -40,20 +41,20 @@ public class BagGUI {
                     number = number - number;
                 }
                 ItemMeta itemMeta = itemStacks[slot].getItemMeta();
-                itemMeta.setDisplayName(String.format("Flow number:" + storage.getId()));
+                itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lore.flow") + ":" + storage.getId()));
                 List<String> stringList = new ArrayList<String>();
-                stringList.add(String.format("Paid by %s", storage.getPaidFrom()));
-                stringList.add(String.format("Market from %s", storage.getShopType()));
+                stringList.add(String.format(plugin.getConfig().getString("message.lore.paid"), storage.getPaidFrom()));
+                stringList.add(String.format(plugin.getConfig().getString("message.lore.from"), storage.getShopType()));
                 if (storage.getBargainDate() != null) {
-                    stringList.add(String.format("Sold in %s", storage.getBargainDate().getTime().toString()));
+                    stringList.add(String.format(plugin.getConfig().getString("message.lore.sold"), (Calendar) storage.getBargainDate()));
                 } else {
-                    stringList.add(String.format("Never sold"));
+                    stringList.add(String.format(plugin.getConfig().getString("message.lore.neverSold")));
                 }
-                stringList.add(String.format("Bought in %s", storage.getOrderDate().getTime().toString()));
-                stringList.add(String.format("Package %d/%d", i, all));
+                stringList.add(String.format(plugin.getConfig().getString("message.lore.bought"), (Calendar) storage.getOrderDate()));
+                stringList.add(String.format(plugin.getConfig().getString("message.lore.package"), i, all));
 
                 if (storage.getBargainDate() == null) {
-                    stringList.add(String.format("This is a refund!"));
+                    stringList.add(String.format(plugin.getConfig().getString("message.lore.refund")));
                 }
                 itemMeta.setLore(stringList);
                 itemStacks[slot].setItemMeta(itemMeta);
@@ -71,7 +72,7 @@ public class BagGUI {
         if (list.size() > 0) {
             itemStacks[53] = new ItemStack(Material.ENDER_CHEST, 1);
             ItemMeta itemMeta = itemStacks[53].getItemMeta();
-            itemMeta.setDisplayName("Collect All!");
+            itemMeta.setDisplayName(plugin.getConfig().getString("message.lore.collect"));
             itemStacks[53].setItemMeta(itemMeta);
         }
         menu.setContents(itemStacks);

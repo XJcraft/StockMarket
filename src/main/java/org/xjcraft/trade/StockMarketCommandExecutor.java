@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Trade;
-import org.xjcraft.util.InfoUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,12 +28,12 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("This command can only be run by a player.");
+            commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
             return false;
         } else if (strings.length == 0) {
             return false;
         } else if (!commandSender.hasPermission("trade.enable")) {
-            commandSender.sendMessage("You don't have this permission!");
+            commandSender.sendMessage(plugin.getConfig().getString("noPermission"));
             return false;
         } else if (strings.length >= 1) {
             switch (strings[0]) {
@@ -60,11 +59,19 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 case "m":
                     excuteMine(commandSender, command, s, strings);
                     break;
-                case "test":
+                case "reload":
                     if (commandSender.isOp()) {
-
+                        plugin.reloadConfig();
                     } else {
-                        commandSender.sendMessage("You are not allowed to use this plugin!");
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
+                    }
+                    break;
+                case "test":
+
+                    if (commandSender.isOp()) {
+                        plugin.reloadConfig();
+                    } else {
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
                     }
                     break;
                 default:
@@ -81,7 +88,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
 
     private void excuteHand(CommandSender commandSender, Command command, String s, String[] strings) {
         ItemStack hand = ((Player) commandSender).getItemInHand();
-        String display = "Item name:" + hand.getType().name();
+        String display = plugin.getConfig().getString("message.itemName") + hand.getType().name();
         if (hand.getDurability() != 0) {
             display = display + ":" + hand.getDurability();
         }
@@ -99,10 +106,10 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 Material material = Material.getMaterial(materialInput.toUpperCase());
                 sendDetail(commandSender, new ItemStack(material, 1, (short) 0));
             } catch (Exception e) {
-                this.plugin.getLogger().info("Incorrect name! Use /trade hand to see the correct item name on hand.");
+                commandSender.sendMessage(plugin.getConfig().getString("message.incorrectName"));
             }
         } else {
-            commandSender.sendMessage("Check your input!");
+            commandSender.sendMessage(plugin.getConfig().getString("message.incorrectName"));
         }
     }
 
@@ -129,7 +136,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             Map.Entry<String, int[]> entry = iterator.next();
             String a = (String) entry.getKey();
             int[] b = (int[]) entry.getValue();
-            commandSender.sendMessage(String.format("%d sales and %d purchases for %s.", b[0], b[1], a));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.offers"), b[0], b[1], a));
         }
     }
 
@@ -139,12 +146,13 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     }
 
     private void excuteHelp(CommandSender commandSender, Command command, String s, String[] strings) {
-        commandSender.sendMessage("/t(rade) h(elp) --show helps");
-        commandSender.sendMessage("/t(rade) on   --open the storage for stock market");
-        commandSender.sendMessage("/t(rade) l(ist) --list all the product in shop");
-        commandSender.sendMessage("/t(rade) m(ine) --list my offers and cancel them");
-        commandSender.sendMessage("/t(rade) p(rice) <item> --show the price detail of a specific product");
-        commandSender.sendMessage("/t(rade) hand --show the name of item on hand");
+        //commandSender.sendMessage(plugin.getConfig().getString("message.help.help"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.help"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.open"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.list"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.mine"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.price"));
+        commandSender.sendMessage(plugin.getConfig().getString("message.help.hand"));
     }
 
     private void sendDetail(CommandSender commandSender, ItemStack itemStack) {
@@ -161,14 +169,21 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         }
         commandSender.sendMessage("========" + material.name() + "========");
         if (list.size() == 0) {
-            commandSender.sendMessage("No trade record found!");
+            commandSender.sendMessage(plugin.getConfig().getString("message.norecord"));
         } else {
-            commandSender.sendMessage("Total sold:" + total);
+            /*commandSender.sendMessage("Total sold:" + total);
             commandSender.sendMessage("Average price:" + InfoUtil.average(itemP, moneyP));
             commandSender.sendMessage("-----Latest sold-----");
             commandSender.sendMessage("Price:" + list.get(0).getItemPrice() + ":" + list.get(0).getMoneyPrice());
             commandSender.sendMessage("From:" + list.get(0).getSeller() + " to " + list.get(0).getBuyer());
             commandSender.sendMessage("Time:" + list.get(0).getDealDate().getTime().toString());
+            */
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total1"), plugin.getConfig().getString("message.norecord")));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total2"), list.get(0).getItemPrice(), list.get(0).getMoneyPrice()));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total3")));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total4"), list.get(0).getItemPrice(), list.get(0).getMoneyPrice()));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total5"), list.get(0).getSeller(), list.get(0).getBuyer()));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total6"), list.get(0).getDealDate()));
         }
     }
 }

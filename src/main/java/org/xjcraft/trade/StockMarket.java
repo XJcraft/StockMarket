@@ -2,11 +2,11 @@ package org.xjcraft.trade;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.blockFML.BlockFMLListener;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
-import org.xjcraft.util.JavaPluginFix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Weiyuan on 2016/1/7.
  */
-public class StockMarket extends JavaPluginFix {
+public class StockMarket extends JavaPlugin {
     // public final String prefix = getConfig().getString("shop.sql.prefix");
     // TODO add dynamic prefix for sql tables
     Plugin plugin;

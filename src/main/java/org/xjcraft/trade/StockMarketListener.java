@@ -169,7 +169,7 @@ public class StockMarketListener implements Listener {
 
             } else {
                 event.setLine(1, "");
-                event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.noCreatePermission"));
+                event.getPlayer().sendMessage(this.plugin.getConfig().getString("message.noPermission"));
             }
         }
     }
@@ -360,7 +360,7 @@ public class StockMarketListener implements Listener {
             buyNumber = buyNumber * ItemUtil.getCurrency().getMaxStackSize();
         }
         if (buyNumber > ItemUtil.getItemNumber(player, ItemUtil.getCurrency())) {
-            player.sendMessage("You don't have enough money for this trade!");
+            player.sendMessage(plugin.getConfig().getString("message.moreMoney"));
             return;
         } else if (buyNumber < moneyPrice) {
             player.sendMessage("You offer is not enough for a single trade");
@@ -400,12 +400,12 @@ public class StockMarketListener implements Listener {
         }
         sellNumber = sellNumber - sellNumber % itemPrice;
         if (sellNumber == 0) {
-            player.sendMessage("You will need to sell more items than price");
+            player.sendMessage(plugin.getConfig().getString("message.moreItem"));
         }
         try {
             player.getInventory().setContents(ItemUtil.removeItem(player, shopType, durability, sellNumber));
         } catch (Exception e) {
-            player.sendMessage(String.format("You don't have enough %s!", shopType.name()));
+            player.sendMessage(String.format(plugin.getConfig().getString("message.noItem"), shopType.name()));
             return;
         }
 
@@ -508,7 +508,7 @@ public class StockMarketListener implements Listener {
             history.setSold(sell.getItemPrice() * multi);
             history.setDurability(sell.getDurability());
             histories.add(history);
-            player.sendMessage(String.format("Get %d %s with $%d from %s", sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));
+            player.sendMessage(String.format(plugin.getConfig().getString("message.deal"), sell.getItemPrice() * multi, shopType.name(), sell.getMoneyPrice() * multi, sell.getPlayer()));
 
             if (paid.getTradeNumber() == 0) {
                 paids.remove(paid);

@@ -27,18 +27,18 @@ public class OfferGUI {
             Material material = Material.getMaterial(trade.getMaterial());
             itemStacks[slot] = new ItemStack(material, 1, trade.getDurability());
             ItemMeta itemMeta = itemStacks[slot].getItemMeta();
-            itemMeta.setDisplayName(String.format("Flow number:" + trade.getId()));
+            itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lore.flow") + ":" + trade.getId()));
             List<String> stringList = new ArrayList<String>();
             if (trade.isSell()) {
-                stringList.add(String.format("Sell %s:", material.name()));
+                stringList.add(String.format("%s %s:", plugin.getConfig().getString("message.lore.sell"), material.name()));
                 stringList.add(String.format("%d %s", trade.getTradeNumber(), trade.getMaterial()));
             } else {
-                stringList.add(String.format("Buy: %s", material.name()));
+                stringList.add(String.format("%s %s", plugin.getConfig().getString("message.lore.sell"), material.name()));
                 stringList.add(String.format("%d %s", trade.getTradeNumber(), ItemUtil.getCurrency()));
             }
-            stringList.add(String.format("Price: %d:%d", trade.getItemPrice(), trade.getMoneyPrice()));
+            stringList.add(String.format("%s %d:%d", plugin.getConfig().getString("message.lore.price"), trade.getItemPrice(), trade.getMoneyPrice()));
 //            stringList.add(String.format("Number: %d", trade.getTradeNumber()));
-            stringList.add(String.format("Click to CANCEL!"));
+            stringList.add(String.format(plugin.getConfig().getString("message.lore.cancel")));
 
             itemMeta.setLore(stringList);
             itemStacks[slot].setItemMeta(itemMeta);
