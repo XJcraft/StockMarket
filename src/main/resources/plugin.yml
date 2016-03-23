@@ -1,6 +1,6 @@
 name: StockMarket
 main: org.xjcraft.trade.StockMarket
-version: 1.2
+version: 1.3
 author: Ree
 description: This plugin is used to simulated a stock market
 website: http://www.xjcraft.org/

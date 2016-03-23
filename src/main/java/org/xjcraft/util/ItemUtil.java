@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 /**
  * Created by Weiyuan on 2016/1/15.
@@ -135,8 +136,8 @@ public class ItemUtil {
         return Highest;
     }
 
-    public static ItemStack getDetail(String name, short durability, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
-        return button(Material.NAME_TAG, name + ";" + durability + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
+    public static ItemStack getDetail(String name, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
+        return button(Material.NAME_TAG, name + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
     }
 
     public static ItemStack button(Material shopType, short durability, String info) {
@@ -147,11 +148,18 @@ public class ItemUtil {
 
     public static ItemStack button(Material shopType, String info) {
         ItemStack sell = new ItemStack(shopType, 1);
+        return button(sell, info);
+    }
+
+    public static ItemStack button(ItemStack itemStack, String info) {
+        ItemStack temp = new ItemStack(itemStack.getType(), 1, itemStack.getDurability());
+
         ItemMeta im;
-        im = sell.getItemMeta();
+        im = temp.getItemMeta();
         im.setDisplayName(info);
-        sell.setItemMeta(im);
-        return sell;
+//        im.setLore(null);
+        temp.setItemMeta(im);
+        return temp;
     }
 
     public static Material getCurrency() {
@@ -163,12 +171,21 @@ public class ItemUtil {
     }
 
     public static int getItemNumber(Player player, Material type, short durability) {
+        ItemStack itemStack = new ItemStack(type, 1, durability);
+        return getItemNumber(player, itemStack);
+    }
+
+    public static int getItemNumber(Player player, ItemStack itemStack) {
         ItemStack[] bag = player.getInventory().getContents();
         int itemCount = 0;
         for (ItemStack i : bag) {
             if (i != null) {
-                if (i.getType().equals(type) && i.getDurability() == durability) {
-                    itemCount = i.getAmount() + itemCount;
+                int amount = i.getAmount();
+                itemStack.setAmount(amount);
+                MIItemStack miItemStack = new MIItemStack(itemStack);
+                MIItemStack temp = new MIItemStack(i);
+                if (miItemStack.toString().equals(temp.toString())) {
+                    itemCount = itemCount + amount;
                 }
             }
         }
@@ -179,17 +196,21 @@ public class ItemUtil {
         return removeItem(player, material, (short) 0, number);
     }
 
-
     public static ItemStack[] removeItem(Player player, Material material, short durability, int number) throws Exception {
-        ItemStack[] itemStacks = player.getInventory().getContents();
+        return removeItem(player, new ItemStack(material, 1, durability), number);
+    }
 
-        for (ItemStack i : itemStacks) {
+    public static ItemStack[] removeItem(Player player, ItemStack itemStack, int number) throws Exception {
+        ItemStack[] bag = player.getInventory().getContents();
+        for (ItemStack i : bag) {
             if (i != null) {
-                if (i.getType().equals(material) && i.getDurability() == durability) {
+                itemStack.setAmount(i.getAmount());
+                MIItemStack temp1 = new MIItemStack(i);
+                MIItemStack temp2 = new MIItemStack(itemStack);
+                if (temp1.toString().equals(temp2.toString())) {
                     if (i.getAmount() <= number) {
                         number = number - i.getAmount();
                         i.setType(Material.AIR);
-
                     } else {
                         i.setAmount(i.getAmount() - number);
                         number = 0;
@@ -199,12 +220,12 @@ public class ItemUtil {
                     }
                 }
             }
-
         }
+        player.getInventory().setContents(bag);
         if (number != 0) {
             throw new Exception("not enough items!");
         }
-        return itemStacks;
+        return bag;
     }
 
     public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {

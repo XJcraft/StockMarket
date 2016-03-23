@@ -28,7 +28,7 @@ message:
   nohighest: Nobody buying
   lowest: Lowest sell price %d:%d by %s
   nolowest: Nobody selling
-  itemName: Item name=
+  itemName: Item name
   incorrectName: Incorrect name! Use /trade hand to see the correct item name on hand.
   offers:  There are %d sales and %d purchases for %s.
   norecord: No trade record found!
@@ -38,6 +38,10 @@ message:
   total4: Price  %d-%d
   total5: From %s To %s
   total6: Time  %tc%n
+  reload: This plugin has been reloaded
+  existName: This name has already exist!
+  saveName: Custom item successful saved!
+  failName: Create new Item fail!
   help:
     help: /tr(ade) h(elp) --show helps
     open: /tr(ade) on   --open the storage for stock market
@@ -45,6 +49,9 @@ message:
     mine: /tr(ade) m(ine) --list my offers and cancel them
     price: /tr(ade) p(rice) <item> --show the price detail of a specific product
     hand: /tr(ade) hand --show the name of item on hand
+    add: /tr(ade) add <itemName> --add a custom item
+    get: /tr(ade) get <itemName> --get a custom item
+    lists: /tr(ade) lists --list all custom item's name
   lore:
     flow: Flow number
     paid: Paid by %s

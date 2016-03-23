@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.blockFML.BlockFMLListener;
+import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
@@ -51,7 +52,7 @@ public class StockMarket extends JavaPlugin {
         getConfig();
         saveConfig();
         YamlConfiguration conf = (YamlConfiguration) getConfig();
-        // TODO encode problems
+
     }
 
     private void setupDatabase() {
@@ -60,6 +61,7 @@ public class StockMarket extends JavaPlugin {
             getDatabase().find(Trade.class).findRowCount();
             getDatabase().find(Storage.class).findRowCount();
             getDatabase().find(History.class).findRowCount();
+            getDatabase().find(CustomItem.class).findRowCount();
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info(getConfig().getString("Fail to enable database, trying to initialize..."));
@@ -80,6 +82,7 @@ public class StockMarket extends JavaPlugin {
         list.add(Trade.class);
         list.add(Storage.class);
         list.add(History.class);
+        list.add(CustomItem.class);
         return list;
     }
 

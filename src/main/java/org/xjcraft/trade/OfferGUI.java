@@ -7,8 +7,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.ItemUtil;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,20 @@ public class OfferGUI {
         int slot = 0;
         boolean isFull = false;
         for (Trade trade : list) {
-            Material material = Material.getMaterial(trade.getMaterial());
+            String[] names = trade.getMaterial().split(":");
+            Material material;
+//            plugin.getLogger().info("special");
+            if (names[0].equalsIgnoreCase("S")) {
+                CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
+                MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
+                material = miItemStack.getItemStack().getType();
+//                plugin.getLogger().info(material.name());
+            } else {
+//                plugin.getLogger().info(trade.getMaterial());
+                material = Material.getMaterial(names[0]);
+            }
+
+//            plugin.getLogger().info(material.name());
             itemStacks[slot] = new ItemStack(material, 1, trade.getDurability());
             ItemMeta itemMeta = itemStacks[slot].getItemMeta();
             itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lore.flow") + ":" + trade.getId()));

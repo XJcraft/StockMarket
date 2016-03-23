@@ -6,9 +6,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Trade;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
+import javax.persistence.OptimisticLockException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,14 +65,35 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 case "reload":
                     if (commandSender.isOp()) {
                         plugin.reloadConfig();
+                        commandSender.sendMessage(plugin.getConfig().getString("message.reload"));
+                    } else {
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
+                    }
+                    break;
+                case "add":
+                    if (commandSender.isOp()) {
+                        excuteAdd(commandSender, command, s, strings);
+                    } else {
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
+                    }
+                    break;
+                case "get":
+                    if (commandSender.isOp()) {
+                        excuteGet(commandSender, command, s, strings);
+                    } else {
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
+                    }
+                    break;
+                case "lists":
+                    if (commandSender.isOp()) {
+                        excuteLists(commandSender, command, s, strings);
                     } else {
                         commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
                     }
                     break;
                 case "test":
-
                     if (commandSender.isOp()) {
-                        plugin.reloadConfig();
+                        commandSender.sendMessage("nothing happened");
                     } else {
                         commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
                     }
@@ -80,6 +104,59 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             return true;
         }
         return false;
+    }
+
+    private void excuteLists(CommandSender commandSender, Command command, String s, String[] strings) {
+        List<CustomItem> customs = plugin.getDatabase().find(CustomItem.class).findList();
+        commandSender.sendMessage("====Slist=============================");
+        for (CustomItem cc : customs) {
+            commandSender.sendMessage(cc.getName());
+        }
+        commandSender.sendMessage("====End=============================");
+    }
+
+    private void excuteGet(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length == 2) {
+            try {
+                CustomItem custom = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findUnique();
+                if (custom != null) {
+                    MIItemStack mi = new MIItemStack(custom.getFlatItem());
+                    ItemStack item = mi.getItemStack();
+                    ((Player) commandSender).getInventory().addItem(item);
+                }
+            } catch (Exception e) {
+                commandSender.sendMessage("not found");
+            }
+
+        }
+    }
+
+    private void excuteAdd(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length == 2) {
+            ItemStack itemInHand = ((Player) commandSender).getItemInHand();
+            itemInHand.setAmount(1);
+            MIItemStack miItemInHand = new MIItemStack(itemInHand);
+            String flatItem = miItemInHand.toString();
+            List<CustomItem> c = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findList();
+            plugin.getLogger().info(c.size() + "");
+            if (c.size() != 0) {
+                commandSender.sendMessage(plugin.getConfig().getString("message.existName"));
+            } else {
+                CustomItem custom = new CustomItem();
+                custom.setFlatItem(flatItem);
+                custom.setName(strings[1]);
+                try {
+                    plugin.getDatabase().save(custom);
+                } catch (OptimisticLockException e) {
+                    e.printStackTrace();
+                    commandSender.sendMessage(plugin.getConfig().getString("message.failName"));
+                }
+                commandSender.sendMessage(plugin.getConfig().getString("message.saveName"));
+            }
+        } else {
+            commandSender.sendMessage(plugin.getConfig().getString("message.help.add"));
+        }
+
     }
 
     private void excuteMine(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -153,6 +230,11 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         commandSender.sendMessage(plugin.getConfig().getString("message.help.mine"));
         commandSender.sendMessage(plugin.getConfig().getString("message.help.price"));
         commandSender.sendMessage(plugin.getConfig().getString("message.help.hand"));
+        if (commandSender.isOp()) {
+            commandSender.sendMessage(plugin.getConfig().getString("message.help.add"));
+            commandSender.sendMessage(plugin.getConfig().getString("message.help.get"));
+            commandSender.sendMessage(plugin.getConfig().getString("message.help.lists"));
+        }
     }
 
     private void sendDetail(CommandSender commandSender, ItemStack itemStack) {

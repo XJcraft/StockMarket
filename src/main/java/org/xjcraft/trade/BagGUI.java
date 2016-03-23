@@ -7,7 +7,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Storage;
+import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,9 +25,21 @@ public class BagGUI {
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;
         boolean isFull = false;
+        ItemStack template;
         for (Storage storage : list) {
-            Material material = Material.getMaterial(storage.getItemName());
+            String[] names = storage.getItemName().split(":");
+            Material material;
             short durability = storage.getDurability();
+            if (names[0].equalsIgnoreCase("S")) {
+                MIItemStack miItemStack = new MIItemStack(plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem());
+                material = miItemStack.getItemStack().getType();
+                template = miItemStack.getItemStack();
+            } else {
+                material = Material.getMaterial(storage.getItemName());
+                template = new ItemStack(material, 1, durability);
+            }
+
+
             int number = storage.getItemNumber();
             int i = 1;
             int all = number / material.getMaxStackSize();
@@ -34,10 +48,12 @@ public class BagGUI {
             }
             while (number > 0) {
                 if (number > material.getMaxStackSize()) {
-                    itemStacks[slot] = new ItemStack(material, material.getMaxStackSize(), durability);
+                    template.setAmount(material.getMaxStackSize());
+                    itemStacks[slot] = template;
                     number = number - material.getMaxStackSize();
                 } else {
-                    itemStacks[slot] = new ItemStack(material, number, durability);
+                    template.setAmount(number);
+                    itemStacks[slot] = template;
                     number = number - number;
                 }
                 ItemMeta itemMeta = itemStacks[slot].getItemMeta();
