@@ -441,7 +441,7 @@ public class StockMarketListener implements Listener {
 //            plugin.getLogger().info("" + sellNumber);
             player.getInventory().setContents(ItemUtil.removeItem(player, product, sellNumber));
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             player.sendMessage(String.format(plugin.getConfig().getString("message.noItem"), name));
             return;
         }

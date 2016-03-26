@@ -202,6 +202,9 @@ public class ItemUtil {
 
     public static ItemStack[] removeItem(Player player, ItemStack itemStack, int number) throws Exception {
         ItemStack[] bag = player.getInventory().getContents();
+        if (getItemNumber(player, itemStack) < number) {
+            throw new Exception("not enough items!");
+        }
         for (ItemStack i : bag) {
             if (i != null) {
                 itemStack.setAmount(i.getAmount());
@@ -222,9 +225,9 @@ public class ItemUtil {
             }
         }
         player.getInventory().setContents(bag);
-        if (number != 0) {
-            throw new Exception("not enough items!");
-        }
+//        if (number != 0) {
+//            throw new Exception("not enough items!");
+//        }
         return bag;
     }
 

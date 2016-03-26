@@ -39,6 +39,7 @@ public class ShopGUI {
             Material material = Material.getMaterial(names[0]);
             durability = Short.parseShort(names[1]);
             shopType = new ItemStack(material, 1, durability);
+
         }
 
 
@@ -98,8 +99,8 @@ public class ShopGUI {
         itemStacks[13] = ItemUtil.button(shopType, String.format(plugin.getConfig().getString("message.priceButton"), itemPrice, name, moneyPrice));
         ItemMeta itemMeta13 = itemStacks[13].getItemMeta();
         List<String> list13 = new ArrayList<String>();
-        list13.add(getLowest(plugin, name));
-        list13.add(getHighest(plugin, name));
+        list13.add(getLowest(plugin, name, durability));
+        list13.add(getHighest(plugin, name, durability));
         itemMeta13.setLore(list13);
         itemStacks[13].setItemMeta(itemMeta13);
         itemStacks[13].setDurability(durability);
@@ -135,26 +136,12 @@ public class ShopGUI {
         player.openInventory(menu);
     }
 
-    private static String getHighest(Plugin plugin, Material shopType, short durability) {
-        String name = shopType.name();
-        return getHighest(plugin, name, durability);
-    }
-
-    private static String getHighest(Plugin plugin, String name) {
-        short durability = 0;
-        return getHighest(plugin, name, durability);
-    }
 
     private static String getHighest(Plugin plugin, String name, short durability) {
-        String[] names = name.split(":");
-        if (names[0].equals("S") && names.length == 2) {
-            name = names[0];
-        } else {
-            durability = Short.parseShort(names[1]);
-            name = names[0];
-        }
+        name = getRealName(name);
         ItemStack itemStack = ItemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
+        plugin.getLogger().info(name + "," + durability);
         Trade tradeH = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().asc("id").orderBy().desc("price").findList());
         if (tradeH != null) {
@@ -166,28 +153,11 @@ public class ShopGUI {
         return itemMetaH.getDisplayName();
     }
 
-
-    private static String getLowest(Plugin plugin, Material shopType, short durability) {
-        String name = shopType.name();
-        return getLowest(plugin, name, durability);
-    }
-
-    private static String getLowest(Plugin plugin, String name) {
-        short durability = 0;
-        return getLowest(plugin, name, durability);
-    }
-
     private static String getLowest(Plugin plugin, String name, short durability) {
-        String[] names = name.split(":");
-        if (names[0].equals("S") && names.length == 2) {
-            name = names[0];
-        } else {
-            durability = Short.parseShort(names[1]);
-            name = names[0];
-        }
+//        String names[]= name.split(":");
+        name = getRealName(name);
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
-//        plugin.getLogger().info("getlowest_material:"+name+",durability:"+durability);
         Trade trade = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("id").orderBy().asc("price").findList());
         if (trade != null) {
@@ -199,5 +169,10 @@ public class ShopGUI {
         return itemMeta.getDisplayName();
     }
 
-
+    private static String getRealName(String name) {
+        String[] names = name.split(":");
+        if (names.length == 2 && names[0].equalsIgnoreCase("S")) {
+            return name;
+        } else return names[0];
+    }
 }
