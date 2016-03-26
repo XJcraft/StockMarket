@@ -68,8 +68,7 @@ public class StockMarketListener implements Listener {
                 if (get == null || (get.getType().equals(Material.ENDER_CHEST) && get.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("message.lore.collect")))) {
                     break;
                 } else if (ItemUtil.hasEmptySlot((Player) event.getWhoClicked())) {
-                    String[] strings = new String[0];
-                    String[] packs = new String[0];
+                    String[] strings, packs;
                     strings = get.getItemMeta().getDisplayName().split(":");
                     String[] lores = get.getItemMeta().getLore().get(4).split(" ");
                     packs = lores[1].split("/");
@@ -253,7 +252,7 @@ public class StockMarketListener implements Listener {
             MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
             itemStack = miItemStack.getItemStack();
         } else {
-            itemStack = new ItemStack(Material.getMaterial(names[0]), Short.parseShort(names[1]));
+            itemStack = new ItemStack(Material.getMaterial(names[0]), 1, Short.parseShort(names[1]));
         }
         int ownedItem = ItemUtil.getItemNumber(player, itemStack);
 
@@ -442,7 +441,7 @@ public class StockMarketListener implements Listener {
 //            plugin.getLogger().info("" + sellNumber);
             player.getInventory().setContents(ItemUtil.removeItem(player, product, sellNumber));
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             player.sendMessage(String.format(plugin.getConfig().getString("message.noItem"), name));
             return;
         }

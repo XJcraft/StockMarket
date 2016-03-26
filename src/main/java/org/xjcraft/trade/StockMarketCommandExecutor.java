@@ -240,7 +240,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     private void sendDetail(CommandSender commandSender, ItemStack itemStack) {
         Material material = itemStack.getType();
         short durability = itemStack.getDurability();
-        List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().asc("id").findList();
+        // FIXME: 2016/3/25
+        List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().desc("id").findList();
         int total = 0;
         int itemP = 0;
         int moneyP = 0;

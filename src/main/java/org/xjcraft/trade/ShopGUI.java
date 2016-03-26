@@ -146,6 +146,13 @@ public class ShopGUI {
     }
 
     private static String getHighest(Plugin plugin, String name, short durability) {
+        String[] names = name.split(":");
+        if (names[0].equals("S") && names.length == 2) {
+            name = names[0];
+        } else {
+            durability = Short.parseShort(names[1]);
+            name = names[0];
+        }
         ItemStack itemStack = ItemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
         Trade tradeH = SqlUtil.getFirst(
@@ -171,9 +178,16 @@ public class ShopGUI {
     }
 
     private static String getLowest(Plugin plugin, String name, short durability) {
-//        String names[]= name.split(":");
+        String[] names = name.split(":");
+        if (names[0].equals("S") && names.length == 2) {
+            name = names[0];
+        } else {
+            durability = Short.parseShort(names[1]);
+            name = names[0];
+        }
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
+//        plugin.getLogger().info("getlowest_material:"+name+",durability:"+durability);
         Trade trade = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("id").orderBy().asc("price").findList());
         if (trade != null) {

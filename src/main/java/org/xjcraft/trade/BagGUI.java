@@ -29,15 +29,17 @@ public class BagGUI {
         for (Storage storage : list) {
             String[] names = storage.getItemName().split(":");
             Material material;
+            String materialname;
             short durability = storage.getDurability();
             if (names[0].equalsIgnoreCase("S")) {
                 MIItemStack miItemStack = new MIItemStack(plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem());
                 material = miItemStack.getItemStack().getType();
-                template = miItemStack.getItemStack();
+                materialname = names[1];
             } else {
                 material = Material.getMaterial(storage.getItemName());
-                template = new ItemStack(material, 1, durability);
+                materialname = names[0];
             }
+
 
 
             int number = storage.getItemNumber();
@@ -47,6 +49,7 @@ public class BagGUI {
                 all++;
             }
             while (number > 0) {
+                template = getTemplate(plugin, materialname, material, durability);
                 if (number > material.getMaxStackSize()) {
                     template.setAmount(material.getMaxStackSize());
                     itemStacks[slot] = template;
@@ -95,5 +98,14 @@ public class BagGUI {
         player.openInventory(menu);
 
 
+    }
+
+    private static ItemStack getTemplate(Plugin plugin, String name, Material material, short durability) {
+        if (name.equalsIgnoreCase("S")) {
+            MIItemStack miItemStack = new MIItemStack(plugin.getDatabase().find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
+            return miItemStack.getItemStack();
+        } else {
+            return new ItemStack(material, 1, durability);
+        }
     }
 }
