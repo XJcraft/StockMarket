@@ -141,7 +141,7 @@ public class ShopGUI {
         name = getRealName(name);
         ItemStack itemStack = ItemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
-        plugin.getLogger().info(name + "," + durability);
+//        plugin.getLogger().info(name + "," + durability);
         Trade tradeH = SqlUtil.getFirst(
                 plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().asc("id").orderBy().desc("price").findList());
         if (tradeH != null) {

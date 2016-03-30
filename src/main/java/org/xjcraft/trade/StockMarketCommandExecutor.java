@@ -138,7 +138,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             MIItemStack miItemInHand = new MIItemStack(itemInHand);
             String flatItem = miItemInHand.toString();
             List<CustomItem> c = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findList();
-            plugin.getLogger().info(c.size() + "");
+//            plugin.getLogger().info(c.size() + "");
             if (c.size() != 0) {
                 commandSender.sendMessage(plugin.getConfig().getString("message.existName"));
             } else {

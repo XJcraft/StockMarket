@@ -41,7 +41,6 @@ public class BagGUI {
             }
 
 
-
             int number = storage.getItemNumber();
             int i = 1;
             int all = number / material.getMaxStackSize();
