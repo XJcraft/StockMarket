@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Trade;
+import org.xjcraft.util.InfoUtil;
 import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 import javax.persistence.OptimisticLockException;
@@ -93,7 +94,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                     break;
                 case "test":
                     if (commandSender.isOp()) {
-                        commandSender.sendMessage("nothing happened");
+                        commandSender.sendMessage(
+                                ((Player) commandSender).getItemInHand().getItemMeta().toString());
                     } else {
                         commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
                     }
@@ -138,9 +140,12 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             MIItemStack miItemInHand = new MIItemStack(itemInHand);
             String flatItem = miItemInHand.toString();
             List<CustomItem> c = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findList();
-//            plugin.getLogger().info(c.size() + "");
-            if (c.size() != 0) {
+            List<CustomItem> c2 = plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", miItemInHand.toString()).findList();
+//            plugin.getLogger().info(c.size() + ","+c2.size());
+            if (c.size() != 0 || c2.size() != 0) {
                 commandSender.sendMessage(plugin.getConfig().getString("message.existName"));
+                if (c2.size() != 0)
+                    commandSender.sendMessage(String.format(plugin.getConfig().getString("message.existName2"), c2.get(0).getName()));
             } else {
                 CustomItem custom = new CustomItem();
                 custom.setFlatItem(flatItem);
@@ -169,6 +174,17 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         if (hand.getDurability() != 0) {
             display = display + ":" + hand.getDurability();
         }
+        try {
+            ItemStack temp = new ItemStack(hand);
+            temp.setAmount(1);
+            MIItemStack miItemStack = new MIItemStack(temp);
+//            plugin.getLogger().info(miItemStack.toString());
+            CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("flatItem", miItemStack.toString()).findUnique();
+            if (customItem != null)
+                display = plugin.getConfig().getString("message.itemName") + customItem.getName();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         commandSender.sendMessage(display);
     }
 
@@ -176,13 +192,25 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         //get specific price detail
         if (strings.length == 1) {
             ItemStack itemStack = ((Player) commandSender).getItemInHand();
-            sendDetail(commandSender, ((Player) commandSender).getItemInHand());
+            ItemStack itemStack1 = new ItemStack(itemStack);
+            itemStack1.setAmount(1);
+            MIItemStack miItemStack = new MIItemStack(itemStack1);
+            sendDetail(commandSender, miItemStack);
         } else if (strings.length == 2) {
             String materialInput = strings[1];
             try {
                 Material material = Material.getMaterial(materialInput.toUpperCase());
-                sendDetail(commandSender, new ItemStack(material, 1, (short) 0));
+                sendDetail(commandSender, new MIItemStack(new ItemStack(material, 1, (short) 0)));
             } catch (Exception e) {
+                try {
+                    CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("name", materialInput).findUnique();
+                    if (customItem == null)
+                        throw new Exception("no item");
+                    MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
+                    sendDetail(commandSender, miItemStack);
+                } catch (Exception e1) {
+//                    e1.printStackTrace();
+                }
                 commandSender.sendMessage(plugin.getConfig().getString("message.incorrectName"));
             }
         } else {
@@ -237,20 +265,34 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         }
     }
 
-    private void sendDetail(CommandSender commandSender, ItemStack itemStack) {
+    private void sendDetail(CommandSender commandSender, MIItemStack miItemStack) {
+        ItemStack itemStack = miItemStack.getItemStack();
+
         Material material = itemStack.getType();
         short durability = itemStack.getDurability();
+        String title = material.name();
         // FIXME: 2016/3/25
         List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().desc("id").findList();
+        try {
+//            plugin.getLogger().info(miItemStack.toString());
+            CustomItem customItem = this.plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", miItemStack.toString()).findUnique();
+//            plugin.getLogger().info(customItem.getName());
+            if (customItem != null) {
+                title = customItem.getName();
+                list = this.plugin.getDatabase().find(History.class).where().ieq("material", "S:" + customItem.getName()).ieq("durability", "0").orderBy().desc("id").findList();
+            }
+
+        } catch (Exception e) {
+        }
         int total = 0;
         int itemP = 0;
         int moneyP = 0;
         for (History history : list) {
             total = total + history.getSold();
-            itemP = itemP + history.getItemPrice();
-            moneyP = moneyP + history.getMoneyPrice();
+            itemP = itemP + history.getItemPrice() * history.getSold();
+            moneyP = moneyP + history.getMoneyPrice() * history.getSold();
         }
-        commandSender.sendMessage("========" + material.name() + "========");
+        commandSender.sendMessage("========" + title + "========");
         if (list.size() == 0) {
             commandSender.sendMessage(plugin.getConfig().getString("message.norecord"));
         } else {
@@ -261,8 +303,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             commandSender.sendMessage("From:" + list.get(0).getSeller() + " to " + list.get(0).getBuyer());
             commandSender.sendMessage("Time:" + list.get(0).getDealDate().getTime().toString());
             */
-            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total1"), plugin.getConfig().getString("message.norecord")));
-            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total2"), list.get(0).getItemPrice(), list.get(0).getMoneyPrice()));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total1"), total));
+            commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total2"), InfoUtil.average(itemP, moneyP)));
             commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total3")));
             commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total4"), list.get(0).getItemPrice(), list.get(0).getMoneyPrice()));
             commandSender.sendMessage(String.format(plugin.getConfig().getString("message.total5"), list.get(0).getSeller(), list.get(0).getBuyer()));

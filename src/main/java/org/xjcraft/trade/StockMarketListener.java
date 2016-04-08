@@ -64,6 +64,7 @@ public class StockMarketListener implements Listener {
             }
 
         } else if (event.getRawSlot() == 53) {
+            event.setCancelled(true);
             for (ItemStack get : event.getInventory().getContents()) {
                 if (get == null || (get.getType().equals(Material.ENDER_CHEST) && get.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("message.lore.collect")))) {
                     break;
@@ -88,7 +89,6 @@ public class StockMarketListener implements Listener {
                     break;
                 }
             }
-            event.setCancelled(true);
             BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
         }
         List<Storage> storages = this.plugin.getDatabase().find(Storage.class).where().ieq("item_number", "0").findList();
