@@ -121,10 +121,15 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         if (strings.length == 2) {
             try {
                 CustomItem custom = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findUnique();
+                commandSender.sendMessage(strings[1]);
+                commandSender.sendMessage(custom.getFlatItem());
                 if (custom != null) {
                     MIItemStack mi = new MIItemStack(custom.getFlatItem());
                     ItemStack item = mi.getItemStack();
+                    if (item.getType() == Material.WRITTEN_BOOK) {
+                    }
                     ((Player) commandSender).getInventory().addItem(item);
+//                    commandSender.sendMessage(item.toString());
                 }
             } catch (Exception e) {
                 commandSender.sendMessage("not found");
@@ -141,7 +146,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             String flatItem = miItemInHand.toString();
             List<CustomItem> c = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findList();
             List<CustomItem> c2 = plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", miItemInHand.toString()).findList();
-//            plugin.getLogger().info(c.size() + ","+c2.size());
+            commandSender.sendMessage(miItemInHand.toString());
             if (c.size() != 0 || c2.size() != 0) {
                 commandSender.sendMessage(plugin.getConfig().getString("message.existName"));
                 if (c2.size() != 0)

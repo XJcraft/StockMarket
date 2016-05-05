@@ -143,7 +143,7 @@ public class ShopGUI {
         ItemMeta itemMetaH = itemStack.getItemMeta();
 //        plugin.getLogger().info(name + "," + durability);
         Trade tradeH = SqlUtil.getFirst(
-                plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().asc("id").orderBy().desc("price").findList());
+                plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().desc("price").orderBy().asc("id").findList());
         if (tradeH != null) {
             itemMetaH.setDisplayName(String.format(plugin.getConfig().getString("message.highest"), tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
         } else {
@@ -159,7 +159,7 @@ public class ShopGUI {
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
         Trade trade = SqlUtil.getFirst(
-                plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("id").orderBy().asc("price").findList());
+                plugin.getDatabase().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("price").orderBy().asc("id").findList());
         if (trade != null) {
             itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lowest"), trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
         } else {

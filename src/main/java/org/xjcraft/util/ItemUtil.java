@@ -268,12 +268,16 @@ public class ItemUtil {
     }
 
     public static boolean hasEmptySlot(Player player) {
+//        System.out.println("inv:"+player.getInventory().firstEmpty());
+
+        return (player.getInventory().firstEmpty() != -1);
+        /*
         ItemStack[] itemStacks = player.getInventory().getContents();
         for (ItemStack itemStack : itemStacks) {
             if (itemStack == null) {
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
 }
