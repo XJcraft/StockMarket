@@ -10,7 +10,7 @@ import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.InfoUtil;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
+import org.xjcraft.util.SerializeUtil;
 
 import javax.persistence.OptimisticLockException;
 import java.util.HashMap;
@@ -71,6 +71,14 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                         commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
                     }
                     break;
+                case "save":
+                    if (commandSender.isOp()) {
+                        plugin.saveConfig();
+                        commandSender.sendMessage(plugin.getConfig().getString("message.save"));
+                    } else {
+                        commandSender.sendMessage(plugin.getConfig().getString("message.noPermission"));
+                    }
+                    break;
                 case "add":
                     if (commandSender.isOp()) {
                         excuteAdd(commandSender, command, s, strings);
@@ -124,8 +132,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 commandSender.sendMessage(strings[1]);
                 commandSender.sendMessage(custom.getFlatItem());
                 if (custom != null) {
-                    MIItemStack mi = new MIItemStack(custom.getFlatItem());
-                    ItemStack item = mi.getItemStack();
+
+                    ItemStack item = SerializeUtil.deSerialization(custom.getFlatItem());
                     if (item.getType() == Material.WRITTEN_BOOK) {
                     }
                     ((Player) commandSender).getInventory().addItem(item);
@@ -142,11 +150,11 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         if (strings.length == 2) {
             ItemStack itemInHand = ((Player) commandSender).getItemInHand();
             itemInHand.setAmount(1);
-            MIItemStack miItemInHand = new MIItemStack(itemInHand);
-            String flatItem = miItemInHand.toString();
+            String flatItem = SerializeUtil.serialization(itemInHand);
             List<CustomItem> c = plugin.getDatabase().find(CustomItem.class).where().ieq("name", strings[1]).findList();
-            List<CustomItem> c2 = plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", miItemInHand.toString()).findList();
-            commandSender.sendMessage(miItemInHand.toString());
+            List<CustomItem> c2 = plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", flatItem).findList();
+            commandSender.sendMessage(flatItem);
+
             if (c.size() != 0 || c2.size() != 0) {
                 commandSender.sendMessage(plugin.getConfig().getString("message.existName"));
                 if (c2.size() != 0)
@@ -163,6 +171,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 }
                 commandSender.sendMessage(plugin.getConfig().getString("message.saveName"));
             }
+
         } else {
             commandSender.sendMessage(plugin.getConfig().getString("message.help.add"));
         }
@@ -182,9 +191,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         try {
             ItemStack temp = new ItemStack(hand);
             temp.setAmount(1);
-            MIItemStack miItemStack = new MIItemStack(temp);
-//            plugin.getLogger().info(miItemStack.toString());
-            CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("flatItem", miItemStack.toString()).findUnique();
+            CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("flatItem", SerializeUtil.serialization(temp)).findUnique();
             if (customItem != null)
                 display = plugin.getConfig().getString("message.itemName") + customItem.getName();
         } catch (Exception e) {
@@ -199,20 +206,19 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             ItemStack itemStack = ((Player) commandSender).getItemInHand();
             ItemStack itemStack1 = new ItemStack(itemStack);
             itemStack1.setAmount(1);
-            MIItemStack miItemStack = new MIItemStack(itemStack1);
-            sendDetail(commandSender, miItemStack);
+            sendDetail(commandSender, itemStack1);
         } else if (strings.length == 2) {
             String materialInput = strings[1];
             try {
                 Material material = Material.getMaterial(materialInput.toUpperCase());
-                sendDetail(commandSender, new MIItemStack(new ItemStack(material, 1, (short) 0)));
+                sendDetail(commandSender, (new ItemStack(material, 1, (short) 0)));
             } catch (Exception e) {
                 try {
                     CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("name", materialInput).findUnique();
                     if (customItem == null)
                         throw new Exception("no item");
-                    MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
-                    sendDetail(commandSender, miItemStack);
+                    ItemStack itemStack = SerializeUtil.deSerialization(customItem.getFlatItem());
+                    sendDetail(commandSender, itemStack);
                 } catch (Exception e1) {
 //                    e1.printStackTrace();
                 }
@@ -270,8 +276,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         }
     }
 
-    private void sendDetail(CommandSender commandSender, MIItemStack miItemStack) {
-        ItemStack itemStack = miItemStack.getItemStack();
+    private void sendDetail(CommandSender commandSender, ItemStack itemStack) {
 
         Material material = itemStack.getType();
         short durability = itemStack.getDurability();
@@ -279,9 +284,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         // FIXME: 2016/3/25
         List<History> list = this.plugin.getDatabase().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().desc("id").findList();
         try {
-//            plugin.getLogger().info(miItemStack.toString());
-            CustomItem customItem = this.plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", miItemStack.toString()).findUnique();
-//            plugin.getLogger().info(customItem.getName());
+            CustomItem customItem = this.plugin.getDatabase().find(CustomItem.class).where().ieq("flat_item", SerializeUtil.serialization(itemStack)).findUnique();
             if (customItem != null) {
                 title = customItem.getName();
                 list = this.plugin.getDatabase().find(History.class).where().ieq("material", "S:" + customItem.getName()).ieq("durability", "0").orderBy().desc("id").findList();

@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Storage;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
+import org.xjcraft.util.SerializeUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,8 +32,7 @@ public class BagGUI {
             String materialname;
             short durability = storage.getDurability();
             if (names[0].equalsIgnoreCase("S")) {
-                MIItemStack miItemStack = new MIItemStack(plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem());
-                material = miItemStack.getItemStack().getType();
+                material = SerializeUtil.deSerialization(plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem()).getType();
                 materialname = names[1];
             } else {
                 material = Material.getMaterial(storage.getItemName());
@@ -101,8 +100,7 @@ public class BagGUI {
 
     private static ItemStack getTemplate(Plugin plugin, String name, Material material, short durability) {
         if (name.equalsIgnoreCase("S")) {
-            MIItemStack miItemStack = new MIItemStack(plugin.getDatabase().find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
-            return miItemStack.getItemStack();
+            return SerializeUtil.deSerialization(plugin.getDatabase().find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
         } else {
             return new ItemStack(material, 1, durability);
         }

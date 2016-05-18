@@ -10,8 +10,8 @@ import org.bukkit.plugin.Plugin;
 import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.ItemUtil;
+import org.xjcraft.util.SerializeUtil;
 import org.xjcraft.util.SqlUtil;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,7 @@ public class ShopGUI {
         short durability;
         if (names.length == 2 && names[0].equalsIgnoreCase("S")) {
             CustomItem custom = plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
-            MIItemStack miItemStack = new MIItemStack(custom.getFlatItem());
-            shopType = miItemStack.getItemStack();
+            shopType = SerializeUtil.deSerialization(custom.getFlatItem());
             durability = 0;
         } else {
             Material material = Material.getMaterial(names[0]);

@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
 
 /**
  * Created by Weiyuan on 2016/1/15.
@@ -182,9 +181,7 @@ public class ItemUtil {
             if (i != null) {
                 int amount = i.getAmount();
                 itemStack.setAmount(amount);
-                MIItemStack miItemStack = new MIItemStack(itemStack);
-                MIItemStack temp = new MIItemStack(i);
-                if (miItemStack.toString().equals(temp.toString())) {
+                if (SerializeUtil.serialization(itemStack).equals(SerializeUtil.serialization(i))) {
                     itemCount = itemCount + amount;
                 }
             }
@@ -208,9 +205,7 @@ public class ItemUtil {
         for (ItemStack i : bag) {
             if (i != null) {
                 itemStack.setAmount(i.getAmount());
-                MIItemStack temp1 = new MIItemStack(i);
-                MIItemStack temp2 = new MIItemStack(itemStack);
-                if (temp1.toString().equals(temp2.toString())) {
+                if (i.hashCode() == itemStack.hashCode()) {
                     if (i.getAmount() <= number) {
                         number = number - i.getAmount();
                         i.setType(Material.AIR);

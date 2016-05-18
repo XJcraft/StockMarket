@@ -8,6 +8,7 @@ import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
+import org.xjcraft.util.SerializeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class StockMarket extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         this.plugin = this;
+        SerializeUtil.plugin = this;
         setupConfig();
         setupDatabase();
         setupListeners();
@@ -64,7 +66,7 @@ public class StockMarket extends JavaPlugin {
             getDatabase().find(CustomItem.class).findRowCount();
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
-            getLogger().info(getConfig().getString("Fail to enable database, trying to initialize..."));
+            getLogger().info("Fail to enable database, trying to initialize...");
             try {
                 installDDL();
                 getLogger().info("Successful import database structure.");
@@ -89,7 +91,7 @@ public class StockMarket extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
-//        saveConfig();
+        saveConfig();
         getLogger().info("StockMarket has been disabled");
     }
 }

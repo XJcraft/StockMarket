@@ -19,7 +19,7 @@ import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.InfoUtil;
 import org.xjcraft.util.ItemUtil;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
+import org.xjcraft.util.SerializeUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,10 +54,9 @@ public class StockMarketListener implements Listener {
                     storage.setItemNumber(storage.getItemNumber() - itemStack.getAmount());
                     this.plugin.getDatabase().save(storage);
                 }
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setLore(null);
-                itemMeta.setDisplayName(null);
-                itemStack.setItemMeta(itemMeta);
+                itemStack = getRealItem(itemStack, itemStack.getItemMeta().getLore().get(1));
+                event.setCurrentItem(itemStack);
+
             } else {
                 event.setCancelled(true);
                 BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
@@ -80,10 +79,7 @@ public class StockMarketListener implements Listener {
                         storage.setItemNumber(storage.getItemNumber() - get.getAmount());
                         this.plugin.getDatabase().save(storage);
                     }
-                    ItemMeta itemMeta = get.getItemMeta();
-                    itemMeta.setLore(null);
-                    itemMeta.setDisplayName(null);
-                    get.setItemMeta(itemMeta);
+                    get = getRealItem(get, get.getItemMeta().getLore().get(1));
                     event.getWhoClicked().getInventory().addItem(get);
                 } else {
                     break;
@@ -97,6 +93,21 @@ public class StockMarketListener implements Listener {
         }
     }
 
+    private ItemStack getRealItem(ItemStack itemStack, String name) {
+        String[] names = name.split(":");
+        if (itemStack.getType() != ItemUtil.getCurrency() && names.length == 2 && "S".equals(names[0].substring(names[0].length() - 1, names[0].length()))) {
+            int amount = itemStack.getAmount();
+            String flat = plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem();
+            itemStack = SerializeUtil.deSerialization(flat);
+            itemStack.setAmount(amount);
+        } else {
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setLore(null);
+            itemMeta.setDisplayName(null);
+            itemStack.setItemMeta(itemMeta);
+        }
+        return itemStack;
+    }
     @EventHandler
     public void cancelTrade(InventoryClickEvent event) {
         if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.offerName"))) {
@@ -141,12 +152,11 @@ public class StockMarketListener implements Listener {
                     String[] item = event.getLine(2).split(":");
                     if (item[0].equalsIgnoreCase("s") && item.length == 2) {
                         CustomItem custom = plugin.getDatabase().find(CustomItem.class).where().ieq("name", item[1]).findUnique();
-                        MIItemStack miItemStack = new MIItemStack(custom.getFlatItem());
                         if (custom == null) {
                             throw new Exception("no special item of this name.");
                         }
                         event.setLine(2, "S:" + custom.getName().toUpperCase());
-                        event.getPlayer().getInventory().addItem(miItemStack.getItemStack());
+                        event.getPlayer().getInventory().addItem(SerializeUtil.deSerialization(custom.getFlatItem()));
                         event.getPlayer().sendMessage(String.format(this.plugin.getConfig().getString("message.createShop"), event.getLine(2)));
                     } else {
 
@@ -249,8 +259,7 @@ public class StockMarketListener implements Listener {
         ItemStack itemStack;
         if (names[0].equalsIgnoreCase("S") && names.length == 2) {
             CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
-            MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
-            itemStack = miItemStack.getItemStack();
+            itemStack = SerializeUtil.deSerialization(customItem.getFlatItem());
         } else {
             itemStack = new ItemStack(Material.getMaterial(names[0]), 1, Short.parseShort(names[1]));
         }

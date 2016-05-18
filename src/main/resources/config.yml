@@ -39,6 +39,7 @@ message:
   total5: From %s To %s
   total6: Time  %tc%n
   reload: This plugin has been reloaded
+  save: This plugin has been saved
   existName: This iem has already exist!
   existName2: The name of this item is %s.
   saveName: Custom item successful saved!

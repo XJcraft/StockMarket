@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.ItemUtil;
-import uk.co.tggl.pluckerpluck.multiinv.inventory.MIItemStack;
+import org.xjcraft.util.SerializeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +31,7 @@ public class OfferGUI {
 //            plugin.getLogger().info("special");
             if (names[0].equalsIgnoreCase("S")) {
                 CustomItem customItem = plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
-                MIItemStack miItemStack = new MIItemStack(customItem.getFlatItem());
-                material = miItemStack.getItemStack().getType();
+                material = SerializeUtil.deSerialization(customItem.getFlatItem()).getType();
 //                plugin.getLogger().info(material.name());
             } else {
 //                plugin.getLogger().info(trade.getMaterial());
