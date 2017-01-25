@@ -1,4 +1,5 @@
 name: StockMarket
+#main: org.xjcraft.blockFML.OnlineLoginPluginDemo
 main: org.xjcraft.trade.StockMarket
 version: 1.3.2
 author: Ree

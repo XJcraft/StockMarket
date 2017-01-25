@@ -35,8 +35,12 @@ public class StockMarketListener implements Listener {
         this.plugin = stockMarket;
     }
 
-
-    @EventHandler
+	/**
+	 * open storage gui
+	 *
+	 * @param event
+	 */
+	@EventHandler
     public void useStorage(InventoryClickEvent event) {
         if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.bagName"))) {
             return;
@@ -593,5 +597,34 @@ public class StockMarketListener implements Listener {
         if (hasTrade) {
             BagGUI.BagGUI(plugin, player);
         }
-    }
+	}
+
+	@EventHandler
+	public void shortCreate (PlayerInteractEvent event) {
+		if (event.getPlayer () != null && event.getAction () == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock () != null && event.getPlayer ().isOp ()) {
+
+			if (!event.getPlayer ().hasPermission ("trade.create")) {
+				return;
+			}
+			if (null == event.getPlayer ().getInventory ().getItemInMainHand ()) {
+				return;
+			}
+			if (event.getClickedBlock ().getState () instanceof Sign) {
+				Sign sign = (Sign) event.getClickedBlock ().getState ();
+				if (sign.getLine (0).equalsIgnoreCase ("[s]")) {
+					sign.setLine (0, "[unbreak]");
+					sign.setLine (1, this.plugin.getConfig ().getString ("shop.name"));
+					ItemStack itemStack = event.getPlayer ().getInventory ().getItemInMainHand ();
+					String item = itemStack.getType ().name ();
+					if (itemStack.getDurability () != 0) {
+						item += ":" + itemStack.getDurability ();
+					}
+					sign.setLine (2, item);
+					sign.setLine (3, InfoUtil.getName (event.getPlayer ()));
+					sign.update ();
+				}
+
+			}
+		}
+	}
 }

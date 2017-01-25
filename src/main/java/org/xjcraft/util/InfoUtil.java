@@ -1,10 +1,17 @@
 package org.xjcraft.util;
 
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Weiyuan on 2016/1/27.
  */
 public class InfoUtil {
-    public static String removeColor(String str) {
+	private static Map<String, String> tempSave = new HashMap<> ();
+
+	public static String removeColor(String str) {
         if (str == null) {
             return null;
         }
@@ -24,5 +31,16 @@ public class InfoUtil {
             double price = (double) moneyP / (double) itemP;
             return "1:" + String.format("%.3f", price);
         }
-    }
+	}
+
+	public static void setName (Player player, String info) {
+		tempSave.put (player.getName (), info);
+	}
+
+	public static String getName (Player player) {
+		String callback = tempSave.get (player.getName ());
+		tempSave.remove (player.getName ());
+		return callback;
+
+	}
 }

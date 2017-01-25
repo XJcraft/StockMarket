@@ -63,6 +63,9 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 case "m":
                     excuteMine(commandSender, command, s, strings);
                     break;
+                case "cn":
+                    excuteCN (commandSender, command, s, strings);
+                    break;
                 case "reload":
                     if (commandSender.isOp()) {
                         plugin.reloadConfig();
@@ -114,6 +117,15 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             return true;
         }
         return false;
+    }
+
+    private void excuteCN (CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length == 2) {
+            InfoUtil.setName ((Player) commandSender, strings[ 1 ]);
+            commandSender.sendMessage ("success!");
+        } else {
+            commandSender.sendMessage ("no info insert");
+        }
     }
 
     private void excuteLists(CommandSender commandSender, Command command, String s, String[] strings) {
