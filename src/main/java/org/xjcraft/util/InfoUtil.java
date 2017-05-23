@@ -34,7 +34,10 @@ public class InfoUtil {
 	}
 
 	public static void setName (Player player, String info) {
-		tempSave.put (player.getName (), info);
+        if (tempSave.containsKey(player.getName())) {
+            tempSave.remove(player.getName());
+        }
+        tempSave.put (player.getName (), info);
 	}
 
 	public static String getName (Player player) {
