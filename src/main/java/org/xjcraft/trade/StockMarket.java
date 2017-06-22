@@ -4,14 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.blockFML.BlockFMLListener;
-import org.xjcraft.database.CustomItem;
-import org.xjcraft.database.History;
-import org.xjcraft.database.Storage;
-import org.xjcraft.database.Trade;
 import org.xjcraft.util.SerializeUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Weiyuan on 2016/1/7.
@@ -60,15 +53,13 @@ public class StockMarket extends JavaPlugin {
     private void setupDatabase() {
         try {
             getLogger().info("Trying to enable database...");
-            getDatabase().find(Trade.class).findRowCount();
-            getDatabase().find(Storage.class).findRowCount();
-            getDatabase().find(History.class).findRowCount();
-            getDatabase().find(CustomItem.class).findRowCount();
+
+
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info("Fail to enable database, trying to initialize...");
             try {
-                installDDL();
+//                installDDL();
                 getLogger().info("Successful import database structure.");
             } catch (Exception e2) {
                 getLogger().warning("Fail to create database structure, please make sure the clear of database!");
@@ -78,15 +69,15 @@ public class StockMarket extends JavaPlugin {
         }
     }
 
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        List<Class<?>> list = new ArrayList<>();
-        list.add(Trade.class);
-        list.add(Storage.class);
-        list.add(History.class);
-        list.add(CustomItem.class);
-        return list;
-    }
+//    @Override
+//    public List<Class<?>> getDatabaseClasses() {
+//        List<Class<?>> list = new ArrayList<>();
+//        list.add(Trade.class);
+//        list.add(Storage.class);
+//        list.add(History.class);
+//        list.add(CustomItem.class);
+//        return list;
+//    }
 
     @Override
     public void onDisable() {

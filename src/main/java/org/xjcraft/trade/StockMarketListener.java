@@ -76,7 +76,8 @@ public class StockMarketListener implements Listener {
                     strings = get.getItemMeta().getDisplayName().split(":");
                     String[] lores = get.getItemMeta().getLore().get(4).split(" ");
                     packs = lores[1].split("/");
-                    Storage storage = this.plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
+//                    Storage storage =
+//                    Storage storage = this.plugin.getDatabase().find(Storage.class).where().ieq("id", strings[1]).findUnique();
                     if (packs[0].equals(packs[1])) {
                         this.plugin.getDatabase().delete(storage);
                     } else {
