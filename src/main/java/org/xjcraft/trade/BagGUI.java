@@ -1,5 +1,6 @@
 package org.xjcraft.trade;
 
+import com.avaje.ebean.Ebean;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class BagGUI {
     public static void BagGUI(Plugin plugin, Player player) {
-        List<Storage> list = plugin.getDatabase().find(Storage.class).where().ieq("playername", player.getName()).orderBy().asc("id").findList();
+        List<Storage> list = Ebean.getServer("database").find(Storage.class).where().ieq("playername", player.getName()).orderBy().asc("id").findList();
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.bagName"));
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;
@@ -32,7 +33,7 @@ public class BagGUI {
             String materialname;
             short durability = storage.getDurability();
             if (names[0].equalsIgnoreCase("S")) {
-                material = SerializeUtil.deSerialization(plugin.getDatabase().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem()).getType();
+                material = SerializeUtil.deSerialization(Ebean.getServer("database").find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem()).getType();
                 materialname = names[1];
             } else {
                 material = Material.getMaterial(storage.getItemName());
@@ -100,7 +101,7 @@ public class BagGUI {
 
     private static ItemStack getTemplate(Plugin plugin, String name, Material material, short durability) {
         if (name.equalsIgnoreCase("S")) {
-            return SerializeUtil.deSerialization(plugin.getDatabase().find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
+            return SerializeUtil.deSerialization(Ebean.getServer("database").find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
         } else {
             return new ItemStack(material, 1, durability);
         }

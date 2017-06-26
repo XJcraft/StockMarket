@@ -1,5 +1,8 @@
 package org.xjcraft.trade;
 
+import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.EbeanServerFactory;
+import com.avaje.ebean.config.ServerConfig;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,7 +57,10 @@ public class StockMarket extends JavaPlugin {
         try {
             getLogger().info("Trying to enable database...");
 
-
+            ServerConfig config = new ServerConfig();
+            config.setName("database");
+            config.loadFromProperties();
+            EbeanServer server = EbeanServerFactory.create(config);
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info("Fail to enable database, trying to initialize...");
