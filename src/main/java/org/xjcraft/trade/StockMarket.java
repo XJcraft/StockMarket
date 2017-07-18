@@ -2,11 +2,16 @@ package org.xjcraft.trade;
 
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.EbeanServerFactory;
+import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.xjcraft.blockFML.BlockFMLListener;
+import org.xjcraft.database.CustomItem;
+import org.xjcraft.database.History;
+import org.xjcraft.database.Storage;
+import org.xjcraft.database.Trade;
 import org.xjcraft.util.SerializeUtil;
 
 /**
@@ -54,17 +59,30 @@ public class StockMarket extends JavaPlugin {
     }
 
     private void setupDatabase() {
+        ServerConfig config = new ServerConfig();
+        config.setName("database");
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        dataSourceConfig.setUrl("jdbc:mysql://192.168.245.132:3306/ree");
+        dataSourceConfig.setDriver("com.mysql.jdbc.Driver");
+        dataSourceConfig.setUsername("ree");
+        dataSourceConfig.setPassword("111");
+
+
+        config.setDataSourceConfig(dataSourceConfig);
+        config.setDdlGenerate(true);
+        config.setDdlRun(true);
+        EbeanServer server = EbeanServerFactory.create(config);
         try {
             getLogger().info("Trying to enable database...");
-
-            ServerConfig config = new ServerConfig();
-            config.setName("database");
-            config.loadFromProperties();
-            EbeanServer server = EbeanServerFactory.create(config);
+            server.find(CustomItem.class).findRowCount();
+            server.find(History.class).findRowCount();
+            server.find(Storage.class).findRowCount();
+            server.find(Trade.class).findRowCount();
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info("Fail to enable database, trying to initialize...");
             try {
+
 //                installDDL();
                 getLogger().info("Successful import database structure.");
             } catch (Exception e2) {
