@@ -1,6 +1,5 @@
 package org.xjcraft.trade;
 
-import com.avaje.ebean.Ebean;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -21,6 +20,7 @@ import org.xjcraft.database.Trade;
 import org.xjcraft.util.InfoUtil;
 import org.xjcraft.util.ItemUtil;
 import org.xjcraft.util.SerializeUtil;
+import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,12 +52,12 @@ public class StockMarketListener implements Listener {
 
                 String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
                 String[] lores = itemStack.getItemMeta().getLore().get(4).split("/");
-                Storage storage = Ebean.getServer("database").find(Storage.class).where().ieq("id", strings[1]).findUnique();
+                Storage storage = SqlUtil.getEbeanServer().find(Storage.class).where().ieq("id", strings[1]).findUnique();
                 if (lores[1].equals("1")) {
-                    Ebean.getServer("database").delete(storage);
+                    SqlUtil.getEbeanServer().delete(storage);
                 } else {
                     storage.setItemNumber(storage.getItemNumber() - itemStack.getAmount());
-                    Ebean.getServer("database").save(storage);
+                    SqlUtil.getEbeanServer().save(storage);
                 }
                 itemStack = getRealItem(itemStack, itemStack.getItemMeta().getLore().get(1));
                 event.setCurrentItem(itemStack);
@@ -78,12 +78,12 @@ public class StockMarketListener implements Listener {
                     String[] lores = get.getItemMeta().getLore().get(4).split(" ");
                     packs = lores[1].split("/");
 //                    Storage storage =
-                    Storage storage = Ebean.getServer("database").find(Storage.class).where().ieq("id", strings[1]).findUnique();
+                    Storage storage = SqlUtil.getEbeanServer().find(Storage.class).where().ieq("id", strings[1]).findUnique();
                     if (packs[0].equals(packs[1])) {
-                        Ebean.getServer("database").delete(storage);
+                        SqlUtil.getEbeanServer().delete(storage);
                     } else {
                         storage.setItemNumber(storage.getItemNumber() - get.getAmount());
-                        Ebean.getServer("database").save(storage);
+                        SqlUtil.getEbeanServer().save(storage);
                     }
                     get = getRealItem(get, get.getItemMeta().getLore().get(1));
                     event.getWhoClicked().getInventory().addItem(get);
@@ -93,9 +93,9 @@ public class StockMarketListener implements Listener {
             }
             BagGUI.BagGUI(this.plugin, (Player) event.getWhoClicked());
         }
-        List<Storage> storages = Ebean.getServer("database").find(Storage.class).where().ieq("item_number", "0").findList();
+        List<Storage> storages = SqlUtil.getEbeanServer().find(Storage.class).where().ieq("item_number", "0").findList();
         for (Storage storage : storages) {
-            Ebean.getServer("database").delete(storage);
+            SqlUtil.getEbeanServer().delete(storage);
         }
     }
 
@@ -103,7 +103,7 @@ public class StockMarketListener implements Listener {
         String[] names = name.split(":");
         if (itemStack.getType() != ItemUtil.getCurrency() && names.length == 2 && "S".equals(names[0].substring(names[0].length() - 1, names[0].length()))) {
             int amount = itemStack.getAmount();
-            String flat = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem();
+            String flat = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem();
             itemStack = SerializeUtil.deSerialization(flat);
             itemStack.setAmount(amount);
         } else {
@@ -124,7 +124,7 @@ public class StockMarketListener implements Listener {
                 ItemStack itemStack = event.getCurrentItem();
                 String[] strings = itemStack.getItemMeta().getDisplayName().split(":");
                 List<String> lores = itemStack.getItemMeta().getLore();
-                Trade trade = Ebean.getServer("database").find(Trade.class).where().ieq("id", strings[1]).findUnique();
+                Trade trade = SqlUtil.getEbeanServer().find(Trade.class).where().ieq("id", strings[1]).findUnique();
                 Storage storage = new Storage();
                 storage.setPlayername(trade.getPlayer());
                 storage.setShopType(trade.getMaterial());
@@ -139,8 +139,8 @@ public class StockMarketListener implements Listener {
                 storage.setOrderDate(trade.getTradeDate());
                 storage.setBargainDate(null);
 
-                Ebean.getServer("database").save(storage);
-                Ebean.getServer("database").delete(trade);
+                SqlUtil.getEbeanServer().save(storage);
+                SqlUtil.getEbeanServer().delete(trade);
 
             }
             event.setCancelled(true);
@@ -157,7 +157,7 @@ public class StockMarketListener implements Listener {
                 try {
                     String[] item = event.getLine(2).split(":");
                     if (item[0].equalsIgnoreCase("s") && item.length == 2) {
-                        CustomItem custom = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", item[1]).findUnique();
+                        CustomItem custom = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", item[1]).findUnique();
                         if (custom == null) {
                             throw new Exception("no special item of this name.");
                         }
@@ -264,7 +264,7 @@ public class StockMarketListener implements Listener {
         String[] names = name.split(":");
         ItemStack itemStack;
         if (names[0].equalsIgnoreCase("S") && names.length == 2) {
-            CustomItem customItem = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", names[1]).findUnique();
+            CustomItem customItem = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
             itemStack = SerializeUtil.deSerialization(customItem.getFlatItem());
         } else {
             itemStack = new ItemStack(Material.getMaterial(names[0]), 1, Short.parseShort(names[1]));
@@ -438,7 +438,7 @@ public class StockMarketListener implements Listener {
             number = ItemUtil.getCurrency().getMaxStackSize();
         }
         trade.setTradeNumber(buyNumber);
-        Ebean.getServer("database").save(trade);
+        SqlUtil.getEbeanServer().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createBuy"), buyNumber, name, itemPrice, moneyPrice));
         onTrade(plugin, player, product, name);
@@ -477,7 +477,7 @@ public class StockMarketListener implements Listener {
         trade.setPrice(((double) moneyPrice) / (double) itemPrice);
         trade.setTradeDate(java.util.Calendar.getInstance());
         trade.setTradeNumber(sellNumber);
-        Ebean.getServer("database").save(trade);
+        SqlUtil.getEbeanServer().save(trade);
 
         player.sendMessage(String.format(plugin.getConfig().getString("message.createSell"), sellNumber, name, itemPrice, moneyPrice));
         onTrade(plugin, player, product, name);
@@ -493,8 +493,8 @@ public class StockMarketListener implements Listener {
         } else {
             shopType = product.getType().name();
         }
-        List<Trade> sells = Ebean.getServer("database").find(Trade.class).where().ieq("sell", "1").ieq("material", shopType).ieq("durability", durability + "").orderBy().asc("price").orderBy().asc("id").findList();
-        List<Trade> paids = Ebean.getServer("database").find(Trade.class).where().ieq("sell", "0").ieq("material", shopType).ieq("durability", durability + "").orderBy().desc("price").orderBy().asc("id").findList();
+        List<Trade> sells = SqlUtil.getEbeanServer().find(Trade.class).where().ieq("sell", "1").ieq("material", shopType).ieq("durability", durability + "").orderBy().asc("price").orderBy().asc("id").findList();
+        List<Trade> paids = SqlUtil.getEbeanServer().find(Trade.class).where().ieq("sell", "0").ieq("material", shopType).ieq("durability", durability + "").orderBy().desc("price").orderBy().asc("id").findList();
         List<History> histories = new ArrayList<>();
 
       /*  plugin.getLogger().info("sell list=====");
@@ -546,7 +546,7 @@ public class StockMarketListener implements Listener {
             getMoney.setShopType(sell.getMaterial());
             getMoney.setBargainDate(Calendar.getInstance());
             getMoney.setOrderDate(sell.getTradeDate());
-            Ebean.getServer("database").save(getMoney);
+            SqlUtil.getEbeanServer().save(getMoney);
 
             Storage getItem = new Storage();
             getItem.setItemNumber(sell.getItemPrice() * multi);
@@ -557,7 +557,7 @@ public class StockMarketListener implements Listener {
             getItem.setShopType(sell.getMaterial());
             getItem.setBargainDate(getMoney.getBargainDate());
             getItem.setOrderDate(paid.getTradeDate());
-            Ebean.getServer("database").save(getItem);
+            SqlUtil.getEbeanServer().save(getItem);
 
             History history = new History();
             history.setBuyer(paid.getPlayer());
@@ -573,7 +573,7 @@ public class StockMarketListener implements Listener {
 
             if (paid.getTradeNumber() == 0) {
                 paids.remove(paid);
-                Ebean.getServer("database").delete(paid);
+                SqlUtil.getEbeanServer().delete(paid);
             } else if (paid.getTradeNumber() < paid.getMoneyPrice()) {
                 Storage remainedMoney = new Storage();
                 remainedMoney.setShopType(sell.getMaterial());
@@ -583,19 +583,19 @@ public class StockMarketListener implements Listener {
                 remainedMoney.setPaidFrom(paid.getPlayer());
                 remainedMoney.setOrderDate(paid.getTradeDate());
                 remainedMoney.setBargainDate(null);
-                Ebean.getServer("database").save(remainedMoney);
+                SqlUtil.getEbeanServer().save(remainedMoney);
 
                 paids.remove(paid);
-                Ebean.getServer("database").delete(paid);
+                SqlUtil.getEbeanServer().delete(paid);
             }
             if (sell.getTradeNumber() == 0) {
                 sells.remove(sell);
-                Ebean.getServer("database").delete(sell);
+                SqlUtil.getEbeanServer().delete(sell);
             }
         }
-        Ebean.getServer("database").save(sells);
-        Ebean.getServer("database").save(paids);
-        Ebean.getServer("database").save(histories);
+        SqlUtil.getEbeanServer().save(sells);
+        SqlUtil.getEbeanServer().save(paids);
+        SqlUtil.getEbeanServer().save(histories);
         if (hasTrade) {
             BagGUI.BagGUI(plugin, player);
         }

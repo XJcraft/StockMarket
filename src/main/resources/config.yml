@@ -68,4 +68,8 @@ message:
     sell: Sell
     buy: Buy
     price: Price
-
+dataSource:
+  driver: com.mysql.jdbc.Driver
+  url: jdbc:mysql://192.168.245.132/ree
+  userName: ree
+  password: 111

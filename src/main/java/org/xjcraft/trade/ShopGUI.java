@@ -1,6 +1,5 @@
 package org.xjcraft.trade;
 
-import com.avaje.ebean.Ebean;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,7 +31,7 @@ public class ShopGUI {
         ItemStack shopType;
         short durability;
         if (names.length == 2 && names[0].equalsIgnoreCase("S")) {
-            CustomItem custom = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", names[1]).findUnique();
+            CustomItem custom = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
             shopType = SerializeUtil.deSerialization(custom.getFlatItem());
             durability = 0;
         } else {
@@ -143,7 +142,7 @@ public class ShopGUI {
         ItemMeta itemMetaH = itemStack.getItemMeta();
 //        plugin.getLogger().info(name + "," + durability);
         Trade tradeH = SqlUtil.getFirst(
-                Ebean.getServer("database").find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().desc("price").orderBy().asc("id").findList());
+                SqlUtil.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().desc("price").orderBy().asc("id").findList());
         if (tradeH != null) {
             itemMetaH.setDisplayName(String.format(plugin.getConfig().getString("message.highest"), tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
         } else {
@@ -159,7 +158,7 @@ public class ShopGUI {
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
         Trade trade = SqlUtil.getFirst(
-                Ebean.getServer("database").find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("price").orderBy().asc("id").findList());
+                SqlUtil.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("price").orderBy().asc("id").findList());
         if (trade != null) {
             itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lowest"), trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
         } else {

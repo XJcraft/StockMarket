@@ -1,6 +1,5 @@
 package org.xjcraft.trade;
 
-import com.avaje.ebean.Ebean;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,6 +11,7 @@ import org.xjcraft.database.History;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.InfoUtil;
 import org.xjcraft.util.SerializeUtil;
+import org.xjcraft.util.SqlUtil;
 
 import javax.persistence.OptimisticLockException;
 import java.util.HashMap;
@@ -130,7 +130,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     }
 
     private void excuteLists(CommandSender commandSender, Command command, String s, String[] strings) {
-        List<CustomItem> customs = Ebean.getServer("database").find(CustomItem.class).findList();
+        List<CustomItem> customs = SqlUtil.getEbeanServer().find(CustomItem.class).findList();
         commandSender.sendMessage("====Slist=============================");
         for (CustomItem cc : customs) {
             commandSender.sendMessage(cc.getName());
@@ -141,7 +141,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     private void excuteGet(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 2) {
             try {
-                CustomItem custom = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", strings[1]).findUnique();
+                CustomItem custom = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", strings[1]).findUnique();
                 commandSender.sendMessage(strings[1]);
                 commandSender.sendMessage(custom.getFlatItem());
                 if (custom != null) {
@@ -164,8 +164,8 @@ public class StockMarketCommandExecutor implements CommandExecutor {
             ItemStack itemInHand = ((Player) commandSender).getItemInHand();
             itemInHand.setAmount(1);
             String flatItem = SerializeUtil.serialization(itemInHand);
-            List<CustomItem> c = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", strings[1]).findList();
-            List<CustomItem> c2 = Ebean.getServer("database").find(CustomItem.class).where().ieq("flat_item", flatItem).findList();
+            List<CustomItem> c = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", strings[1]).findList();
+            List<CustomItem> c2 = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("flat_item", flatItem).findList();
             commandSender.sendMessage(flatItem);
 
             if (c.size() != 0 || c2.size() != 0) {
@@ -177,7 +177,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 custom.setFlatItem(flatItem);
                 custom.setName(strings[1]);
                 try {
-                    Ebean.getServer("database").save(custom);
+                    SqlUtil.getEbeanServer().save(custom);
                 } catch (OptimisticLockException e) {
                     e.printStackTrace();
                     commandSender.sendMessage(plugin.getConfig().getString("message.failName"));
@@ -204,7 +204,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         try {
             ItemStack temp = new ItemStack(hand);
             temp.setAmount(1);
-            CustomItem customItem = Ebean.getServer("database").find(CustomItem.class).where().ieq("flatItem", SerializeUtil.serialization(temp)).findUnique();
+            CustomItem customItem = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("flatItem", SerializeUtil.serialization(temp)).findUnique();
             if (customItem != null)
                 display = plugin.getConfig().getString("message.itemName") + customItem.getName();
         } catch (Exception e) {
@@ -227,7 +227,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
                 sendDetail(commandSender, (new ItemStack(material, 1, (short) 0)));
             } catch (Exception e) {
                 try {
-                    CustomItem customItem = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", materialInput).findUnique();
+                    CustomItem customItem = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", materialInput).findUnique();
                     if (customItem == null)
                         throw new Exception("no item");
                     ItemStack itemStack = SerializeUtil.deSerialization(customItem.getFlatItem());
@@ -245,7 +245,7 @@ public class StockMarketCommandExecutor implements CommandExecutor {
     private void excuteList(CommandSender commandSender, Command command, String s, String[] strings) {
         //get price list
         commandSender.sendMessage("==Offers=======================");
-        List<Trade> Tradelist = Ebean.getServer("database").find(Trade.class).setDistinct(true).where().orderBy().asc("material").findList();
+        List<Trade> Tradelist = SqlUtil.getEbeanServer().find(Trade.class).setDistinct(true).where().orderBy().asc("material").findList();
         HashMap<String, int[]> map = new HashMap<>();
         for (Trade trade : Tradelist) {
             if (!map.containsKey(trade.getMaterial())) {
@@ -295,12 +295,12 @@ public class StockMarketCommandExecutor implements CommandExecutor {
         short durability = itemStack.getDurability();
         String title = material.name();
         // FIXME: 2016/3/25
-        List<History> list = Ebean.getServer("database").find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().desc("id").findList();
+        List<History> list = SqlUtil.getEbeanServer().find(History.class).where().ieq("material", material.name()).ieq("durability", durability + "").orderBy().desc("id").findList();
         try {
-            CustomItem customItem = Ebean.getServer("database").find(CustomItem.class).where().ieq("flat_item", SerializeUtil.serialization(itemStack)).findUnique();
+            CustomItem customItem = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("flat_item", SerializeUtil.serialization(itemStack)).findUnique();
             if (customItem != null) {
                 title = customItem.getName();
-                list = Ebean.getServer("database").find(History.class).where().ieq("material", "S:" + customItem.getName()).ieq("durability", "0").orderBy().desc("id").findList();
+                list = SqlUtil.getEbeanServer().find(History.class).where().ieq("material", "S:" + customItem.getName()).ieq("durability", "0").orderBy().desc("id").findList();
             }
 
         } catch (Exception e) {

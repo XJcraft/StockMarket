@@ -1,9 +1,6 @@
 package org.xjcraft.trade;
 
 import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.EbeanServerFactory;
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebean.config.ServerConfig;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,7 +9,13 @@ import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.History;
 import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
+import org.xjcraft.ebean.EbeanBuilder;
+import org.xjcraft.ebean.EbeanHelper;
 import org.xjcraft.util.SerializeUtil;
+import org.xjcraft.util.SqlUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Weiyuan on 2016/1/7.
@@ -59,30 +62,35 @@ public class StockMarket extends JavaPlugin {
     }
 
     private void setupDatabase() {
-        ServerConfig config = new ServerConfig();
-        config.setName("database");
-        DataSourceConfig dataSourceConfig = new DataSourceConfig();
-        dataSourceConfig.setUrl("jdbc:mysql://192.168.245.132:3306/ree");
-        dataSourceConfig.setDriver("com.mysql.jdbc.Driver");
-        dataSourceConfig.setUsername("ree");
-        dataSourceConfig.setPassword("111");
-
-
-        config.setDataSourceConfig(dataSourceConfig);
-        config.setDdlGenerate(true);
-        config.setDdlRun(true);
-        EbeanServer server = EbeanServerFactory.create(config);
+//        ServerConfig config = new ServerConfig();
+//        config.setName("database");
+//        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+//        dataSourceConfig.setUrl("jdbc:mysql://192.168.245.132:3306/ree");
+//        dataSourceConfig.setDriver("com.mysql.jdbc.Driver");
+//        dataSourceConfig.setUsername("ree");
+//        dataSourceConfig.setPassword("111");
+//
+//
+//        config.setDataSourceConfig(dataSourceConfig);
+//        config.setDdlGenerate(true);
+//        config.setDdlRun(true);
+//        EbeanServer server = EbeanServerFactory.create(config);
+        EbeanServer db = new EbeanBuilder(this)
+                .setName("database")
+                .setDriver(plugin.getConfig().getString("dataSource.driver"))
+                .setURL(plugin.getConfig().getString("dataSource.url"))
+                .setCredentials(plugin.getConfig().getString("dataSource.userName"), plugin.getConfig().getString("dataSource.password"))
+                .setClasses(getDatabaseClasses())
+                .build();
+        SqlUtil.setEbeanServer(db);
         try {
             getLogger().info("Trying to enable database...");
-            server.find(CustomItem.class).findRowCount();
-            server.find(History.class).findRowCount();
-            server.find(Storage.class).findRowCount();
-            server.find(Trade.class).findRowCount();
+            db.find(Trade.class).findRowCount();
             getLogger().info("Database enable successful!");
         } catch (Exception e) {
             getLogger().info("Fail to enable database, trying to initialize...");
             try {
-
+                EbeanHelper.installDDL(db);
 //                installDDL();
                 getLogger().info("Successful import database structure.");
             } catch (Exception e2) {
@@ -94,14 +102,14 @@ public class StockMarket extends JavaPlugin {
     }
 
 //    @Override
-//    public List<Class<?>> getDatabaseClasses() {
-//        List<Class<?>> list = new ArrayList<>();
-//        list.add(Trade.class);
-//        list.add(Storage.class);
-//        list.add(History.class);
-//        list.add(CustomItem.class);
-//        return list;
-//    }
+public List<Class<?>> getDatabaseClasses() {
+    List<Class<?>> list = new ArrayList<>();
+    list.add(Trade.class);
+    list.add(Storage.class);
+    list.add(History.class);
+    list.add(CustomItem.class);
+    return list;
+}
 
     @Override
     public void onDisable() {

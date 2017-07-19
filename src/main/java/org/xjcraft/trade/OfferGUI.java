@@ -1,6 +1,5 @@
 package org.xjcraft.trade;
 
-import com.avaje.ebean.Ebean;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +11,7 @@ import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Trade;
 import org.xjcraft.util.ItemUtil;
 import org.xjcraft.util.SerializeUtil;
+import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class OfferGUI {
     public static void OfferGUI(Plugin plugin, Player player) {
-        List<Trade> list = Ebean.getServer("database").find(Trade.class).where().ieq("player", player.getName()).orderBy().asc("id").findList();
+        List<Trade> list = SqlUtil.getEbeanServer().find(Trade.class).where().ieq("player", player.getName()).orderBy().asc("id").findList();
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.offerName"));
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;
@@ -31,7 +31,7 @@ public class OfferGUI {
             Material material;
 //            plugin.getLogger().info("special");
             if (names[0].equalsIgnoreCase("S")) {
-                CustomItem customItem = Ebean.getServer("database").find(CustomItem.class).where().ieq("name", names[1]).findUnique();
+                CustomItem customItem = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
                 material = SerializeUtil.deSerialization(customItem.getFlatItem()).getType();
 //                plugin.getLogger().info(material.name());
             } else {
