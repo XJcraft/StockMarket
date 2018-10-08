@@ -9,9 +9,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Trade;
+import org.xjcraft.util.Dao;
 import org.xjcraft.util.ItemUtil;
 import org.xjcraft.util.SerializeUtil;
-import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class ShopGUI {
         ItemStack shopType;
         short durability;
         if (names.length == 2 && names[0].equalsIgnoreCase("S")) {
-            CustomItem custom = SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique();
+            CustomItem custom = Dao.getCustomItem(names[0]);
             shopType = SerializeUtil.deSerialization(custom.getFlatItem());
             durability = 0;
         } else {
@@ -141,8 +141,8 @@ public class ShopGUI {
         ItemStack itemStack = ItemUtil.getHighest();
         ItemMeta itemMetaH = itemStack.getItemMeta();
 //        plugin.getLogger().info(name + "," + durability);
-        Trade tradeH = SqlUtil.getFirst(
-                SqlUtil.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().desc("price").orderBy().asc("id").findList());
+        Trade tradeH = Dao.getFirst(
+                Dao.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "0").orderBy().desc("price").orderBy().asc("id").findList());
         if (tradeH != null) {
             itemMetaH.setDisplayName(String.format(plugin.getConfig().getString("message.highest"), tradeH.getItemPrice(), tradeH.getMoneyPrice(), tradeH.getPlayer()));
         } else {
@@ -157,8 +157,8 @@ public class ShopGUI {
         name = getRealName(name);
         ItemStack itemStack = ItemUtil.getLowest();
         ItemMeta itemMeta = itemStack.getItemMeta();
-        Trade trade = SqlUtil.getFirst(
-                SqlUtil.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("price").orderBy().asc("id").findList());
+        Trade trade = Dao.getFirst(
+                Dao.getEbeanServer().find(Trade.class).where().ieq("material", name).ieq("durability", durability + "").ieq("sell", "1").orderBy().asc("price").orderBy().asc("id").findList());
         if (trade != null) {
             itemMeta.setDisplayName(String.format(plugin.getConfig().getString("message.lowest"), trade.getItemPrice(), trade.getMoneyPrice(), trade.getPlayer()));
         } else {

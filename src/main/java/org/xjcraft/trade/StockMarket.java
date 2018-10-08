@@ -11,8 +11,8 @@ import org.xjcraft.database.Storage;
 import org.xjcraft.database.Trade;
 import org.xjcraft.ebean.EbeanBuilder;
 import org.xjcraft.ebean.EbeanHelper;
+import org.xjcraft.util.Dao;
 import org.xjcraft.util.SerializeUtil;
-import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +82,7 @@ public class StockMarket extends JavaPlugin {
                 .setCredentials(plugin.getConfig().getString("dataSource.userName"), plugin.getConfig().getString("dataSource.password"))
                 .setClasses(getDatabaseClasses())
                 .build();
-        SqlUtil.setEbeanServer(db);
+        Dao.setEbeanServer(db);
         try {
             getLogger().info("Trying to enable database...");
             db.find(Trade.class).findRowCount();

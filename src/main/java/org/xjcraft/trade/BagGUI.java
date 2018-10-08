@@ -7,10 +7,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.xjcraft.database.CustomItem;
 import org.xjcraft.database.Storage;
+import org.xjcraft.util.Dao;
 import org.xjcraft.util.SerializeUtil;
-import org.xjcraft.util.SqlUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class BagGUI {
     public static void BagGUI(Plugin plugin, Player player) {
-        List<Storage> list = SqlUtil.getEbeanServer().find(Storage.class).where().ieq("playername", player.getName()).orderBy().asc("id").findList();
+        List<Storage> list = Dao.getStorage(player);
         Inventory menu = Bukkit.createInventory(null, 54, plugin.getConfig().getString("shop.bagName"));
         ItemStack[] itemStacks = menu.getContents();
         int slot = 0;
@@ -33,7 +32,7 @@ public class BagGUI {
             String materialname;
             short durability = storage.getDurability();
             if (names[0].equalsIgnoreCase("S")) {
-                material = SerializeUtil.deSerialization(SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", names[1]).findUnique().getFlatItem()).getType();
+                material = SerializeUtil.deSerialization(Dao.getCustomItem(names[1]).getFlatItem()).getType();
                 materialname = names[1];
             } else {
                 material = Material.getMaterial(storage.getItemName());
@@ -101,7 +100,7 @@ public class BagGUI {
 
     private static ItemStack getTemplate(Plugin plugin, String name, Material material, short durability) {
         if (name.equalsIgnoreCase("S")) {
-            return SerializeUtil.deSerialization(SqlUtil.getEbeanServer().find(CustomItem.class).where().ieq("name", name).findUnique().getFlatItem());
+            return SerializeUtil.deSerialization(Dao.getCustomItem(name).getFlatItem());
         } else {
             return new ItemStack(material, 1, durability);
         }

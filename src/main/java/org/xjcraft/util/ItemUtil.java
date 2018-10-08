@@ -16,7 +16,7 @@ public class ItemUtil {
     public static ItemStack getNumberStack(int i) {
 
         i = i % 10;
-        ItemStack itemStack = new ItemStack(Material.BANNER, 1);
+        ItemStack itemStack = new ItemStack(Material.WHITE_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
         bannerMeta.setBaseColor(DyeColor.WHITE);
 
@@ -101,7 +101,7 @@ public class ItemUtil {
     }
 
     public static ItemStack getUpArrow() {
-        ItemStack upArrow = new ItemStack(Material.BANNER, 1);
+        ItemStack upArrow = new ItemStack(Material.BLACK_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) upArrow.getItemMeta();
         bannerMeta.setDisplayName("+");
         bannerMeta.setBaseColor(DyeColor.BLACK);
@@ -114,7 +114,7 @@ public class ItemUtil {
     }
 
     public static ItemStack getDownArrow() {
-        ItemStack downArrow = new ItemStack(Material.BANNER, 1);
+        ItemStack downArrow = new ItemStack(Material.BLACK_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) downArrow.getItemMeta();
         bannerMeta.setDisplayName("-");
         bannerMeta.setBaseColor(DyeColor.BLACK);
