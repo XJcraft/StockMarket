@@ -43,7 +43,7 @@ public class StockMarketListener implements Listener {
 	 */
 	@EventHandler
     public void useStorage(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.bagName"))) {
+        if (!event.getView().getTitle().equals(this.plugin.getConfig().getString("shop.bagName"))) {
             return;
         }
         if (event.getRawSlot() < 53) {
@@ -116,7 +116,7 @@ public class StockMarketListener implements Listener {
     }
     @EventHandler
     public void cancelTrade(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.offerName"))) {
+        if (!event.getView().getTitle().equals(this.plugin.getConfig().getString("shop.offerName"))) {
             return;
         }
         if (event.getRawSlot() < 54) {
@@ -203,11 +203,10 @@ public class StockMarketListener implements Listener {
 
     @EventHandler
     public void openShop(PlayerInteractEvent event) {
-        if (event.getPlayer() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
             if (event.getClickedBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 if (sign.getLine(1).equalsIgnoreCase(this.plugin.getConfig().getString("shop.name"))) {
-                    boolean isS = false;
                     try {
                         String[] names = sign.getLine(2).toUpperCase().split(":");
                         if (names.length == 2 && names[0].equalsIgnoreCase("S")) {
@@ -239,7 +238,7 @@ public class StockMarketListener implements Listener {
 
     @EventHandler
     public void useShop(InventoryClickEvent event) {
-        if (!event.getInventory().getName().equals(this.plugin.getConfig().getString("shop.name"))) {
+        if (!event.getView().getTitle().equals(this.plugin.getConfig().getString("shop.name"))) {
             return;
         }
         event.setCancelled(true);
