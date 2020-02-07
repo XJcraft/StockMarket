@@ -1,4 +1,4 @@
-package org.xjcraft.util;
+package org.xjcraft.trade.utils;
 
 import org.bukkit.entity.Player;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Weiyuan on 2016/1/27.
+ * Created by Ree on 2016/1/27.
  */
 public class InfoUtil {
 	private static Map<String, String> tempSave = new HashMap<> ();
@@ -34,10 +34,8 @@ public class InfoUtil {
 	}
 
 	public static void setName (Player player, String info) {
-        if (tempSave.containsKey(player.getName())) {
-            tempSave.remove(player.getName());
-        }
-        tempSave.put (player.getName (), info);
+        tempSave.remove(player.getName());
+        tempSave.put(player.getName(), info);
 	}
 
 	public static String getName (Player player) {

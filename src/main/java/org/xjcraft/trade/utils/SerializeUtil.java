@@ -1,4 +1,4 @@
-package org.xjcraft.util;
+package org.xjcraft.trade.utils;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Created by Weiyuan on 2016/5/18.
+ * Created by Ree on 2016/5/18.
  */
 public class SerializeUtil {
     public static Plugin plugin;

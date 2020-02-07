@@ -6,9 +6,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.Plugin;
 import org.xjcraft.trade.StockMarket;
+import org.xjcraft.trade.config.MessageConfig;
 
 /**
- * Created by Weiyuan on 2016/1/19.
+ * Created by Ree on 2016/1/19.
  */
 public class BlockFMLListener implements Listener {
     private Plugin plugin;
@@ -22,8 +23,8 @@ public class BlockFMLListener implements Listener {
 
 
 		if (event.getHostname ().contains ("FML") && !event.getPlayer ().isOp ()) {
-			this.plugin.getLogger().info(String.format("%s tried to connect with modded client", event.getPlayer().getName()));
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, this.plugin.getConfig().getString("message.blockFML"));
+            this.plugin.getLogger().info(String.format("%s tried to connect with modded client", event.getPlayer().getName()));
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, MessageConfig.config.getBlockFML());
         }
     }
 }

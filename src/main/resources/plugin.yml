@@ -1,11 +1,12 @@
 name: StockMarket
 #main: org.xjcraft.blockFML.OnlineLoginPluginDemo
 main: org.xjcraft.trade.StockMarket
-api-version: 1.13
+api-version: '1.13'
 version: ${project.version}
 author: Ree
 description: This plugin is used to simulated a stock market
 website: http://www.xjcraft.org/
+depend: [SimpleSpigot]
 
 commands:
     trade:

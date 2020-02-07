@@ -1,4 +1,4 @@
-package org.xjcraft.util;
+package org.xjcraft.trade.utils;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -9,8 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
+
 /**
- * Created by Weiyuan on 2016/1/15.
+ * Created by Ree on 2016/1/15.
  */
 public class ItemUtil {
     public static ItemStack getNumberStack(int i) {
@@ -59,19 +61,18 @@ public class ItemUtil {
             case 5:
                 bannerMeta.setBaseColor(DyeColor.BLACK);
                 bannerMeta.setDisplayName("5");
-                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_VERTICAL));
-                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL));
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
-                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.RHOMBUS_MIDDLE));
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_DOWNRIGHT));
                 break;
             case 6:
                 bannerMeta.setDisplayName("6");
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
                 bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL));
-                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
-                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
                 break;
             case 7:
                 bannerMeta.setDisplayName("7");
@@ -125,6 +126,21 @@ public class ItemUtil {
         return downArrow;
     }
 
+    public static ItemStack getDollar() {
+        ItemStack item = new ItemStack(Material.WHITE_BANNER, 1);
+        BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
+        bannerMeta.setDisplayName("Price");
+        bannerMeta.setBaseColor(DyeColor.WHITE);
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL_MIRROR));
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+        item.setItemMeta(bannerMeta);
+        return item;
+    }
+
     public static ItemStack getLowest() {
         ItemStack lowest = new ItemStack(Material.LEATHER, 1);
         return lowest;
@@ -135,9 +151,6 @@ public class ItemUtil {
         return Highest;
     }
 
-    public static ItemStack getDetail(String name, int moneyPrice, int itemPrice, int sellNumber, int buyNumber, boolean itemSize, boolean moneySize) {
-        return button(Material.NAME_TAG, name + ";" + moneyPrice + ";" + itemPrice + ";" + sellNumber + ";" + buyNumber + ";" + itemSize + ";" + moneySize);
-    }
 
     public static ItemStack button(Material shopType, short durability, String info) {
         ItemStack button = button(shopType, info);
@@ -156,6 +169,18 @@ public class ItemUtil {
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(info);
+//        im.setLore(null);
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+    public static ItemStack getStackButton(ItemStack itemStack, Boolean stack, String... info) {
+        ItemStack temp = new ItemStack(itemStack.getType(), stack ? itemStack.getMaxStackSize() : 1, itemStack.getDurability());
+
+        ItemMeta im;
+        im = temp.getItemMeta();
+//        im.setDisplayName(info);
+        im.setLore(Arrays.asList(info));
 //        im.setLore(null);
         temp.setItemMeta(im);
         return temp;
