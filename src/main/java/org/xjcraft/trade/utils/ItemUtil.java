@@ -126,7 +126,7 @@ public class ItemUtil {
         return downArrow;
     }
 
-    public static ItemStack getDollar() {
+    public static ItemStack getMarketInfo() {
         ItemStack item = new ItemStack(Material.WHITE_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
         bannerMeta.setDisplayName("Price");

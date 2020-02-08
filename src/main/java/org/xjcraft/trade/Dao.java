@@ -24,15 +24,22 @@ public class Dao {
 
 
     public List<Storage> getStorage(Player player) {
-        return ebeanServer.find(Storage.class).where().ieq("playername", player.getName()).orderBy().asc("id").findList();
+        return ebeanServer.find(Storage.class).where().eq("playername", player.getName()).orderBy().asc("id").findList();
     }
 
     public CustomItem getCustomItem(String name) {
-        return ebeanServer.find(CustomItem.class).where().ieq("name", name).findOne();
+        return ebeanServer.find(CustomItem.class).where().eq("name", name).findOne();
     }
 
     public List<Trade> getTrades(Player player) {
-        return ebeanServer.find(Trade.class).where().ieq("player", player.getName()).orderBy().asc("id").findList();
+        return ebeanServer.find(Trade.class).where().eq("player", player.getName()).orderBy().asc("id").findList();
     }
 
+    public List<CustomItem> getSpecials(String name) {
+        return ebeanServer.find(CustomItem.class).where().eq("meta", name).findList();
+    }
+
+    public void save(Object o) {
+        ebeanServer.save(o);
+    }
 }

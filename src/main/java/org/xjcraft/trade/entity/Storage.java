@@ -13,7 +13,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Data
-@Table(name = "StockMarket_storages")
+@Table(name = "dev_storages")
 public class Storage {
     @Id
     int id;

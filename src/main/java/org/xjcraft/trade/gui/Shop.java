@@ -6,22 +6,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.MessageConfig;
+import org.xjcraft.trade.entity.Trade;
 import org.xjcraft.trade.utils.ItemUtil;
+
+import java.util.List;
 
 public class Shop implements InventoryHolder, StockMarketGui {
     private final String currency;
     private final ItemStack item;
+    private String itemLabel;
     Inventory inventory;
-
     //数据部分
     int price = 1;
     int number = 1;
     boolean stackMode = false;
+    List<Trade> currentBuys;
+    List<Trade> currentSells;
+    private StockMarket plugin;
 
 
-    public Shop(Player player, String currency, ItemStack item) {
+    public Shop(StockMarket plugin, Player player, String currency, ItemStack item) {
+        this.plugin = plugin;
         this.currency = currency;
         this.item = item;
         inventory = Bukkit.createInventory(this, 54, Config.config.getShop_name());
@@ -35,13 +43,17 @@ public class Shop implements InventoryHolder, StockMarketGui {
         for (int slot : downArrwoSlots) {
             inventory.setItem(slot, ItemUtil.getDownArrow());
         }
-        inventory.setItem(Slot.DOLLAR_SIGNAL, ItemUtil.getDollar());
+        inventory.setItem(Slot.MARKET_INFO, ItemUtil.getMarketInfo());
 
-        update(player);
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
 
     public void update(Player player) {
-        refresh(player);
+        if (itemLabel == null) itemLabel = plugin.getManager().getLabel(item);
+        this.currentSells = plugin.getManager().getSells(currency, itemLabel);
+        this.currentBuys = plugin.getManager().getBuys(currency, itemLabel);
+
+        plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
     }
 
     public void refresh(Player player) {
@@ -60,10 +72,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
             inventory.setItem(numberIndexes[i], numberStack);
         }
         inventory.setItem(Slot.STACK_MODE, ItemUtil.getStackButton(item, stackMode,
-                String.format(MessageConfig.config.getItemOwned(), ItemUtil.getItemNumber(player, item), item.getItemMeta().getDisplayName()),
+                String.format(MessageConfig.config.getItemOwned(), ItemUtil.getItemNumber(player, item), item.getType().name()),
                 MessageConfig.config.getStackButton()));
-        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, ""));
-        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, ""));
+        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number, item.getType().name())));
+        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number, item.getType().name())));
     }
 
 
@@ -143,7 +155,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
 
     public static class Slot {
 
-        public static final int DOLLAR_SIGNAL = 15;
+        public static final int MARKET_INFO = 14;
+        public static final int CURRENCY_DIGITAL_0 = 15;
+        public static final int CURRENCY_DIGITAL_1 = 16;
+        public static final int CURRENCY_DIGITAL_2 = 17;
         //价格面板
         public static final int PRICE_1_PlUS = 4;
         public static final int PRICE_10_PlUS = 3;

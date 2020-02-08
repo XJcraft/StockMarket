@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Data
-@Table(name = "StockMarket_history")
+@Table(name = "dev_history")
 public class History {
     @Id
     int id;

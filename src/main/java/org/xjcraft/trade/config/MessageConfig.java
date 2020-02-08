@@ -20,8 +20,8 @@ public class MessageConfig {
     String noItem = "You don't have enough %s!";
     String deal = "Get %d %s with $%d from %s";
     String priceButton = "Use %d %s to exchange %d emerald";
-    String sellButton = "Sell %d %s with %d emerald";
-    String buyButton = "Buy %s with %d emerald with price %d:%d";
+    String sellButton = "以%d价格卖出%d个%s";
+    String buyButton = "以%d价格购买%d个%s";
     String itemOwned = "你拥有%d个%s。";
     String moneyOwned = "You have $%d in your bag.";
     String createSell = "You place %d sale(s) of %s with price %d:%d";

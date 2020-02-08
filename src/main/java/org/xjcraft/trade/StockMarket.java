@@ -1,6 +1,7 @@
 package org.xjcraft.trade;
 
 import io.ebean.EbeanServer;
+import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import org.xjcraft.CommonPlugin;
 import org.xjcraft.blockFML.BlockFMLListener;
@@ -12,6 +13,8 @@ import org.xjcraft.trade.utils.SerializeUtil;
  */
 public class StockMarket extends CommonPlugin {
     Plugin plugin;
+    @Getter
+    StockMarketManager manager;
 
     @Override
     public void onEnable() {
@@ -21,9 +24,10 @@ public class StockMarket extends CommonPlugin {
         loadConfigs();
         EbeanServer db = getEbeanServer(this.plugin.getName());
         Dao dao = new Dao(db);
-        StockMarketManager manager = new StockMarketManager(this, dao);
+
+        manager = new StockMarketManager(this, dao);
         setupListeners(manager);
-        registerCommand(new StockMarketCommands(manager));
+        registerCommand(new StockMarketCommands(this, manager));
         getLogger().info("StockMarket has been enabled");
     }
 

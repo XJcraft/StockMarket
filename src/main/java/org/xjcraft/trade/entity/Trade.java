@@ -15,7 +15,7 @@ import java.sql.Timestamp;
  */
 @Data
 @Entity
-@Table(name = "StockMarket_trades")
+@Table(name = "dev_trades")
 
 public class Trade {
 

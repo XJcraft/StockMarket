@@ -1,5 +1,6 @@
 package org.xjcraft.trade.entity;
 
+import io.ebean.annotation.Index;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -11,12 +12,13 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name = "StockMarket_customItem")
+@Table(name = "dev_customItem")
 public class CustomItem {
     @Id
     int id;
 
-    String name;
+    @Index
+    String meta;
 
     String flatItem;
 
