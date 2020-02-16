@@ -9,9 +9,11 @@ import org.bukkit.inventory.ItemStack;
 import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.MessageConfig;
-import org.xjcraft.trade.entity.Trade;
+import org.xjcraft.trade.entity.StockTrade;
 import org.xjcraft.trade.utils.ItemUtil;
+import org.xjcraft.utils.StringUtil;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Shop implements InventoryHolder, StockMarketGui {
@@ -23,8 +25,8 @@ public class Shop implements InventoryHolder, StockMarketGui {
     int price = 1;
     int number = 1;
     boolean stackMode = false;
-    List<Trade> currentBuys;
-    List<Trade> currentSells;
+    List<StockTrade> currentBuys;
+    List<StockTrade> currentSells;
     private StockMarket plugin;
 
 
@@ -43,7 +45,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
         for (int slot : downArrwoSlots) {
             inventory.setItem(slot, ItemUtil.getDownArrow());
         }
-        inventory.setItem(Slot.MARKET_INFO, ItemUtil.getMarketInfo());
+
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
@@ -71,11 +73,20 @@ public class Shop implements InventoryHolder, StockMarketGui {
             ItemStack numberStack = ItemUtil.getNumberStack(number / (int) Math.pow(10, (double) i) % 10);
             inventory.setItem(numberIndexes[i], numberStack);
         }
+        inventory.setItem(Slot.MARKET_INFO, ItemUtil.getMarketInfo(new String[]{this.currentSells.size() == 0 ? MessageConfig.config.getNohighest() : StringUtil.applyPlaceHolder(MessageConfig.config.getSellInfo(), new HashMap<String, String>() {{
+            put("size", currentSells.size() + "");
+            put("price", currentSells.get(0).getPrice() + "");
+            put("currency", currentSells.get(0).getCurrency() + "");
+        }}), this.currentBuys.size() == 0 ? MessageConfig.config.getNolowest() : StringUtil.applyPlaceHolder(MessageConfig.config.getBuyInfo(), new HashMap<String, String>() {{
+            put("size", currentBuys.size() + "");
+            put("price", currentBuys.get(0).getPrice() + "");
+            put("currency", currentBuys.get(0).getCurrency() + "");
+        }})}));
         inventory.setItem(Slot.STACK_MODE, ItemUtil.getStackButton(item, stackMode,
-                String.format(MessageConfig.config.getItemOwned(), ItemUtil.getItemNumber(player, item), item.getType().name()),
+                String.format(MessageConfig.config.getItemOwned(), ItemUtil.getItemNumber(player, item), plugin.getManager().getTranslate(item) + ""),
                 MessageConfig.config.getStackButton()));
-        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number, item.getType().name())));
-        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number, item.getType().name())));
+        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), item.getType().name())));
+        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, String.format(MessageConfig.config.getBuyButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), item.getType().name())));
     }
 
 
@@ -145,6 +156,18 @@ public class Shop implements InventoryHolder, StockMarketGui {
             case Slot.PRICE_10000_MINUS:
                 this.price -= 10000;
                 break;
+            case Slot.CONFIRM_BUY:
+                player.closeInventory();
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                    plugin.getManager().buy(player, currency, item, price, number * (stackMode ? 64 : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
+                });
+                return;
+            case Slot.CONFIRM_SELL:
+                player.closeInventory();
+                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                    plugin.getManager().sell(player, currency, item, price, number * (stackMode ? 64 : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
+                });
+                return;
             default:
                 return;
 

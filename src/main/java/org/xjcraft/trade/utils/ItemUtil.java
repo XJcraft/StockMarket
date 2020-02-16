@@ -126,17 +126,18 @@ public class ItemUtil {
         return downArrow;
     }
 
-    public static ItemStack getMarketInfo() {
-        ItemStack item = new ItemStack(Material.WHITE_BANNER, 1);
-        BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
+    public static ItemStack getMarketInfo(String[] strings) {
+        ItemStack item = new ItemStack(Material.NAME_TAG, 1);
+        ItemMeta bannerMeta = item.getItemMeta();
         bannerMeta.setDisplayName("Price");
-        bannerMeta.setBaseColor(DyeColor.WHITE);
-        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
-        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
-        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL_MIRROR));
-        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
-        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
-        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+//        bannerMeta.setBaseColor(DyeColor.WHITE);
+//        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
+//        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
+//        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.HALF_HORIZONTAL_MIRROR));
+//        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
+//        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_MIDDLE));
+//        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
+        bannerMeta.setLore(Arrays.asList(strings));
         item.setItemMeta(bannerMeta);
         return item;
     }

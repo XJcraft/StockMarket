@@ -1,32 +1,33 @@
 package org.xjcraft.trade.entity;
 
 import io.ebean.annotation.CreatedTimestamp;
+import io.ebean.annotation.Index;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
- * Created by Ree on 2016/1/21.
+ * Created by Ree on 2016/1/25.
  */
 @Entity
 @Data
-@Table(name = "dev_storages")
-public class Storage {
+public class StockHistory {
     @Id
     int id;
-
-    String name;
-
+    @Index
+    String seller;
+    @Index
+    String buyer;
+    @Index
     String item;
 
+    Integer price;
+
+    String currency;
+
     Integer number;
-
-    String source;
-
-    Timestamp tradeTime;
 
     @CreatedTimestamp
     Timestamp createTime;

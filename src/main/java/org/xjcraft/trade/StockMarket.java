@@ -23,7 +23,7 @@ public class StockMarket extends CommonPlugin {
         SerializeUtil.plugin = this;
         loadConfigs();
         EbeanServer db = getEbeanServer(this.plugin.getName());
-        Dao dao = new Dao(db);
+        Dao dao = new Dao(db, this);
 
         manager = new StockMarketManager(this, dao);
         setupListeners(manager);

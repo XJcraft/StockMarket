@@ -131,6 +131,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.zjyl1994.minecraftplugin</groupId>
+            <artifactId>MultiCurrency</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 

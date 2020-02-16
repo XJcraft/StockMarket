@@ -7,7 +7,6 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
@@ -15,9 +14,8 @@ import java.sql.Timestamp;
  */
 @Data
 @Entity
-@Table(name = "dev_trades")
 
-public class Trade {
+public class StockTrade {
 
     @Id
     int id;
