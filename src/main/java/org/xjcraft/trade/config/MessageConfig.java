@@ -20,6 +20,21 @@ public class MessageConfig {
     String buyInfo = "%size%笔交易尝试以%price%%currency%的价格购买";
     String nolowest = "无人购买";
     String stackButton = "点击切换组模式与单个模式";
+    String currencyNotFound = "该货币不存在！";
+    String storage = "出售者%seller%\n类型%type%:%subtype%\n数量：%number%\n交易时间：%time%\n流水号：%id%";
+    String collectAll = "一键收取！";
+    String slotNotEnough = "背包空间不足！\n你需要留出%slot%个空格来接受物品！";
+    String buyHint = "你从%seller%手中购买了%number%个%type%%subtype%";
+    String buyRemain = "没有足够的出售者！\n剩余%number%物品以%currency%%price%的价格发出一笔收购申请！";
+    String sellHint = "你卖给%buyer%了%number%个%type%%subtype%";
+    String sellRemain = "没有足够的收购者！\n剩余%number%物品以%currency%%price%的价格发出一笔出售申请！";
+    String trade = "%operation%%number%个%type%%subtype%\n价格%currency%%price%\n流水号：%id%\n§r§l§4点击取消";
+
+    String switchToBag = "点击打开我的仓库";
+    String switchToCounter = "点击打开我的柜台";
+    String sellInfoButton = "点击查询当前在售";
+    String buyInfoButton = "点击查询当前收购";
+
 
 //    String createShop = "商店%s已建立！";
 //    String enterShop = "进入%s市场中...";

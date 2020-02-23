@@ -1,6 +1,7 @@
 package org.xjcraft.trade;
 
 import io.ebean.EbeanServer;
+import io.ebean.ExpressionList;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class Dao {
 
 
     public List<StockStorage> getStorage(Player player) {
-        return ebeanServer.find(StockStorage.class).where().eq("playername", player.getName()).orderBy().asc("id").findList();
+        return ebeanServer.find(StockStorage.class).where().eq("name", player.getName()).orderBy().asc("id").setMaxRows(53).findList();
     }
 
     public StockCustomItem getCustomItem(String name) {
@@ -40,7 +41,7 @@ public class Dao {
         return ebeanServer.find(StockTrade.class).where().eq("player", player.getName()).orderBy().asc("id").findList();
     }
 
-    public Map<Integer, ItemMeta> getSpecials(String name) {
+    public Map<String, ItemMeta> getSpecials(String name) {
         return SpecialItemConfig.config.getOrDefault(name, new SpecialItemConfig()).getItemMetas();
     }
 
@@ -49,7 +50,7 @@ public class Dao {
 //        uuid = new UUID(0l,uuid.getLeastSignificantBits());
         SpecialItemConfig itemConfig = SpecialItemConfig.config.getOrDefault(o.getMeta(), new SpecialItemConfig());
         SpecialItemConfig.config.put(o.getMeta(), itemConfig);
-        itemConfig.getItemMetas().put(o.getId(), o.getFlatItem());
+        itemConfig.getItemMetas().put(o.getId() + "", o.getFlatItem());
 //        o.setId(uuid);
         plugin.saveConfig(SpecialItemConfig.class);
     }
@@ -58,12 +59,20 @@ public class Dao {
         ebeanServer.save(o);
     }
 
-    public List<StockTrade> getSells(String currency, String item) {
-        return ebeanServer.find(StockTrade.class).where().eq("currency", currency).eq("item", item).eq("sell", true).orderBy().asc("price").findList();
+    public List<StockTrade> getSells(String currency, String item, String subType) {
+        ExpressionList<StockTrade> expression = ebeanServer.find(StockTrade.class).where().eq("currency", currency).eq("item", item);
+        if (subType != null) {
+            expression.eq("hash", subType);
+        }
+        return expression.eq("sell", true).orderBy().asc("price").findList();
     }
 
-    public List<StockTrade> getBuys(String currency, String item) {
-        return ebeanServer.find(StockTrade.class).where().eq("currency", currency).eq("item", item).eq("sell", false).orderBy().desc("price").findList();
+    public List<StockTrade> getBuys(String currency, String item, String subType) {
+        ExpressionList<StockTrade> expression = ebeanServer.find(StockTrade.class).where().eq("currency", currency).eq("item", item);
+        if (subType != null) {
+            expression.eq("hash", subType);
+        }
+        return expression.eq("sell", false).orderBy().desc("price").findList();
     }
 
     public void delete(Object o) {

@@ -20,10 +20,11 @@ public class Shop implements InventoryHolder, StockMarketGui {
     private final String currency;
     private final ItemStack item;
     private String itemLabel;
+    private String itemHash;
     Inventory inventory;
     //数据部分
-    int price = 1;
-    int number = 1;
+    Integer price = null;
+    Integer number = null;
     boolean stackMode = false;
     List<StockTrade> currentBuys;
     List<StockTrade> currentSells;
@@ -45,20 +46,39 @@ public class Shop implements InventoryHolder, StockMarketGui {
         for (int slot : downArrwoSlots) {
             inventory.setItem(slot, ItemUtil.getDownArrow());
         }
-
+        inventory.setItem(Slot.SWITCH_BAG, ItemUtil.getSwitchBagButton());
+        inventory.setItem(Slot.SWITCH_COUNTER, ItemUtil.getSwitchCounterButton());
+        inventory.setItem(Slot.SELL_INFO, ItemUtil.getSellInfoButton());
+        inventory.setItem(Slot.BUY_INFO, ItemUtil.getBuyInfoButton());
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
 
     public void update(Player player) {
-        if (itemLabel == null) itemLabel = plugin.getManager().getLabel(item);
-        this.currentSells = plugin.getManager().getSells(currency, itemLabel);
-        this.currentBuys = plugin.getManager().getBuys(currency, itemLabel);
+        if (itemLabel == null) itemLabel = item.getType().name();
+        if (itemHash == null) itemHash = plugin.getManager().getSubType(item);
+        this.currentSells = plugin.getManager().getSells(currency, itemLabel, itemHash);
+        this.currentBuys = plugin.getManager().getBuys(currency, itemLabel, itemHash);
 
         plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
     }
 
     public void refresh(Player player) {
+        int itemsInBag = ItemUtil.getItemNumber(player, item);
+        if (price == null) {
+            if (currentSells.size() > 0) {
+                price = currentSells.get(0).getPrice();
+            } else {
+                price = 1;
+            }
+        }
+        if (number == null) {
+            if (itemsInBag > 0) {
+                number = itemsInBag;
+            } else {
+                number = 1;
+            }
+        }
         if (price > 99999) price = price % 99999;
         if (price < 1) price = price + 99999;
         if (number > 9999) number = number % 9999;
@@ -82,11 +102,15 @@ public class Shop implements InventoryHolder, StockMarketGui {
             put("price", currentBuys.get(0).getPrice() + "");
             put("currency", currentBuys.get(0).getCurrency() + "");
         }})}));
-        inventory.setItem(Slot.STACK_MODE, ItemUtil.getStackButton(item, stackMode,
-                String.format(MessageConfig.config.getItemOwned(), ItemUtil.getItemNumber(player, item), plugin.getManager().getTranslate(item) + ""),
+
+        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, "出售", String.format(MessageConfig.config.getSellButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), plugin.getManager().getTranslate(item))));
+        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, "买入", String.format(MessageConfig.config.getBuyButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), plugin.getManager().getTranslate(item))));
+        ItemStack clone = item.clone();
+        clone.setAmount(stackMode ? item.getMaxStackSize() : 1);
+        inventory.setItem(Slot.STACK_MODE, clone);
+        inventory.setItem(Slot.REMAIN, ItemUtil.getStackButton(new ItemStack(Material.CHEST), false,
+                "我的背包", String.format(MessageConfig.config.getItemOwned(), itemsInBag, plugin.getManager().getTranslate(item) + ""),
                 MessageConfig.config.getStackButton()));
-        inventory.setItem(Slot.CONFIRM_SELL, ItemUtil.getStackButton(new ItemStack(Material.RED_WOOL), false, String.format(MessageConfig.config.getSellButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), item.getType().name())));
-        inventory.setItem(Slot.CONFIRM_BUY, ItemUtil.getStackButton(new ItemStack(Material.LIME_WOOL), false, String.format(MessageConfig.config.getBuyButton(), price, number * (stackMode ? item.getMaxStackSize() : 1), item.getType().name())));
     }
 
 
@@ -98,7 +122,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
     @Override
     public void onClick(Player player, int slot) {
         switch (slot) {
-            case Slot.STACK_MODE:
+            case Slot.REMAIN:
                 this.stackMode = !this.stackMode;
                 break;
 
@@ -159,14 +183,22 @@ public class Shop implements InventoryHolder, StockMarketGui {
             case Slot.CONFIRM_BUY:
                 player.closeInventory();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                    plugin.getManager().buy(player, currency, item, price, number * (stackMode ? 64 : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
+                    plugin.getManager().buy(player, currency, item, price, number * (stackMode ? item.getMaxStackSize() : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
                 });
                 return;
             case Slot.CONFIRM_SELL:
                 player.closeInventory();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                    plugin.getManager().sell(player, currency, item, price, number * (stackMode ? 64 : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
+                    plugin.getManager().sell(player, currency, item, price, number * (stackMode ? item.getMaxStackSize() : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
                 });
+                return;
+            case Slot.SWITCH_BAG:
+                player.closeInventory();
+                player.openInventory(new Bag(plugin, player).getInventory());
+                return;
+            case Slot.SWITCH_COUNTER:
+                player.closeInventory();
+                player.openInventory(new Counter(plugin, player).getInventory());
                 return;
             default:
                 return;
@@ -179,6 +211,8 @@ public class Shop implements InventoryHolder, StockMarketGui {
     public static class Slot {
 
         public static final int MARKET_INFO = 14;
+        public static final int SELL_INFO = 5;
+        public static final int BUY_INFO = 23;
         public static final int CURRENCY_DIGITAL_0 = 15;
         public static final int CURRENCY_DIGITAL_1 = 16;
         public static final int CURRENCY_DIGITAL_2 = 17;
@@ -214,10 +248,13 @@ public class Shop implements InventoryHolder, StockMarketGui {
         public static final int NUM_1000_MINUS = 45;
 
         //操作按钮
-        public static final int REMAIN = 31;
+        public static final int REMAIN = 49;
         public static final int STACK_MODE = 40;
-        public static final int CONFIRM_SELL = 42;
-        public static final int CONFIRM_BUY = 44;
+        public static final int SWITCH_BAG = 43;
+        public static final int SWITCH_COUNTER = 44;
+        public static final int CONFIRM_SELL = 52;
+        public static final int CONFIRM_BUY = 53;
+
 
     }
 }

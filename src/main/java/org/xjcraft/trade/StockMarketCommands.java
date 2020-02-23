@@ -25,6 +25,6 @@ public class StockMarketCommands implements CommonCommandExecutor {
     @RCommand("label")
     public void label(Player player) {
         ItemStack itemInHand = player.getItemInHand();
-        player.sendMessage(manager.getLabel(itemInHand));
+        player.sendMessage(manager.getSubType(itemInHand));
     }
 }

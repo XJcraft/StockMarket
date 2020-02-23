@@ -97,10 +97,6 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
-        <repository>
-            <id>releases</id>
-            <url>http://repo.skyslience.top:8081/nexus/content/repositories/thirdparty/</url>
-        </repository>
 
     </repositories>
 

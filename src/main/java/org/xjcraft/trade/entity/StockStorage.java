@@ -1,6 +1,7 @@
 package org.xjcraft.trade.entity;
 
 import io.ebean.annotation.CreatedTimestamp;
+import io.ebean.annotation.Index;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -15,10 +16,12 @@ import java.sql.Timestamp;
 public class StockStorage {
     @Id
     int id;
-
+    @Index
     String name;
 
     String item;
+
+    String hash;
 
     Integer number;
 

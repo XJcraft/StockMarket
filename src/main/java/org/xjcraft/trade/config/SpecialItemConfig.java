@@ -14,7 +14,7 @@ import java.util.Map;
 public class SpecialItemConfig {
     @Folder
     public static final Map<String, SpecialItemConfig> config = new HashMap<>();
-    Map<Integer, ItemMeta> itemMetas = new HashMap<>();
+    Map<String, ItemMeta> itemMetas = new HashMap<>();
 
 
 }

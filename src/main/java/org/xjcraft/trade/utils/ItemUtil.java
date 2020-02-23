@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.xjcraft.trade.config.MessageConfig;
+import org.xjcraft.utils.StringUtil;
 
 import java.util.Arrays;
 
@@ -175,12 +177,14 @@ public class ItemUtil {
         return temp;
     }
 
-    public static ItemStack getStackButton(ItemStack itemStack, Boolean stack, String... info) {
+    public static ItemStack getStackButton(ItemStack itemStack, Boolean stack, String displayName, String... info) {
         ItemStack temp = new ItemStack(itemStack.getType(), stack ? itemStack.getMaxStackSize() : 1, itemStack.getDurability());
 
         ItemMeta im;
         im = temp.getItemMeta();
-//        im.setDisplayName(info);
+        if (!StringUtil.isEmpty(displayName)) {
+            im.setDisplayName(displayName);
+        }
         im.setLore(Arrays.asList(info));
 //        im.setLore(null);
         temp.setItemMeta(im);
@@ -301,4 +305,63 @@ public class ItemUtil {
         }
         return false;*/
     }
+
+    public static int countEmptySlot(Player player) {
+        int empty = 0;
+        ItemStack[] itemStacks = player.getInventory().getStorageContents();
+        for (ItemStack itemStack : itemStacks) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
+                empty++;
+            }
+        }
+        return empty;
+    }
+
+    public static ItemStack getCollectAll() {
+        ItemStack temp = new ItemStack(Material.ENDER_CHEST, 1);
+
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getCollectAll());
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+    public static ItemStack getSwitchBagButton() {
+        ItemStack temp = new ItemStack(Material.IRON_DOOR, 1);
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getSwitchToBag());
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+    public static ItemStack getSwitchCounterButton() {
+        ItemStack temp = new ItemStack(Material.OAK_DOOR, 1);
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getSwitchToCounter());
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+    public static ItemStack getSellInfoButton() {
+        ItemStack temp = new ItemStack(Material.IRON_DOOR, 1);
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getSellInfoButton());
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+    public static ItemStack getBuyInfoButton() {
+        ItemStack temp = new ItemStack(Material.OAK_DOOR, 1);
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getBuyInfoButton());
+        temp.setItemMeta(im);
+        return temp;
+    }
+
+
 }

@@ -11,9 +11,9 @@ public class Config {
     public static Config config = new Config();
     Boolean blockFML = true;
     Boolean shop_enable = true;
-    String shop_name = "[Stock Market]";
-    String shop_bagName = "[Stock Storage]";
-    String shop_offerName = "[My offers]";
+    String shop_name = "[商店]";
+    String shop_bagName = "[仓库]";
+    String shop_offerName = "[柜台]";
 
 
 }

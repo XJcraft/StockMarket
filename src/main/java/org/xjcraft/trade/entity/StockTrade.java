@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  */
 @Data
 @Entity
-
+//@UniqueConstraint(columnNames = {"item", "hash"})
 public class StockTrade {
 
     @Id
@@ -25,6 +25,9 @@ public class StockTrade {
     Boolean sell;
     @Index
     String item;
+    @Index
+    String hash;
+
     @Index
     String currency;
 
