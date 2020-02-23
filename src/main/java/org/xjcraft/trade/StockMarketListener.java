@@ -9,7 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.xjcraft.trade.config.Config;
@@ -18,6 +20,7 @@ import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
 import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.gui.StockMarketGui;
+import org.xjcraft.utils.JSON;
 import org.xjcraft.utils.StringUtil;
 
 import java.util.Objects;
@@ -32,11 +35,25 @@ public class StockMarketListener implements Listener {
     }
 
     @EventHandler
-    public void click(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof StockMarketGui && event.getRawSlot() < 54) {
+    public void drag(InventoryDragEvent event) {
+        if (event.getInventory().getHolder() instanceof StockMarketGui) {
             event.setCancelled(true);
-            ((StockMarketGui) event.getInventory().getHolder()).onClick((Player) event.getWhoClicked(), event.getRawSlot());
         }
+    }
+
+    @EventHandler
+    public void click(InventoryClickEvent event) {
+        if (event.getInventory().getHolder() instanceof StockMarketGui) {
+            if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR ||
+                    event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY ||
+                    event.getAction() == InventoryAction.PLACE_SOME ||
+                    event.getRawSlot() < 54) {
+                event.setCancelled(true);
+                ((StockMarketGui) event.getInventory().getHolder()).onClick((Player) event.getWhoClicked(), event.getRawSlot());
+            }
+            System.out.println(JSON.toJSONString(event));
+        }
+
 
 //        if (event.getCurrentItem() != null && event.getCurrentItem().getItemMeta() instanceof BannerMeta) {
 //            BannerMeta meta = (BannerMeta) event.getCurrentItem().getItemMeta();

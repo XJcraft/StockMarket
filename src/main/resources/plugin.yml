@@ -23,10 +23,10 @@ commands:
 permissions:
     trade.command:
         description: Allow user to use trade command
-        default: true
+        default: op
     trade.enable:
         description: Allow user to use trade plugin
-        default: true
+        default: op
     trade.create:
         description: Allow user to create shop
         default: op
