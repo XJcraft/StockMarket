@@ -106,10 +106,13 @@ public class StockMarketListener implements Listener {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     } else {
                         //get into a shop
+                        String currency = sign.getLine(1);
+                        if (currency.length() < 5) return;
+                        currency = currency.substring(1, 4);
                         String type = sign.getLine(2);
                         String hashcode = sign.getLine(3);
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
-                        Shop shop = new Shop(plugin, player, "GOV", itemStack);
+                        Shop shop = new Shop(plugin, player, currency, itemStack);
                         player.openInventory(shop.getInventory());
                     }
                 } else if (lines[0].equals(Config.config.getShop_bagName())) {
