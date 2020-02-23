@@ -346,7 +346,7 @@ public class ItemUtil {
     }
 
     public static ItemStack getSellInfoButton() {
-        ItemStack temp = new ItemStack(Material.IRON_DOOR, 1);
+        ItemStack temp = new ItemStack(Material.PAPER, 1);
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(MessageConfig.config.getSellInfoButton());
@@ -355,7 +355,7 @@ public class ItemUtil {
     }
 
     public static ItemStack getBuyInfoButton() {
-        ItemStack temp = new ItemStack(Material.OAK_DOOR, 1);
+        ItemStack temp = new ItemStack(Material.PAPER, 1);
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(MessageConfig.config.getBuyInfoButton());

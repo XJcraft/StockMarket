@@ -73,7 +73,7 @@ public class Bag implements InventoryHolder, StockMarketGui {
             player.openInventory(new Counter(plugin, player).getInventory());
         } else if (slot == 52 && storage.size() > 0) {
             collectAll(player);
-        } else if (slot < storage.size()) {
+        } else if (slot < storage.size() && slot >= 0) {
             collect(player, slot);
         }
     }
@@ -94,9 +94,12 @@ public class Bag implements InventoryHolder, StockMarketGui {
         });
     }
 
-    private void collectAll(Player player) {
+    public void collectAll(Player player) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             synchronized (this) {
+                if (storage == null) {
+                    storage = plugin.getManager().getStorage(player);
+                }
                 for (int i = 0; i < storage.size(); i++) {
                     try {
                         collectStorage(player, i);
@@ -126,6 +129,12 @@ public class Bag implements InventoryHolder, StockMarketGui {
 
         plugin.getManager().delete(stockStorage);
         player.getInventory().addItem(itemStack);
+        player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getReceive(), new HashMap<String, String>() {{
+            put("player", stockStorage.getSource());
+            put("number", stockStorage.getNumber() + "");
+            put("type", stockStorage.getItem() + "");
+            put("subtype", stockStorage.getHash() + "");
+        }}));
     }
 
 

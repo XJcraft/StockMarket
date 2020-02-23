@@ -183,7 +183,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
             case Slot.CONFIRM_BUY:
                 player.closeInventory();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                    plugin.getManager().buy(player, currency, item, price, number * (stackMode ? item.getMaxStackSize() : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.openInventory(getInventory()), 1));
+                    plugin.getManager().buy(player, currency, item, price, number * (stackMode ? item.getMaxStackSize() : 1), success -> plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        new Bag(plugin, player).collectAll(player);
+                        player.openInventory(getInventory());
+                    }, 1));
                 });
                 return;
             case Slot.CONFIRM_SELL:
@@ -200,6 +203,30 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 player.closeInventory();
                 player.openInventory(new Counter(plugin, player).getInventory());
                 return;
+            case Slot.BUY_INFO:
+                for (StockTrade currentBuy : this.currentBuys) {
+                    player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyDetailInfo(), new HashMap<String, String>() {{
+                        put("player", currentBuy.getPlayer());
+                        put("currency", currentBuy.getCurrency());
+                        put("price", currentBuy.getPrice() + "");
+                        put("number", currentBuy.getTradeNumber() + "");
+                        put("type", currentBuy.getItem());
+                        put("subtype", currentBuy.getHash());
+                    }}));
+                }
+                break;
+            case Slot.SELL_INFO:
+                for (StockTrade currentBuy : this.currentSells) {
+                    player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellDetailInfo(), new HashMap<String, String>() {{
+                        put("player", currentBuy.getPlayer());
+                        put("currency", currentBuy.getCurrency());
+                        put("price", currentBuy.getPrice() + "");
+                        put("number", currentBuy.getTradeNumber() + "");
+                        put("type", currentBuy.getItem());
+                        put("subtype", currentBuy.getHash());
+                    }}));
+                }
+                break;
             default:
                 return;
 

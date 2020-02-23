@@ -23,6 +23,7 @@ public class MessageConfig {
     String currencyNotFound = "该货币不存在！";
     String storage = "出售者%seller%\n类型%type%:%subtype%\n数量：%number%\n交易时间：%time%\n流水号：%id%";
     String collectAll = "一键收取！";
+    String receive = "从仓库中收到来自%player%的%number%个%type%%subtype%";
     String slotNotEnough = "背包空间不足！\n你需要留出%slot%个空格来接受物品！";
     String buyHint = "你从%seller%手中购买了%number%个%type%%subtype%";
     String buyRemain = "没有足够的出售者！\n剩余%number%物品以%currency%%price%的价格发出一笔收购申请！";
@@ -35,6 +36,8 @@ public class MessageConfig {
     String sellInfoButton = "点击查询当前在售";
     String buyInfoButton = "点击查询当前收购";
 
+    String sellDetailInfo = "%player%以%currency%%price%的价格出售%number%个%type%%subtype%";
+    String buyDetailInfo = "%player%以%currency%%price%的价格收购%number%个%type%%subtype%";
 
 //    String createShop = "商店%s已建立！";
 //    String enterShop = "进入%s市场中...";

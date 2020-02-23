@@ -71,7 +71,7 @@ public class Counter implements InventoryHolder, StockMarketGui {
         if (slot == 53) {
             player.closeInventory();
             player.openInventory(new Bag(plugin, player).getInventory());
-        } else if (slot < trades.size()) {
+        } else if (slot < trades.size() && slot >= 0) {
             collect(player, slot);
         }
     }
