@@ -66,7 +66,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
     public void refresh(Player player) {
         int itemsInBag = ItemUtil.getItemNumber(player, item);
         if (price == null) {
-            if (currentSells.size() > 0) {
+            if (currentSells != null && currentSells.size() > 0) {
                 price = currentSells.get(0).getPrice();
             } else {
                 price = 1;

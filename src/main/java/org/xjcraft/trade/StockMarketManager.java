@@ -177,7 +177,7 @@ public class StockMarketManager {
                 if (sell.getPrice() <= price) {
                     //direct buy
                     if (sell.getTradeNumber() <= amount) {
-                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((sell.getTradeNumber() * sell.getPrice())), TxTypeEnum.SHOP_TRADE_IN, String.format("buy %s %s with %s %s", amount, subType, price, currency));
+                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((sell.getTradeNumber() * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", sell.getTradeNumber(), type, subType, sell.getPrice(), currency));
                         if (!result.getSuccess()) {
                             player.sendMessage("error:" + operateResult.getReason());
                             callback.onDone(false);
@@ -190,7 +190,7 @@ public class StockMarketManager {
                         gain(type, subType, sell.getPlayer(), sell.getTradeNumber(), player.getName());
                         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyHint(), stockHistory.fetchPlaceHolder()));
                     } else {
-                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((amount * sell.getPrice())), TxTypeEnum.SHOP_TRADE_IN, String.format("buy %s %s with %s %s", amount, subType, price, currency));
+                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((amount * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", amount, type, subType, sell.getPrice(), currency));
                         if (!result.getSuccess()) {
                             player.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
@@ -209,7 +209,7 @@ public class StockMarketManager {
             }
             if (amount > 0) {
                 //put buy order
-                OperateResult result = BankService.transferTo(player.getName(), SHOP_ACCOUNT, currency, new BigDecimal(total), TxTypeEnum.SHOP_TRADE_IN, String.format("buy %s %s with %s %s", total, subType, price, currency));
+                OperateResult result = BankService.transferTo(player.getName(), SHOP_ACCOUNT, currency, new BigDecimal(amount * price), TxTypeEnum.SHOP_TRADE_OUT, String.format("order %s %s %s with %s %s  each", amount, type, subType, price, currency));
                 if (!result.getSuccess()) {
                     player.sendMessage("error:" + result.getReason());
                     callback.onDone(false);
@@ -262,7 +262,7 @@ public class StockMarketManager {
                 if (buy.getPrice() >= price) {
                     //direct sell with higher price
                     if (buy.getTradeNumber() < amount) {
-                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, player.getName(), currency, new BigDecimal((buy.getTradeNumber() * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s with %s %s", amount, subType, price, currency));
+                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, player.getName(), currency, new BigDecimal((buy.getTradeNumber() * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", buy.getTradeNumber(), type, subType, buy.getPrice(), currency));
                         if (!result.getSuccess()) {
                             player.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
@@ -275,7 +275,7 @@ public class StockMarketManager {
                         pay(player, itemStack, buy.getPlayer(), buy.getTradeNumber());
                         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellHint(), stockHistory.fetchPlaceHolder()));
                     } else {
-                        OperateResult result = BankService.transferTo(player.getName(), buy.getPlayer(), currency, new BigDecimal((amount * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s with %s %s", amount, subType, price, currency));
+                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, buy.getPlayer(), currency, new BigDecimal((amount * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", amount, type, subType, buy.getPrice(), currency));
                         if (!result.getSuccess()) {
                             player.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
