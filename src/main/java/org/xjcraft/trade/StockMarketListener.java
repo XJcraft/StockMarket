@@ -20,7 +20,6 @@ import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
 import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.gui.StockMarketGui;
-import org.xjcraft.utils.JSON;
 import org.xjcraft.utils.StringUtil;
 
 import java.util.Objects;
@@ -51,18 +50,8 @@ public class StockMarketListener implements Listener {
                 event.setCancelled(true);
                 ((StockMarketGui) event.getInventory().getHolder()).onClick((Player) event.getWhoClicked(), event.getRawSlot());
             }
-            System.out.println(JSON.toJSONString(event));
+//            System.out.println(JSON.toJSONString(event));
         }
-
-
-//        if (event.getCurrentItem() != null && event.getCurrentItem().getItemMeta() instanceof BannerMeta) {
-//            BannerMeta meta = (BannerMeta) event.getCurrentItem().getItemMeta();
-//            System.out.println(meta.getBaseColor());
-//            for (Pattern pattern : meta.getPatterns()) {
-//                System.out.println(pattern.getColor() + ":" + pattern.getPattern());
-//            }
-//
-//        }
     }
 
     @EventHandler
