@@ -1,2 +1,4 @@
-/.idea/
-/StockMarket.iml
+target/
+.idea/
+*.iml
+
