@@ -150,24 +150,24 @@ public class StockMarketManager {
     }
 
     /**
-     * 出售操作
+     * 购买操作
      *
-     * @param player
+     * @param buyer
      * @param currency
      * @param itemStack
      * @param price
      * @param amount
      * @param callback
      */
-    public void buy(Player player, String currency, ItemStack itemStack, Integer price, Integer amount, Callback callback) {
+    public void buy(Player buyer, String currency, ItemStack itemStack, Integer price, Integer amount, Callback callback) {
         String type = itemStack.getType().name();
         String subType = getSubType(itemStack);
         synchronized (this) {
             Integer total = price * amount;
-            OperateResult operateResult = BankService.queryCurrencyBalance(player.getName(), currency);
+            OperateResult operateResult = BankService.queryCurrencyBalance(buyer.getName(), currency);
             BigDecimal data = (BigDecimal) operateResult.getData();
             if (data.intValue() < total) {
-                player.sendMessage(MessageConfig.config.getMoreMoney());
+                buyer.sendMessage(MessageConfig.config.getMoreMoney());
                 callback.onDone(false);
                 return;
             }
@@ -177,41 +177,41 @@ public class StockMarketManager {
                 if (sell.getPrice() <= price) {
                     //direct buy
                     if (sell.getTradeNumber() <= amount) {
-                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((sell.getTradeNumber() * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", sell.getTradeNumber(), type, subType, sell.getPrice(), currency));
+                        OperateResult result = BankService.transferTo(buyer.getName(), sell.getPlayer(), currency, new BigDecimal((sell.getTradeNumber() * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", sell.getTradeNumber(), type, subType, sell.getPrice(), currency));
                         if (!result.getSuccess()) {
-                            player.sendMessage("error:" + operateResult.getReason());
+                            buyer.sendMessage("error:" + operateResult.getReason());
                             callback.onDone(false);
                             return;
                         }
                         amount -= sell.getTradeNumber();
-                        StockHistory stockHistory = new StockHistory(player.getName(), sell.getPlayer(), sell.getItem(), sell.getHash(), sell.getPrice(), sell.getCurrency(), sell.getTradeNumber());
+                        StockHistory stockHistory = new StockHistory(buyer.getName(), sell.getPlayer(), sell.getItem(), sell.getHash(), sell.getPrice(), sell.getCurrency(), sell.getTradeNumber());
                         dao.save(stockHistory);
                         dao.delete(sell);
-                        gain(type, subType, sell.getPlayer(), sell.getTradeNumber(), player.getName());
-                        player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyHint(), stockHistory.fetchPlaceHolder()));
+                        gain(type, subType, sell.getPlayer(), sell.getTradeNumber(), buyer.getName());
+                        buyer.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyHint(), stockHistory.fetchPlaceHolder()));
                     } else {
-                        OperateResult result = BankService.transferTo(player.getName(), sell.getPlayer(), currency, new BigDecimal((amount * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", amount, type, subType, sell.getPrice(), currency));
+                        OperateResult result = BankService.transferTo(buyer.getName(), sell.getPlayer(), currency, new BigDecimal((amount * sell.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("buy %s %s %s with %s %s each", amount, type, subType, sell.getPrice(), currency));
                         if (!result.getSuccess()) {
-                            player.sendMessage("error:" + result.getReason());
+                            buyer.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
                             return;
                         }
                         sell.setTradeNumber(sell.getTradeNumber() - amount);
-                        StockHistory stockHistory = new StockHistory(player.getName(), sell.getPlayer(), sell.getItem(), sell.getHash(), sell.getPrice(), sell.getCurrency(), amount);
+                        StockHistory stockHistory = new StockHistory(buyer.getName(), sell.getPlayer(), sell.getItem(), sell.getHash(), sell.getPrice(), sell.getCurrency(), amount);
                         dao.save(stockHistory);
                         dao.save(sell);
-                        gain(type, subType, sell.getPlayer(), amount, player.getName());
+                        gain(type, subType, sell.getPlayer(), amount, buyer.getName());
                         amount = 0;
-                        player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyHint(), stockHistory.fetchPlaceHolder()));
+                        buyer.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyHint(), stockHistory.fetchPlaceHolder()));
                         break;
                     }
                 }
             }
             if (amount > 0) {
                 //put buy order
-                OperateResult result = BankService.transferTo(player.getName(), SHOP_ACCOUNT, currency, new BigDecimal(amount * price), TxTypeEnum.SHOP_TRADE_OUT, String.format("order %s %s %s with %s %s  each", amount, type, subType, price, currency));
+                OperateResult result = BankService.transferTo(buyer.getName(), SHOP_ACCOUNT, currency, new BigDecimal(amount * price), TxTypeEnum.SHOP_TRADE_OUT, String.format("order %s %s %s with %s %s  each", amount, type, subType, price, currency));
                 if (!result.getSuccess()) {
-                    player.sendMessage("error:" + result.getReason());
+                    buyer.sendMessage("error:" + result.getReason());
                     callback.onDone(false);
                     return;
                 }
@@ -222,11 +222,11 @@ public class StockMarketManager {
                 trade.setCurrency(currency);
                 trade.setPrice(price);
                 trade.setSell(false);
-                trade.setPlayer(player.getName());
+                trade.setPlayer(buyer.getName());
                 trade.setTradeNumber(amount);
                 dao.save(trade);
                 int finalAmount = amount;
-                player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyRemain(), new HashMap<String, String>() {{
+                buyer.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyRemain(), new HashMap<String, String>() {{
                     put("number", finalAmount + "");
                     put("currency", currency + "");
                     put("price", price + "");
@@ -238,22 +238,22 @@ public class StockMarketManager {
     }
 
     /**
-     * 购买操作
+     * 出售操作
      *
-     * @param player
+     * @param seller
      * @param currency
      * @param itemStack
      * @param price
      * @param amount
      * @param callback
      */
-    public void sell(Player player, String currency, ItemStack itemStack, int price, int amount, Callback callback) {
+    public void sell(Player seller, String currency, ItemStack itemStack, int price, int amount, Callback callback) {
         String type = itemStack.getType().name();
         String subType = getSubType(itemStack);
         synchronized (this) {
-            int itemNumber = ItemUtil.getItemNumber(player, itemStack);
+            int itemNumber = ItemUtil.getItemNumber(seller, itemStack);
             if (itemNumber < amount) {
-                player.sendMessage(MessageConfig.config.getMoreItem());
+                seller.sendMessage(MessageConfig.config.getMoreItem());
                 callback.onDone(false);
                 return;
             }
@@ -261,33 +261,33 @@ public class StockMarketManager {
             for (StockTrade buy : buys) {
                 if (buy.getPrice() >= price) {
                     //direct sell with higher price
-                    if (buy.getTradeNumber() < amount) {
-                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, player.getName(), currency, new BigDecimal((buy.getTradeNumber() * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", buy.getTradeNumber(), type, subType, buy.getPrice(), currency));
+                    if (buy.getTradeNumber() <= amount) {
+                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, seller.getName(), currency, new BigDecimal((buy.getTradeNumber() * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", buy.getTradeNumber(), type, subType, buy.getPrice(), currency));
                         if (!result.getSuccess()) {
-                            player.sendMessage("error:" + result.getReason());
+                            seller.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
                             return;
                         }
                         amount -= buy.getTradeNumber();
-                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), player.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), buy.getTradeNumber());
+                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), seller.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), buy.getTradeNumber());
                         dao.save(stockHistory);
                         dao.delete(buy);
-                        pay(player, itemStack, buy.getPlayer(), buy.getTradeNumber());
-                        player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellHint(), stockHistory.fetchPlaceHolder()));
+                        pay(seller, itemStack, buy.getPlayer(), buy.getTradeNumber());
+                        seller.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellHint(), stockHistory.fetchPlaceHolder()));
                     } else {
-                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, buy.getPlayer(), currency, new BigDecimal((amount * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", amount, type, subType, buy.getPrice(), currency));
+                        OperateResult result = BankService.transferTo(SHOP_ACCOUNT, seller.getName(), currency, new BigDecimal((amount * buy.getPrice())), TxTypeEnum.SHOP_TRADE_OUT, String.format("sell %s %s %s with %s %s each", amount, type, subType, buy.getPrice(), currency));
                         if (!result.getSuccess()) {
-                            player.sendMessage("error:" + result.getReason());
+                            seller.sendMessage("error:" + result.getReason());
                             callback.onDone(false);
                             return;
                         }
                         buy.setTradeNumber(buy.getTradeNumber() - amount);
-                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), player.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), amount);
+                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), seller.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), amount);
                         dao.save(stockHistory);
-                        amount = 0;
                         dao.save(buy);
-                        pay(player, itemStack, buy.getPlayer(), amount);
-                        player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellHint(), stockHistory.fetchPlaceHolder()));
+                        pay(seller, itemStack, buy.getPlayer(), amount);
+                        amount = 0;
+                        seller.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellHint(), stockHistory.fetchPlaceHolder()));
                         break;
                     }
                 }
@@ -295,7 +295,7 @@ public class StockMarketManager {
             if (amount > 0) {
                 //put buy order
                 try {
-                    ItemUtil.removeItem(player, itemStack, amount);
+                    ItemUtil.removeItem(seller, itemStack, amount);
                     StockTrade trade = new StockTrade();
 
                     trade.setItem(type);
@@ -303,11 +303,11 @@ public class StockMarketManager {
                     trade.setCurrency(currency);
                     trade.setPrice(price);
                     trade.setSell(true);
-                    trade.setPlayer(player.getName());
+                    trade.setPlayer(seller.getName());
                     trade.setTradeNumber(amount);
                     dao.save(trade);
                     int finalAmount = amount;
-                    player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellRemain(), new HashMap<String, String>() {{
+                    seller.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellRemain(), new HashMap<String, String>() {{
                         put("number", finalAmount + "");
                         put("currency", currency + "");
                         put("price", price + "");
@@ -326,18 +326,18 @@ public class StockMarketManager {
     /**
      * 出售入他人库
      *
-     * @param player
+     * @param seller
      * @param item
      * @param buyer
      * @param tradeNumber
      */
-    private void pay(Player player, ItemStack item, String buyer, Integer tradeNumber) {
+    private void pay(Player seller, ItemStack item, String buyer, Integer tradeNumber) {
         try {
-            ItemUtil.removeItem(player, item, tradeNumber);
+            ItemUtil.removeItem(seller, item, tradeNumber);
             StockStorage storage = new StockStorage();
             storage.setName(buyer);
             storage.setNumber(tradeNumber);
-            storage.setSource(player.getName());
+            storage.setSource(seller.getName());
             storage.setItem(item.getType().name());
             storage.setHash(getSubType(item));
 
