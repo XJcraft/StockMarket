@@ -4,7 +4,6 @@ import io.ebean.EbeanServer;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 import org.xjcraft.CommonPlugin;
-import org.xjcraft.blockFML.BlockFMLListener;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.utils.SerializeUtil;
 
@@ -36,9 +35,7 @@ public class StockMarket extends CommonPlugin {
 //            getServer().getPluginManager().registerEvents(new StockMarketListener(this,manager), this);
             getServer().getPluginManager().registerEvents(new StockMarketListener(this, manager), this);
         }
-        if (Config.config.getBlockFML()) {
-            getServer().getPluginManager().registerEvents(new BlockFMLListener(this), this);
-        }
+
     }
 
 
