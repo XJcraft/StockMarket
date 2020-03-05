@@ -9,7 +9,6 @@ import org.xjcraft.annotation.RConfig;
 public class MessageConfig {
     @Instance
     public static MessageConfig config = new MessageConfig();
-    String blockFML = "请更换无mod的纯净客户端！";
     String moreMoney = "你没有足够的货币！";
     String moreItem = "你没有足够的物品！";
     String sellButton = "以%d价格卖出%d个%s";

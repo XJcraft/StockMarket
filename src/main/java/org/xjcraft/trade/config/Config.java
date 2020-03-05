@@ -9,7 +9,6 @@ import org.xjcraft.annotation.RConfig;
 public class Config {
     @Instance
     public static Config config = new Config();
-    Boolean blockFML = true;
     Boolean shop_enable = true;
     String shop_name = "[商店]";
     String shop_bagName = "[仓库]";
