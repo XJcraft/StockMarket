@@ -1,5 +1,6 @@
 package org.xjcraft.trade.gui;
 
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,6 +51,8 @@ public class Shop implements InventoryHolder, StockMarketGui {
         inventory.setItem(Slot.SWITCH_COUNTER, ItemUtil.getSwitchCounterButton());
         inventory.setItem(Slot.SELL_INFO, ItemUtil.getSellInfoButton());
         inventory.setItem(Slot.BUY_INFO, ItemUtil.getBuyInfoButton());
+        inventory.setItem(Slot.PRICE_INPUT, ItemUtil.getInputButton());
+        inventory.setItem(Slot.NUM_INPUT, ItemUtil.getInputButton());
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
@@ -227,6 +230,53 @@ public class Shop implements InventoryHolder, StockMarketGui {
                     }}));
                 }
                 break;
+            case Slot.NUM_INPUT:
+                new AnvilGUI.Builder().plugin(plugin)
+                        .title(MessageConfig.config.getInputButton())
+                        .text(number + "")
+                        .item(new ItemStack(Material.PAPER))
+                        .onComplete((p, text) -> {
+                            boolean success = false;
+                            try {
+                                int i = Integer.parseInt(text);
+                                number = i;
+                                success = true;
+                                return AnvilGUI.Response.close();
+                            } catch (NumberFormatException e) {
+                                return AnvilGUI.Response.text(MessageConfig.config.getInputTitle());
+                            } finally {
+                                if (success) player.openInventory(Shop.this.getInventory());
+                            }
+
+                        }).onClose(p -> {
+                    player.openInventory(getInventory());
+                    plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
+                }).open(player);
+
+                break;
+            case Slot.PRICE_INPUT:
+                new AnvilGUI.Builder().plugin(plugin)
+                        .title(MessageConfig.config.getInputButton())
+                        .text(price + "")
+                        .item(new ItemStack(Material.PAPER))
+                        .onComplete((p, text) -> {
+                            boolean success = false;
+                            try {
+                                int i = Integer.parseInt(text);
+                                price = i;
+                                success = true;
+                                return AnvilGUI.Response.close();
+                            } catch (NumberFormatException e) {
+                                return AnvilGUI.Response.text(MessageConfig.config.getInputTitle());
+                            } finally {
+                                if (success) player.openInventory(Shop.this.getInventory());
+                            }
+
+                        }).onClose(p -> {
+                    player.openInventory(getInventory());
+                    plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
+                }).open(player);
+                break;
             default:
                 return;
 
@@ -237,9 +287,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
 
     public static class Slot {
 
-        public static final int MARKET_INFO = 14;
-        public static final int SELL_INFO = 5;
-        public static final int BUY_INFO = 23;
+        public static final int PRICE_INPUT = 14;
+        public static final int MARKET_INFO = 15;
+        public static final int SELL_INFO = 6;
+        public static final int BUY_INFO = 24;
         public static final int CURRENCY_DIGITAL_0 = 15;
         public static final int CURRENCY_DIGITAL_1 = 16;
         public static final int CURRENCY_DIGITAL_2 = 17;
@@ -274,9 +325,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
         public static final int NUM_100_MINUS = 46;
         public static final int NUM_1000_MINUS = 45;
 
+        public static final int NUM_INPUT = 40;
         //操作按钮
         public static final int REMAIN = 49;
-        public static final int STACK_MODE = 40;
+        public static final int STACK_MODE = 31;
         public static final int SWITCH_BAG = 43;
         public static final int SWITCH_COUNTER = 44;
         public static final int CONFIRM_SELL = 52;

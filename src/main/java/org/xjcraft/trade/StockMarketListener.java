@@ -22,6 +22,7 @@ import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.gui.StockMarketGui;
 import org.xjcraft.utils.StringUtil;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class StockMarketListener implements Listener {
@@ -64,7 +65,7 @@ public class StockMarketListener implements Listener {
                 event.setLine(0, Config.config.getShop_name());
                 event.setLine(1, String.format("[%s]", currency));
                 event.setLine(2, "");
-                event.setLine(3, "");
+//                event.setLine(3, "");
             } else {
                 event.getPlayer().sendMessage(MessageConfig.config.getCurrencyNotFound());
                 for (int i = 0; i < 4; i++) {
@@ -81,15 +82,19 @@ public class StockMarketListener implements Listener {
             if (event.getClickedBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 String[] lines = sign.getLines();
-                if (lines[0].equals(Config.config.getShop_name())) {
+                if (lines[0].contains(Config.config.getShop_name())) {
                     if (StringUtil.isEmpty(lines[2])) {
                         //create shop with item in hand
                         ItemStack itemInHand = player.getItemInHand();
                         if (itemInHand.getType() == Material.AIR) return;
-                        sign.setLine(1, sign.getLine(1) + "#" + plugin.getManager().getTranslate(itemInHand));
-                        sign.setLine(2, itemInHand.getType().name());
-                        String label = plugin.getManager().getSubType(itemInHand);
-                        sign.setLine(3, label);
+                        sign.setLine(0, String.format("%s%s", plugin.getManager().getTranslate(itemInHand), Config.config.getShop_nameHide()));
+                        sign.setLine(1, StringUtil.applyPlaceHolder(Config.config.getCurrencyPrefix(), new HashMap<String, String>() {{
+                            put("currency", sign.getLine(1));
+                        }}));
+                        sign.setLine(2, sign.getLine(3));
+                        sign.setLine(3, "                " + itemInHand.getType().name() + "@" + plugin.getManager().getSubType(itemInHand));
+//                        String label = plugin.getManager().getSubType(itemInHand);
+//                        sign.setLine(3, label);
 
                         sign.update();
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
@@ -97,9 +102,30 @@ public class StockMarketListener implements Listener {
                         //get into a shop
                         String currency = sign.getLine(1);
                         if (currency.length() < 5) return;
-                        currency = currency.substring(1, 4);
-                        String type = sign.getLine(2);
-                        String hashcode = sign.getLine(3);
+                        currency = currency.substring(currency.indexOf("[") + 1, currency.indexOf("]"));
+                        String[] split = sign.getLine(2).split("@");
+                        String type = split[0];
+                        String hashcode;
+                        if (!StringUtil.isEmpty(sign.getLine(3))) {
+                            hashcode = sign.getLine(3);
+                        } else if (split.length > 1) {
+                            hashcode = split[1];
+                        } else {
+                            hashcode = "";
+                        }
+                        ItemStack itemStack = manager.getItemStack(type, hashcode);
+                        Shop shop = new Shop(plugin, player, currency, itemStack);
+                        player.openInventory(shop.getInventory());
+                    }
+                } else if (lines[0].contains(Config.config.getShop_nameHide())) {
+                    if (!StringUtil.isEmpty(lines[3])) {
+                        //get into a shop
+                        String currency = sign.getLine(1);
+                        if (currency.length() < 5) return;
+                        currency = currency.substring(currency.indexOf("[") + 1, currency.indexOf("]"));
+                        String[] split = sign.getLine(3).trim().split("@");
+                        String type = split[0];
+                        String hashcode = split.length > 1 ? split[1] : "";
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
                         Shop shop = new Shop(plugin, player, currency, itemStack);
                         player.openInventory(shop.getInventory());

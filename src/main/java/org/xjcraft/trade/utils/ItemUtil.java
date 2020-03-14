@@ -364,4 +364,12 @@ public class ItemUtil {
     }
 
 
+    public static ItemStack getInputButton() {
+        ItemStack temp = new ItemStack(Material.FEATHER, 1);
+        ItemMeta im;
+        im = temp.getItemMeta();
+        im.setDisplayName(MessageConfig.config.getInputButton());
+        temp.setItemMeta(im);
+        return temp;
+    }
 }

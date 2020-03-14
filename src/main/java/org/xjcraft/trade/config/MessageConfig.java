@@ -34,6 +34,8 @@ public class MessageConfig {
     String switchToCounter = "点击打开我的柜台";
     String sellInfoButton = "点击查询当前在售";
     String buyInfoButton = "点击查询当前收购";
+    String inputButton = "点击手工输入数字";
+    String inputTitle = "请输入一个整数";
 
     String sellDetailInfo = "%player%以%currency%%price%的价格出售%number%个%type%%subtype%";
     String buyDetailInfo = "%player%以%currency%%price%的价格收购%number%个%type%%subtype%";
