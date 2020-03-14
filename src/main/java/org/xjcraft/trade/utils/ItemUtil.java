@@ -4,6 +4,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -11,7 +12,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.utils.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Created by Ree on 2016/1/15.
@@ -211,7 +215,7 @@ public class ItemUtil {
             if (i != null) {
                 int amount = i.getAmount();
                 itemStack.setAmount(amount);
-                if (SerializeUtil.serialization(itemStack).equals(SerializeUtil.serialization(i))) {
+                if (isEquals(i, itemStack)) {
                     itemCount = itemCount + amount;
                 }
             }
@@ -235,7 +239,7 @@ public class ItemUtil {
         for (ItemStack i : bag) {
             if (i != null) {
                 itemStack.setAmount(i.getAmount());
-                if (i.hashCode() == itemStack.hashCode()) {
+                if (isEquals(itemStack, i)) {
                     if (i.getAmount() <= number) {
                         number = number - i.getAmount();
                         i.setType(Material.AIR);
@@ -254,6 +258,12 @@ public class ItemUtil {
 //            throw new Exception("not enough items!");
 //        }
         return bag;
+    }
+
+    public static boolean isEquals(ItemStack a, ItemStack b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.getType() == b.getType() && hashcode(a.getItemMeta()).equals(hashcode(b.getItemMeta()));
     }
 
     public static ItemStack[] addItem(Player player, Material material, int number) throws Exception {
@@ -371,5 +381,25 @@ public class ItemUtil {
         im.setDisplayName(MessageConfig.config.getInputButton());
         temp.setItemMeta(im);
         return temp;
+    }
+
+    public static Integer hashcode(ConfigurationSerializable itemMeta) {
+        int hashcode = 0;
+        if (itemMeta == null) return hashcode;
+        Map<String, Object> map = itemMeta.serialize();
+        ArrayList<String> list = new ArrayList<>(map.keySet());
+        Collections.sort(list);
+        for (String s : list) {
+            int keyHash = s.hashCode();
+            Object o = map.get(s);
+            int valueHash = 0;
+            if ((o instanceof ConfigurationSerializable)) {
+                valueHash = hashcode((ConfigurationSerializable) o);
+            } else {
+                valueHash = o.hashCode();
+            }
+            hashcode = hashcode * 53 + keyHash * 211 + valueHash;
+        }
+        return hashcode;
     }
 }

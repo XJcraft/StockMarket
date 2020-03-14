@@ -114,15 +114,18 @@ public class StockMarketManager {
                             Class<? extends ItemMeta> aClass = itemMeta.getClass();
                             String className = aClass.getName().replaceAll("org\\.bukkit\\.craftbukkit\\..*?\\.inventory\\.", "");
 //                Method method = aClass.getSuperclass().getClasses()[0].getDeclaredMethod("deserialize", (Class<Map<String, Object>>) (Class) Map.class);
+                            Integer hashcode = ItemUtil.hashcode(itemMeta);
                             Map<String, ItemMeta> specials = dao.getSpecials(className);
-                            for (Map.Entry<String, ItemMeta> entry : specials.entrySet()) {
-                                boolean equals = entry.getValue().equals(itemMeta);
-                                if (equals) {
-                                    return entry.getKey() + "";
-                                }
-                            }
+//                            for (Map.Entry<String, ItemMeta> entry : specials.entrySet()) {
+//                                boolean equals = entry.getValue().equals(itemMeta);
+//                                if (equals) {
+//                                    return entry.getKey() + "";
+//                                }
+//                            }
+                            ItemMeta meta = specials.get(hashcode.toString());
+                            if (meta != null) return hashcode.toString();
                             StockCustomItem stockCustomItem = new StockCustomItem();
-                            stockCustomItem.setId(hashcode(itemMeta));
+                            stockCustomItem.setId(hashcode);
                             stockCustomItem.setMeta(className);
                             stockCustomItem.setFlatItem(itemMeta);
                             dao.save(stockCustomItem);
@@ -139,10 +142,6 @@ public class StockMarketManager {
             e.printStackTrace();
         }
         return "";
-    }
-
-    private static Integer hashcode(ItemMeta itemMeta) {
-        return null;
     }
 
     public List<StockTrade> getSells(String currency, String type, String subType) {
