@@ -3,6 +3,7 @@ package org.xjcraft.trade.gui;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -20,6 +21,7 @@ import java.util.List;
 public class Shop implements InventoryHolder, StockMarketGui {
     private final String currency;
     private final ItemStack item;
+    private Sign sign;
     private String itemLabel;
     private String itemHash;
     Inventory inventory;
@@ -32,10 +34,11 @@ public class Shop implements InventoryHolder, StockMarketGui {
     private StockMarket plugin;
 
 
-    public Shop(StockMarket plugin, Player player, String currency, ItemStack item) {
+    public Shop(StockMarket plugin, Player player, String currency, ItemStack item, Sign sign) {
         this.plugin = plugin;
         this.currency = currency;
         this.item = item;
+        this.sign = sign;
         inventory = Bukkit.createInventory(this, 54, Config.config.getShop_name());
         int[] upArrowSlots = {Slot.PRICE_1_PlUS, Slot.PRICE_10_PlUS, Slot.PRICE_100_PlUS, Slot.PRICE_1000_PlUS, Slot.PRICE_10000_PlUS,
                 Slot.NUM_1_PLUS, Slot.NUM_10_PLUS, Slot.NUM_100_PLUS, Slot.NUM_1000_PLUS,};
@@ -114,6 +117,13 @@ public class Shop implements InventoryHolder, StockMarketGui {
         inventory.setItem(Slot.REMAIN, ItemUtil.getStackButton(new ItemStack(Material.CHEST), false,
                 "我的背包", String.format(MessageConfig.config.getItemOwned(), itemsInBag, plugin.getManager().getTranslate(item) + ""),
                 MessageConfig.config.getStackButton()));
+        sign.setLine(2, this.currentSells.size() == 0 ? "" : StringUtil.applyPlaceHolder(Config.config.getLine2(), new HashMap<String, String>() {{
+            put("sell", Shop.this.currentSells.get(0).getPrice() + "");
+        }}));
+        sign.setLine(3, this.currentBuys.size() == 0 ? "" : StringUtil.applyPlaceHolder(Config.config.getLine3(), new HashMap<String, String>() {{
+            put("buy", Shop.this.currentBuys.get(0).getPrice() + "");
+        }}));
+        sign.update();
     }
 
 

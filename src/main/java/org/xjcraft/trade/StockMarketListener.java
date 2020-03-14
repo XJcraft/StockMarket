@@ -58,7 +58,8 @@ public class StockMarketListener implements Listener {
     @EventHandler
     public void sign(SignChangeEvent event) {
         if (event.getLine(0).equalsIgnoreCase("[s]") && event.getPlayer().hasPermission("trade.create")
-                || Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(Config.config.getShop_name())) {
+                || Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(Config.config.getShop_name())
+                || Objects.requireNonNull(event.getLine(0)).equalsIgnoreCase(Config.config.getShop_name().replace("[", "【").replace("]", "】"))) {
             String currency = event.getLine(1).toUpperCase();
             OperateResult currencyInfo = CurrencyService.getCurrencyInfo(currency);
             if (currencyInfo.getSuccess()) {
@@ -87,16 +88,7 @@ public class StockMarketListener implements Listener {
                         //create shop with item in hand
                         ItemStack itemInHand = player.getItemInHand();
                         if (itemInHand.getType() == Material.AIR) return;
-                        sign.setLine(0, String.format("%s%s", plugin.getManager().getTranslate(itemInHand), Config.config.getShop_nameHide()));
-                        sign.setLine(1, StringUtil.applyPlaceHolder(Config.config.getCurrencyPrefix(), new HashMap<String, String>() {{
-                            put("currency", sign.getLine(1));
-                        }}));
-                        sign.setLine(2, sign.getLine(3));
-                        sign.setLine(3, "                " + itemInHand.getType().name() + "@" + plugin.getManager().getSubType(itemInHand));
-//                        String label = plugin.getManager().getSubType(itemInHand);
-//                        sign.setLine(3, label);
-
-                        sign.update();
+                        updateSign(sign, itemInHand);
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     } else {
                         //get into a shop
@@ -114,20 +106,22 @@ public class StockMarketListener implements Listener {
                             hashcode = "";
                         }
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
-                        Shop shop = new Shop(plugin, player, currency, itemStack);
+                        Shop shop = new Shop(plugin, player, currency, itemStack, sign);
                         player.openInventory(shop.getInventory());
+                        updateSign(sign, itemStack);
+
                     }
                 } else if (lines[0].contains(Config.config.getShop_nameHide())) {
-                    if (!StringUtil.isEmpty(lines[3])) {
+                    if (sign.getLine(1).contains("@")) {
                         //get into a shop
                         String currency = sign.getLine(1);
                         if (currency.length() < 5) return;
                         currency = currency.substring(currency.indexOf("[") + 1, currency.indexOf("]"));
-                        String[] split = sign.getLine(3).trim().split("@");
-                        String type = split[0];
-                        String hashcode = split.length > 1 ? split[1] : "";
+                        String[] split = sign.getLine(1).trim().split("@");
+                        String type = split[1];
+                        String hashcode = split.length > 2 ? split[2] : "";
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
-                        Shop shop = new Shop(plugin, player, currency, itemStack);
+                        Shop shop = new Shop(plugin, player, currency, itemStack, sign);
                         player.openInventory(shop.getInventory());
                     }
                 } else if (lines[0].equals(Config.config.getShop_bagName())) {
@@ -137,6 +131,26 @@ public class StockMarketListener implements Listener {
                 }
             }
         }
+    }
+
+    public void updateSign(Sign sign, ItemStack itemInHand) {
+        HashMap<String, String> placeHolder = new HashMap<>() {{
+            put("shop", Config.config.getShop_nameHide());
+            put("item", plugin.getManager().getTranslate(itemInHand));
+            put("custom", StringUtil.isEmpty(sign.getLine(3)) ? "" : String.format("§3[%s]", sign.getLine(3)));
+            put("currency", "[" + sign.getLine(1).substring(sign.getLine(1).indexOf("[") + 1, sign.getLine(1).indexOf("]")) + "]");
+            put("hashcode", "                @" + itemInHand.getType().name() + "@" + plugin.getManager().getSubType(itemInHand));
+            put("sell", " - ");
+            put("buy", " - ");
+        }};
+        sign.setLine(0, StringUtil.applyPlaceHolder(Config.config.getLine0() + "%shop%", placeHolder));
+        sign.setLine(1, StringUtil.applyPlaceHolder(Config.config.getLine1() + "%hashcode%", placeHolder));
+        sign.setLine(2, StringUtil.applyPlaceHolder(Config.config.getLine2(), placeHolder));
+        sign.setLine(3, StringUtil.applyPlaceHolder(Config.config.getLine3(), placeHolder));
+//                        String label = plugin.getManager().getSubType(itemInHand);
+//                        sign.setLine(3, label);
+
+        sign.update();
     }
 
 

@@ -1,15 +1,12 @@
-import com.google.gson.Gson;
-
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Map;
 
 public class DecodeTest {
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("D:\\OneDrive\\ProjectsPrivate\\StockMarket\\src\\main\\resources\\zh_cn.json");
-        Gson gson = new Gson();
-        Map map = gson.fromJson(new FileReader(file), Map.class);
-        System.out.println(map.size());
+        String aaa = "交易货币[GOV]";
+        System.out.println(aaa.substring(aaa.indexOf("[") + 1, aaa.indexOf("]")));
+        String bbb = "          @list@123";
+        String[] split = bbb.trim().split("@");
     }
+
+
 }

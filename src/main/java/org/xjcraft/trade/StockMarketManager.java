@@ -122,7 +122,7 @@ public class StockMarketManager {
                                 }
                             }
                             StockCustomItem stockCustomItem = new StockCustomItem();
-                            stockCustomItem.setId(itemMeta.hashCode());
+                            stockCustomItem.setId(hashcode(itemMeta));
                             stockCustomItem.setMeta(className);
                             stockCustomItem.setFlatItem(itemMeta);
                             dao.save(stockCustomItem);
@@ -139,6 +139,10 @@ public class StockMarketManager {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private static Integer hashcode(ItemMeta itemMeta) {
+        return null;
     }
 
     public List<StockTrade> getSells(String currency, String type, String subType) {

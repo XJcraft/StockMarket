@@ -21,7 +21,7 @@ public class StockMarketCommands implements CommonCommandExecutor {
 
     @RCommand("test")
     public void test(Player player) {
-        Shop shop = new Shop(plugin, player, "GOV", new ItemStack(Material.LEATHER, 1));
+        Shop shop = new Shop(plugin, player, "GOV", new ItemStack(Material.LEATHER, 1), null);
         player.openInventory(shop.getInventory());
     }
 
