@@ -396,7 +396,7 @@ public class ItemUtil {
             if ((o instanceof ConfigurationSerializable)) {
                 valueHash = hashcode((ConfigurationSerializable) o);
             } else {
-                valueHash = o.hashCode();
+                valueHash = o.toString().hashCode();
             }
             hashcode = hashcode * 53 + keyHash * 211 + valueHash;
         }
