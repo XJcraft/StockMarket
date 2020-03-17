@@ -13,6 +13,7 @@ import org.xjcraft.trade.entity.StockStorage;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.utils.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +129,15 @@ public class Bag implements InventoryHolder, StockMarketGui {
         }
 
         plugin.getManager().delete(stockStorage);
-        player.getInventory().addItem(itemStack);
+        List<ItemStack> itemStacks = new ArrayList<ItemStack>();
+        itemStacks.add(itemStack);
+        while (itemStacks.get(0).getAmount() > itemStack.getMaxStackSize()) {
+            itemStacks.get(0).setAmount(itemStacks.get(0).getAmount() - itemStack.getMaxStackSize());
+            ItemStack clone = itemStack.clone();
+            clone.setAmount(clone.getMaxStackSize());
+            itemStacks.add(clone);
+        }
+        player.getInventory().addItem(itemStacks.toArray(new ItemStack[]{}));
         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getReceive(), new HashMap<String, String>() {{
             put("player", stockStorage.getSource());
             put("number", stockStorage.getNumber() + "");
