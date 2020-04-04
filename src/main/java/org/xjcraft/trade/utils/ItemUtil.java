@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.utils.StringUtil;
 
@@ -21,6 +22,64 @@ import java.util.Map;
  * Created by Ree on 2016/1/15.
  */
 public class ItemUtil {
+
+    public static ItemStack getConfigPrice(int i) {
+        i = i % 10;
+        switch (i) {
+            case 0:
+                return IconConfig.config.getBlackNum0();
+            case 1:
+                return IconConfig.config.getBlackNum1();
+            case 2:
+                return IconConfig.config.getBlackNum2();
+            case 3:
+                return IconConfig.config.getBlackNum3();
+            case 4:
+                return IconConfig.config.getBlackNum4();
+            case 5:
+                return IconConfig.config.getBlackNum5();
+            case 6:
+                return IconConfig.config.getBlackNum6();
+            case 7:
+                return IconConfig.config.getBlackNum7();
+            case 8:
+                return IconConfig.config.getBlackNum8();
+            case 9:
+                return IconConfig.config.getBlackNum9();
+
+        }
+        return null;
+    }
+
+    public static ItemStack getConfigNumber(int i) {
+        i = i % 10;
+        switch (i) {
+            case 0:
+                return IconConfig.config.getYellowNum0();
+            case 1:
+                return IconConfig.config.getYellowNum1();
+            case 2:
+                return IconConfig.config.getYellowNum2();
+            case 3:
+                return IconConfig.config.getYellowNum3();
+            case 4:
+                return IconConfig.config.getYellowNum4();
+            case 5:
+                return IconConfig.config.getYellowNum5();
+            case 6:
+                return IconConfig.config.getYellowNum6();
+            case 7:
+                return IconConfig.config.getYellowNum7();
+            case 8:
+                return IconConfig.config.getYellowNum8();
+            case 9:
+                return IconConfig.config.getYellowNum9();
+
+        }
+        return null;
+    }
+
+
     public static ItemStack getNumberStack(int i) {
 
         i = i % 10;

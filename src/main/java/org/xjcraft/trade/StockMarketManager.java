@@ -7,6 +7,7 @@ import com.zjyl1994.minecraftplugin.multicurrency.services.BankService;
 import com.zjyl1994.minecraftplugin.multicurrency.utils.OperateResult;
 import com.zjyl1994.minecraftplugin.multicurrency.utils.TxTypeEnum;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,6 +17,8 @@ import org.xjcraft.trade.entity.StockHistory;
 import org.xjcraft.trade.entity.StockStorage;
 import org.xjcraft.trade.entity.StockTrade;
 import org.xjcraft.trade.gui.Callback;
+import org.xjcraft.trade.gui.Menu;
+import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.utils.JSON;
 import org.xjcraft.utils.StringUtil;
@@ -392,6 +395,16 @@ public class StockMarketManager {
                 plugin.getLogger().warning("玩家退款不成功！" + JSON.toJSONString(trade));
                 return;
             }
+        }
+    }
+
+    public void openIndex(Player player, Sign sign, String currency, ItemStack itemStack) {
+        if (StringUtil.isEmpty(sign.getLine(2))) {
+            Menu shop = new Menu(plugin, player, currency, itemStack, sign);
+            player.openInventory(shop.getInventory());
+        } else {
+            Shop shop = new Shop(plugin, player, currency, itemStack, sign, Shop.ShopMode.SIMPLE);
+            player.openInventory(shop.getInventory());
         }
     }
 }

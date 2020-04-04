@@ -1,14 +1,19 @@
 package org.xjcraft.trade;
 
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.xjcraft.annotation.RCommand;
 import org.xjcraft.api.CommonCommandExecutor;
+import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
 import org.xjcraft.trade.gui.Shop;
+
+import java.lang.reflect.Field;
 
 public class StockMarketCommands implements CommonCommandExecutor {
     private StockMarket plugin;
@@ -21,7 +26,7 @@ public class StockMarketCommands implements CommonCommandExecutor {
 
     @RCommand("test")
     public void test(Player player) {
-        Shop shop = new Shop(plugin, player, "GOV", new ItemStack(Material.LEATHER, 1), null);
+        Shop shop = new Shop(plugin, player, "GOV", new ItemStack(Material.LEATHER, 1), null, Shop.ShopMode.SIMPLE);
         player.openInventory(shop.getInventory());
     }
 
@@ -55,6 +60,40 @@ public class StockMarketCommands implements CommonCommandExecutor {
     public void mine(CommandSender player) {
         if (player instanceof Player) {
             ((Player) player).openInventory(new Counter(plugin, (Player) player).getInventory());
+        }
+    }
+
+    @RCommand(value = "check", sender = RCommand.Sender.PLAYER)
+    public void check(CommandSender sender) {
+        Player player = (Player) sender;
+        ItemStack itemInHand = player.getItemInHand();
+        if (itemInHand.getItemMeta() instanceof BannerMeta) {
+            BannerMeta itemMeta = (BannerMeta) itemInHand.getItemMeta();
+            for (Pattern pattern : itemMeta.getPatterns()) {
+                System.out.println(String.format("%s:%s", pattern.getPattern().name(), pattern.getColor()));
+            }
+
+        }
+        IconConfig.config.setBuy(itemInHand);
+        plugin.saveConfig(IconConfig.class);
+    }
+
+    @RCommand(value = "save", sender = RCommand.Sender.PLAYER)
+    public void save(CommandSender sender, String field) {
+        Player player = (Player) sender;
+        ItemStack itemInHand = player.getItemInHand();
+        try {
+            IconConfig config = IconConfig.config;
+            Field field1 = IconConfig.class.getDeclaredField(field);
+            field1.setAccessible(true);
+            field1.set(config, itemInHand);
+            plugin.saveConfig(IconConfig.class);
+            sender.sendMessage("已保存");
+        } catch (NoSuchFieldException e) {
+            sender.sendMessage("字段不存在！");
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

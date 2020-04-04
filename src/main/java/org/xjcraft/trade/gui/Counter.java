@@ -8,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
+import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.entity.StockTrade;
-import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.utils.StringUtil;
 
 import java.util.Arrays;
@@ -25,7 +25,8 @@ public class Counter implements InventoryHolder, StockMarketGui {
     public Counter(StockMarket plugin, Player player) {
         this.plugin = plugin;
         inventory = Bukkit.createInventory(this, 54, Config.config.getShop_offerName());
-        inventory.setItem(53, ItemUtil.getSwitchBagButton());
+        inventory.setItem(Slot.BAG, IconConfig.config.getBag());
+//        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
 
@@ -35,7 +36,7 @@ public class Counter implements InventoryHolder, StockMarketGui {
     }
 
     private void refresh(Player player) {
-        for (int i = 0; i < 53; i++) {
+        for (int i = 0; i < Slot.BAG; i++) {
             if (i < trades.size()) {
                 StockTrade trade = this.trades.get(i);
                 ItemStack itemStack = plugin.getManager().getItemStack(trade.getItem(), trade.getHash());
@@ -68,12 +69,20 @@ public class Counter implements InventoryHolder, StockMarketGui {
 
     @Override
     public void onClick(Player player, int slot) {
-        if (slot == 53) {
-            player.closeInventory();
-            player.openInventory(new Bag(plugin, player).getInventory());
-        } else if (slot < trades.size() && slot >= 0) {
-            collect(player, slot);
+        switch (slot) {
+            case Slot.BAG:
+                player.openInventory(new Bag(plugin, player).getInventory());
+                break;
+//            case Slot.CLOSE:
+//                player.closeInventory();
+//                break;
+            default:
+                if (slot < trades.size() && slot >= 0) {
+                    collect(player, slot);
+                }
+                break;
         }
+
     }
 
     private void collect(Player player, int slot) {
@@ -98,5 +107,10 @@ public class Counter implements InventoryHolder, StockMarketGui {
         plugin.getManager().cancelTrade(player, trade);
     }
 
+    interface Slot {
+        int BAG = 53;
+        int CLOSE = 51;
+
+    }
 
 }

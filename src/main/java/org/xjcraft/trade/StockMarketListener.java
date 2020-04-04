@@ -18,7 +18,7 @@ import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
-import org.xjcraft.trade.gui.Shop;
+import org.xjcraft.trade.gui.Menu;
 import org.xjcraft.trade.gui.StockMarketGui;
 import org.xjcraft.utils.StringUtil;
 
@@ -106,9 +106,9 @@ public class StockMarketListener implements Listener {
                             hashcode = "";
                         }
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
-                        Shop shop = new Shop(plugin, player, currency, itemStack, sign);
+                        Menu shop = new Menu(plugin, player, currency, itemStack, sign);
                         player.openInventory(shop.getInventory());
-                        updateSign(sign, itemStack);
+//                        updateSign(sign, itemStack);
 
                     }
                 } else if (lines[0].contains(Config.config.getShop_nameHide())) {
@@ -121,8 +121,8 @@ public class StockMarketListener implements Listener {
                         String type = split[1];
                         String hashcode = split.length > 2 ? split[2] : "";
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
-                        Shop shop = new Shop(plugin, player, currency, itemStack, sign);
-                        player.openInventory(shop.getInventory());
+                        manager.openIndex(player, sign, currency, itemStack);
+
                     }
                 } else if (lines[0].equals(Config.config.getShop_bagName())) {
                     player.openInventory(new Bag(plugin, player).getInventory());
@@ -132,6 +132,7 @@ public class StockMarketListener implements Listener {
             }
         }
     }
+
 
     public void updateSign(Sign sign, ItemStack itemInHand) {
         HashMap<String, String> placeHolder = new HashMap<>() {{

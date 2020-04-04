@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
+import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.entity.StockStorage;
 import org.xjcraft.trade.utils.ItemUtil;
@@ -26,7 +27,9 @@ public class Bag implements InventoryHolder, StockMarketGui {
     public Bag(StockMarket plugin, Player player) {
         this.plugin = plugin;
         inventory = Bukkit.createInventory(this, 54, Config.config.getShop_bagName());
-        inventory.setItem(53, ItemUtil.getSwitchCounterButton());
+        inventory.setItem(Slot.COLLECT_ALL, IconConfig.config.getCollectAll());
+        inventory.setItem(Slot.COUNTER, IconConfig.config.getAccount());
+//        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
 
@@ -36,7 +39,7 @@ public class Bag implements InventoryHolder, StockMarketGui {
     }
 
     private void refresh(Player player) {
-        for (int i = 0; i < 52; i++) {
+        for (int i = 0; i < Slot.COLLECT_ALL; i++) {
             if (i < storage.size()) {
                 StockStorage storage = this.storage.get(i);
                 ItemStack itemStack = plugin.getManager().getItemStack(storage.getItem(), storage.getHash());
@@ -56,9 +59,9 @@ public class Bag implements InventoryHolder, StockMarketGui {
                 inventory.setItem(i, null);
             }
         }
-        if (storage.size() > 0) {
-            inventory.setItem(52, ItemUtil.getCollectAll());
-        }
+//        if (storage.size() > 0) {
+//            inventory.setItem(52, ItemUtil.getCollectAll());
+//        }
     }
 
 
@@ -69,14 +72,24 @@ public class Bag implements InventoryHolder, StockMarketGui {
 
     @Override
     public void onClick(Player player, int slot) {
-        if (slot == 53) {
-            player.closeInventory();
-            player.openInventory(new Counter(plugin, player).getInventory());
-        } else if (slot == 52 && storage.size() > 0) {
-            collectAll(player);
-        } else if (slot < storage.size() && slot >= 0) {
-            collect(player, slot);
+        switch (slot) {
+            case Slot.COLLECT_ALL:
+
+                if (storage.size() > 0) collectAll(player);
+                break;
+            case Slot.COUNTER:
+                player.openInventory(new Counter(plugin, player).getInventory());
+                break;
+//            case Slot.CLOSE:
+//                player.closeInventory();
+//                break;
+            default:
+                if (slot < storage.size() && slot >= 0) {
+                    collect(player, slot);
+                }
+                break;
         }
+
     }
 
     private void collect(Player player, int slot) {
@@ -146,5 +159,10 @@ public class Bag implements InventoryHolder, StockMarketGui {
         }}));
     }
 
+    interface Slot {
+        int COLLECT_ALL = 52;
+        int COUNTER = 53;
+        int CLOSE = 51;
 
+    }
 }
