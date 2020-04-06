@@ -407,4 +407,8 @@ public class StockMarketManager {
             player.openInventory(shop.getInventory());
         }
     }
+
+    public StockTrade getTradeById(StockTrade trade) {
+        return dao.getTrade(trade.getId());
+    }
 }

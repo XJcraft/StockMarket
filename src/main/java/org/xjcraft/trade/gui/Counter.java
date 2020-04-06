@@ -102,7 +102,8 @@ public class Counter implements InventoryHolder, StockMarketGui {
     }
 
     private void cancelTrade(Player player, int slot) {
-        StockTrade trade = trades.get(slot);
+        StockTrade trade = plugin.getManager().getTradeById(trades.get(slot));
+        if (trade == null) return;
         plugin.getManager().delete(trade);
         plugin.getManager().cancelTrade(player, trade);
     }

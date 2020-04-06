@@ -78,4 +78,8 @@ public class Dao {
     public void delete(Object o) {
         ebeanServer.delete(o);
     }
+
+    public StockTrade getTrade(int id) {
+        return ebeanServer.find(StockTrade.class).where().eq("id", id).setMaxRows(1).findOne();
+    }
 }
