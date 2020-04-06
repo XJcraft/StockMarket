@@ -23,7 +23,7 @@ public class Menu implements InventoryHolder, StockMarketGui {
         this.currency = currency;
         this.item = item;
         this.sign = sign;
-        inventory = Bukkit.createInventory(this, 27, Config.config.getShop_name());
+        inventory = Bukkit.createInventory(this, 27, Config.config.getTitle_menu());
         inventory.setItem(Slot.buy, IconConfig.config.getBuy());
         inventory.setItem(Slot.sell, IconConfig.config.getSell());
         inventory.setItem(Slot.bag, IconConfig.config.getBag());
