@@ -43,8 +43,26 @@ public class Shop implements InventoryHolder, StockMarketGui {
         this.mode = mode;
         this.item.setAmount(1);
         this.sign = sign;
-        inventory = Bukkit.createInventory(this, 54, Config.config.getShop_name());
+
+        setInventory(mode);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
+    }
+
+    public void setInventory(ShopMode mode) {
+        switch (mode) {
+
+            case SIMPLE:
+                inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_simple());
+                break;
+            case BUY:
+                inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_buy());
+                break;
+            case SELL:
+                inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_sell());
+                break;
+        }
+
+
     }
 
     public void update(Player player) {
@@ -87,11 +105,17 @@ public class Shop implements InventoryHolder, StockMarketGui {
             inventory.setItem(numberIndexes[i], numberStack);
         }
         HashMap<String, String> placeHolder = new HashMap<>();
-        placeHolder.put("price", price + "");
-        placeHolder.put("currency", currency);
-        placeHolder.put("amount", number + "");
-        placeHolder.put("remain", number + "");
-        placeHolder.put("name", plugin.getManager().getTranslate(item));
+        placeHolder.put("price", price + "");//设置的价格
+        placeHolder.put("currency", currency);//使用的货币
+        placeHolder.put("amount", number + "");//设置的数量
+        placeHolder.put("remain", itemsInBag + "");//背包中剩余物品数量
+        placeHolder.put("sellSize", currentSells.size() + "");//出售笔数
+        placeHolder.put("sellPrice", (currentSells.size() > 0 ? currentSells.get(0).getPrice() : 0) + "");//最低出售价中第一笔的价格
+        placeHolder.put("sellNumber", (currentSells.size() > 0 ? currentSells.get(0).getTradeNumber() : 0) + "");//最低出售价中第一笔的数量
+        placeHolder.put("buySize", currentBuys.size() + "");//收购笔数
+        placeHolder.put("buyPrice", (currentBuys.size() > 0 ? currentBuys.get(0).getPrice() : 0) + "");//最高收购价中第一笔价格
+        placeHolder.put("buyNumber", (currentBuys.size() > 0 ? currentBuys.get(0).getTradeNumber() : 0) + "");//最高收购价中第一笔数量
+        placeHolder.put("name", plugin.getManager().getTranslate(item));//物品名称
         for (int i = 0; i < inventory.getSize(); i++) {
             switch (i) {
 
@@ -133,7 +157,17 @@ public class Shop implements InventoryHolder, StockMarketGui {
                     inventory.setItem(i, item);
                     break;
                 case Slot.PRICE_INFO:
-                    inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice(), placeHolder));
+                    switch (this.mode) {
+                        case SIMPLE:
+                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice(), placeHolder));
+                            break;
+                        case BUY:
+                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice2(), placeHolder));
+                            break;
+                        case SELL:
+                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice3(), placeHolder));
+                            break;
+                    }
                 case Slot.REMAIN:
                     break;
                 case Slot.SWITCH_BAG:
@@ -260,13 +294,18 @@ public class Shop implements InventoryHolder, StockMarketGui {
                     this.price -= 10000;
                 break;
             case Slot.SWITCH_BUY:
-                if (mode == ShopMode.SIMPLE)
+                if (mode == ShopMode.SIMPLE) {
                     this.mode = ShopMode.BUY;
+                    this.setInventory(this.mode);
+                    player.openInventory(getInventory());
+                }
                 break;
             case Slot.SWITCH_SELL:
                 if (mode == ShopMode.SIMPLE) {
                     this.mode = ShopMode.SELL;
                     number = null;
+                    this.setInventory(this.mode);
+                    player.openInventory(getInventory());
                 }
                 break;
             case Slot.MINE:

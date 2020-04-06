@@ -18,6 +18,12 @@ public class Config {
     String line1 = " §6使用%currency%货币交易";
     String line2 = " §c§l购买价%sell%元/个";
     String line3 = "§2§l收购价%buy%元/个";
+    String title_menu = "[此商品无人出售]";
+    String title_simple = "[购买]";
+    String title_buy = "[收购]";
+    String title_sell = "[出售]";
+    String title_bag = "[我的仓库]";
+    String title_offer = "[我的柜台]";
 
 
 }

@@ -26,7 +26,7 @@ public class Bag implements InventoryHolder, StockMarketGui {
 
     public Bag(StockMarket plugin, Player player) {
         this.plugin = plugin;
-        inventory = Bukkit.createInventory(this, 54, Config.config.getShop_bagName());
+        inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_bag());
         inventory.setItem(Slot.COLLECT_ALL, IconConfig.config.getCollectAll());
         inventory.setItem(Slot.COUNTER, IconConfig.config.getAccount());
 //        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());

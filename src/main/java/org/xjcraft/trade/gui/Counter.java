@@ -24,7 +24,7 @@ public class Counter implements InventoryHolder, StockMarketGui {
 
     public Counter(StockMarket plugin, Player player) {
         this.plugin = plugin;
-        inventory = Bukkit.createInventory(this, 54, Config.config.getShop_offerName());
+        inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_offer());
         inventory.setItem(Slot.BAG, IconConfig.config.getBag());
 //        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));

@@ -20,8 +20,12 @@ public class IconConfig {
     ItemStack bag = new ItemStack(Material.CHEST, 1);
     @Comment("我的柜台")
     ItemStack account = new ItemStack(Material.LECTERN, 1);
-    @Comment("价格信息")
+    @Comment("价格信息——购买")
     ItemStack price = new ItemStack(Material.EMERALD, 1);
+    @Comment("价格信息——收购")
+    ItemStack price2 = new ItemStack(Material.EMERALD, 1);
+    @Comment("价格信息——出售")
+    ItemStack price3 = new ItemStack(Material.EMERALD, 1);
     @Comment("+")
     ItemStack blackPlus = new ItemStack(Material.BLACK_BANNER, 1);
     @Comment("-")

@@ -125,7 +125,7 @@
         <dependency>
             <groupId>org.xjcraft</groupId>
             <artifactId>SimpleSpigot</artifactId>
-            <version>1.0.0</version>
+            <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
