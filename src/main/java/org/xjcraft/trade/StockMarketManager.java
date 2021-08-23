@@ -275,7 +275,7 @@ public class StockMarketManager {
                             return;
                         }
                         amount -= buy.getTradeNumber();
-                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), seller.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), buy.getTradeNumber());
+                        StockHistory stockHistory = new StockHistory(seller.getName(), buy.getPlayer(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), buy.getTradeNumber());
                         dao.save(stockHistory);
                         dao.delete(buy);
                         pay(seller, itemStack, buy.getPlayer(), buy.getTradeNumber());
@@ -288,7 +288,7 @@ public class StockMarketManager {
                             return;
                         }
                         buy.setTradeNumber(buy.getTradeNumber() - amount);
-                        StockHistory stockHistory = new StockHistory(buy.getPlayer(), seller.getName(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), amount);
+                        StockHistory stockHistory = new StockHistory(seller.getName(), buy.getPlayer(), buy.getItem(), buy.getHash(), buy.getPrice(), buy.getCurrency(), amount);
                         dao.save(stockHistory);
                         dao.save(buy);
                         pay(seller, itemStack, buy.getPlayer(), amount);
