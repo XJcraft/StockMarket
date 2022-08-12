@@ -95,7 +95,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>codemc-snapshots</id>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>1.5.3-SNAPSHOT</version>
+            <version>[1.5.3-SNAPSHOT,)</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
