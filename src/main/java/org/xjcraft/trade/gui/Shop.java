@@ -15,7 +15,7 @@ import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.entity.StockTrade;
 import org.xjcraft.trade.utils.ItemUtil;
-import org.xjcraft.utils.StringUtil;
+import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -159,10 +159,10 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 case Slot.PRICE_INFO:
                     switch (this.mode) {
                         case SIMPLE:
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice(), placeHolder));
+                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice().getAmount(), placeHolder));
                             break;
                         case BUY:
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice2(), placeHolder));
+                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice2().getAmount(), placeHolder));
                             break;
                         case SELL:
                             inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice3(), placeHolder));
@@ -215,6 +215,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
             put("buy", Shop.this.currentBuys.get(0).getPrice() + "");
         }}));
         sign.update();
+        
     }
 
 

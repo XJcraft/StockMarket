@@ -12,7 +12,7 @@ import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.entity.StockStorage;
 import org.xjcraft.trade.utils.ItemUtil;
-import org.xjcraft.utils.StringUtil;
+import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

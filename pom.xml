@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xjcraft.org</groupId>
@@ -102,13 +100,12 @@
             <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
-
     <dependencies>
         <!--Spigot API-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>[1.19.3-R0.1-SNAPSHOT,)</version>
+            <version>[1.18.2-R0.1-SNAPSHOT,)</version>
             <scope>provided</scope>
             <!--            <systemPath>M:/Minecraft/Buildtools/spigot-cat73-1.15.2.jar</systemPath>-->
         </dependency>
@@ -122,25 +119,36 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>LATEST</version>
+            <version>1.18.28</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.xjcraft</groupId>
-            <artifactId>SimpleSpigot</artifactId>
-            <version>LATEST</version>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.zjyl1994.minecraftplugin</groupId>
             <artifactId>MultiCurrency</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>[1.0-SNAPSHOT,)</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean</artifactId>
+            <version>11.35.3</version>
+        </dependency>   
+        <!-- Ebean annotation processor -->
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-annotation</artifactId>
+            <version>6.3</version>
         </dependency>
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>[1.5.3-SNAPSHOT,)</version>
+            <version>1.5.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

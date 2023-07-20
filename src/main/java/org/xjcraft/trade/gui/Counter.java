@@ -11,7 +11,7 @@ import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
 import org.xjcraft.trade.entity.StockTrade;
-import org.xjcraft.utils.StringUtil;
+import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;

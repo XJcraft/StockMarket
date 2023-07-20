@@ -21,7 +21,7 @@ import org.xjcraft.trade.gui.Menu;
 import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.utils.JSON;
-import org.xjcraft.utils.StringUtil;
+import org.xjcraft.trade.utils.StringUtil;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

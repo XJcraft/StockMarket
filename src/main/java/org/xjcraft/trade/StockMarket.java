@@ -10,7 +10,7 @@ import org.xjcraft.trade.utils.SerializeUtil;
 /**
  * Created by Ree on 2016/1/7.
  */
-public class StockMarket extends CommonPlugin {
+public class StockMarket extends CommonPlugin{
     Plugin plugin;
     @Getter
     StockMarketManager manager;
@@ -37,7 +37,6 @@ public class StockMarket extends CommonPlugin {
         }
 
     }
-
 
     @Override
     public void onDisable() {

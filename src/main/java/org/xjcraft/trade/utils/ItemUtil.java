@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
-import org.xjcraft.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

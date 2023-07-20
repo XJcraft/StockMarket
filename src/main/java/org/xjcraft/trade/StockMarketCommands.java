@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.xjcraft.annotation.RCommand;
-import org.xjcraft.api.CommonCommandExecutor;
+import org.xjcraft.CommonCommandExecutor;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
@@ -15,7 +15,7 @@ import org.xjcraft.trade.gui.Shop;
 
 import java.lang.reflect.Field;
 
-public class StockMarketCommands implements CommonCommandExecutor {
+public class StockMarketCommands extends CommonCommandExecutor{
     private StockMarket plugin;
     private StockMarketManager manager;
 
@@ -24,6 +24,10 @@ public class StockMarketCommands implements CommonCommandExecutor {
         this.manager = manager;
     }
 
+    /**
+     * 命令：/测试
+     * 描述：为玩家开设测试商店。
+     */
     @RCommand("test")
     public void test(Player player) {
         Shop shop = new Shop(plugin, player, "GOV", new ItemStack(Material.LEATHER, 1), null, Shop.ShopMode.SIMPLE);
@@ -55,7 +59,7 @@ public class StockMarketCommands implements CommonCommandExecutor {
             ((Player) player).openInventory(new Bag(plugin, (Player) player).getInventory());
         }
     }
-
+    
     @RCommand(value = "mine", sender = RCommand.Sender.PLAYER, desc = "打开柜台面板")
     public void mine(CommandSender player) {
         if (player instanceof Player) {
@@ -63,6 +67,10 @@ public class StockMarketCommands implements CommonCommandExecutor {
         }
     }
 
+    /**
+     * 命令: /check
+     * 描述: 查看手持物品的图案
+     */
     @RCommand(value = "check", sender = RCommand.Sender.PLAYER)
     public void check(CommandSender sender) {
         Player player = (Player) sender;
@@ -78,6 +86,10 @@ public class StockMarketCommands implements CommonCommandExecutor {
         plugin.saveConfig(IconConfig.class);
     }
 
+     /**
+     * 命令: /save <字段>
+     * 描述: 将手持物品保存到配置文件中的指定字段中
+     */
     @RCommand(value = "save", sender = RCommand.Sender.PLAYER)
     public void save(CommandSender sender, String field) {
         Player player = (Player) sender;

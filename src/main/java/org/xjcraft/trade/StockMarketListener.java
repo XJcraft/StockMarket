@@ -20,7 +20,7 @@ import org.xjcraft.trade.gui.Bag;
 import org.xjcraft.trade.gui.Counter;
 import org.xjcraft.trade.gui.Menu;
 import org.xjcraft.trade.gui.StockMarketGui;
-import org.xjcraft.utils.StringUtil;
+import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.Objects;
