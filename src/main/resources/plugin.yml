@@ -19,6 +19,13 @@ commands:
             usage: use /<command> h to show all commands avaliable in plugin
             permission: trade.command
             permission-message: You don't have <permission>
+    test:
+    label:
+    get:
+    on:
+    mine:
+    check:
+    save:
 
 permissions:
     trade.command:

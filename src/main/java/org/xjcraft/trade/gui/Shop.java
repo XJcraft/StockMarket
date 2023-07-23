@@ -13,12 +13,12 @@ import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
-import org.xjcraft.trade.entity.StockTrade;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Shop implements InventoryHolder, StockMarketGui {
     private final String currency;
@@ -31,8 +31,8 @@ public class Shop implements InventoryHolder, StockMarketGui {
     //数据部分
     Integer price = null;
     Integer number = null;
-    List<StockTrade> currentBuys;
-    List<StockTrade> currentSells;
+    List<Map<String, Object>> currentBuys;
+    List<Map<String, Object>> currentSells;
     private StockMarket plugin;
     int itemsInBag;
 
@@ -78,7 +78,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
         itemsInBag = ItemUtil.getItemNumber(player, item);
         if (price == null) {
             if ((currentSells != null && currentSells.size() > 0)) {
-                price = currentSells.get(0).getPrice();
+                price = (int) currentSells.get(0).get("price");
             } else {
                 price = 1;
             }
@@ -96,12 +96,12 @@ public class Shop implements InventoryHolder, StockMarketGui {
         if (number < 1) number = number + 9999;
         int[] priceIndexes = {Slot.PRICE_1_DISPLAY, Slot.PRICE_10_DISPLAY, Slot.PRICE_100_DISPLAY, Slot.PRICE_1000_DISPLAY, Slot.PRICE_10000_DISPLAY,};
         for (int i = 0; i < 5; i++) {
-            ItemStack numberStack = ItemUtil.getConfigPrice(price / (int) Math.pow(10, (double) i) % 10);
+            ItemStack numberStack = ItemUtil.getNumberStack(price / (int) Math.pow(10, (double) i) % 10);
             inventory.setItem(priceIndexes[i], numberStack);
         }
         int[] numberIndexes = {Slot.NUM_1_DISPLAY, Slot.NUM_10_DISPLAY, Slot.NUM_100_DISPLAY, Slot.NUM_1000_DISPLAY};
         for (int i = 0; i < 4; i++) {
-            ItemStack numberStack = ItemUtil.getConfigNumber(number / (int) Math.pow(10, (double) i) % 10);
+            ItemStack numberStack = ItemUtil.getNumberStack(number / (int) Math.pow(10, (double) i) % 10);
             inventory.setItem(numberIndexes[i], numberStack);
         }
         HashMap<String, String> placeHolder = new HashMap<>();
@@ -110,11 +110,11 @@ public class Shop implements InventoryHolder, StockMarketGui {
         placeHolder.put("amount", number + "");//设置的数量
         placeHolder.put("remain", itemsInBag + "");//背包中剩余物品数量
         placeHolder.put("sellSize", currentSells.size() + "");//出售笔数
-        placeHolder.put("sellPrice", (currentSells.size() > 0 ? currentSells.get(0).getPrice() : 0) + "");//最低出售价中第一笔的价格
-        placeHolder.put("sellNumber", (currentSells.size() > 0 ? currentSells.get(0).getTradeNumber() : 0) + "");//最低出售价中第一笔的数量
+        placeHolder.put("sellPrice", (currentSells.size() > 0 ? (int) currentSells.get(0).get("price") : 0) + "");//最低出售价中第一笔的价格
+        placeHolder.put("sellNumber", (currentSells.size() > 0 ? (int) currentSells.get(0).get("trade_number") : 0) + "");//最低出售价中第一笔的数量
         placeHolder.put("buySize", currentBuys.size() + "");//收购笔数
-        placeHolder.put("buyPrice", (currentBuys.size() > 0 ? currentBuys.get(0).getPrice() : 0) + "");//最高收购价中第一笔价格
-        placeHolder.put("buyNumber", (currentBuys.size() > 0 ? currentBuys.get(0).getTradeNumber() : 0) + "");//最高收购价中第一笔数量
+        placeHolder.put("buyPrice", (currentBuys.size() > 0 ? (int) currentBuys.get(0).get("price") : 0) + "");//最高收购价中第一笔价格
+        placeHolder.put("buyNumber", (currentBuys.size() > 0 ? (int) currentBuys.get(0).get("trade_number") : 0) + "");//最高收购价中第一笔数量
         placeHolder.put("name", plugin.getManager().getTranslate(item));//物品名称
         for (int i = 0; i < inventory.getSize(); i++) {
             switch (i) {
@@ -125,33 +125,33 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 case Slot.PRICE_100_PlUS:
                 case Slot.PRICE_1000_PlUS:
                 case Slot.PRICE_10000_PlUS:
-                    inventory.setItem(i, mode.priceModify ? IconConfig.config.getYellowPlus() : IconConfig.config.getAir());
+                    inventory.setItem(i, mode.priceModify ? ItemUtil.getUpArrow() : IconConfig.config.getAir());
                     break;
                 case Slot.PRICE_1_MINUS:
                 case Slot.PRICE_10_MINUS:
                 case Slot.PRICE_100_MINUS:
                 case Slot.PRICE_1000_MINUS:
                 case Slot.PRICE_10000_MINUS:
-                    inventory.setItem(i, mode.priceModify ? IconConfig.config.getYellowMinus() : IconConfig.config.getAir());
+                    inventory.setItem(i, mode.priceModify ? ItemUtil.getDownArrow() : IconConfig.config.getAir());
                     break;
                 case Slot.PRICE_INPUT:
-                    inventory.setItem(i, mode.priceModify ? IconConfig.config.getEnterPrice() : IconConfig.config.getAir());
+                    inventory.setItem(i, mode.priceModify ? ItemUtil.getAmountInfo("价格"):IconConfig.config.getAir());
                     break;
                 case Slot.NUM_INPUT:
-                    inventory.setItem(i, IconConfig.config.getEnter());
+                    inventory.setItem(i, ItemUtil.getAmountInfo("数量"));
                     break;
                 //数量面板
                 case Slot.NUM_1_PLUS:
                 case Slot.NUM_10_PLUS:
                 case Slot.NUM_100_PLUS:
                 case Slot.NUM_1000_PLUS:
-                    inventory.setItem(i, IconConfig.config.getBlackPlus());
+                    inventory.setItem(i, ItemUtil.getUpArrow());
                     break;
                 case Slot.NUM_1_MINUS:
                 case Slot.NUM_10_MINUS:
                 case Slot.NUM_100_MINUS:
                 case Slot.NUM_1000_MINUS:
-                    inventory.setItem(i, IconConfig.config.getBlackMinus());
+                    inventory.setItem(i, ItemUtil.getDownArrow());
                     break;
                 case Slot.ITEM_INSTANCE:
                     inventory.setItem(i, item);
@@ -159,60 +159,59 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 case Slot.PRICE_INFO:
                     switch (this.mode) {
                         case SIMPLE:
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice().getAmount(), placeHolder));
+                            inventory.setItem(i, ItemUtil.getSellInfoButton());
                             break;
                         case BUY:
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice2().getAmount(), placeHolder));
+                            inventory.setItem(i, ItemUtil.getBuyInfoButton());
                             break;
                         case SELL:
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getPrice3(), placeHolder));
+                            inventory.setItem(i, ItemUtil.getSellInfoButton());
                             break;
                     }
                 case Slot.REMAIN:
                     break;
                 case Slot.SWITCH_BAG:
-                    inventory.setItem(i, IconConfig.config.getBag());
+                    inventory.setItem(i, ItemUtil.getSwitchBagButton());
                     break;
                 case Slot.SWITCH_COUNTER:
-                    inventory.setItem(i, IconConfig.config.getAccount());
+                    inventory.setItem(i, ItemUtil.getSwitchCounterButton());
                     break;
                 case Slot.MINE:
                     if (mode.buy) {
                         inventory.setItem(i, IconConfig.config.getAir());
                     } else {
-                        inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getMine(), placeHolder));
+                        inventory.setItem(i,ItemUtil.getMine());
                     }
                     break;
                 case Slot.CONFIRM_BUY:
                     if (mode.buy) {
                         if (mode.priceModify) {
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getBuyConfirm(), placeHolder));
+                            inventory.setItem(i,ItemUtil.getBuyConfirm());
                         } else {
-                            inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getBuySimple(), placeHolder));
+                            inventory.setItem(i,ItemUtil.getBuySimple());
                         }
                     } else {
-                        inventory.setItem(i, StringUtil.applyPlaceHolder(IconConfig.config.getSellConfirm(), placeHolder));
+                        inventory.setItem(i, ItemUtil.getSellConfirm());
                     }
                     break;
                 case Slot.CLOSE:
                     if (mode.priceModify)
-                        inventory.setItem(i, IconConfig.config.getClose());
+                        inventory.setItem(i, ItemUtil.getClose());
                     break;
                 case Slot.SWITCH_BUY:
-                    inventory.setItem(i, (mode == ShopMode.SIMPLE) ? IconConfig.config.getBuy() : IconConfig.config.getAir());
+                    inventory.setItem(i, (mode == ShopMode.SIMPLE) ? ItemUtil.getBuymod() : IconConfig.config.getAir());
                     break;
                 case Slot.SWITCH_SELL:
-                    inventory.setItem(i, (mode == ShopMode.SIMPLE) ? IconConfig.config.getSell() : IconConfig.config.getAir());
+                    inventory.setItem(i, (mode == ShopMode.SIMPLE) ? ItemUtil.getSellmod() : IconConfig.config.getAir());
                     break;
             }
         }
 
-
         sign.setLine(2, this.currentSells.size() == 0 ? "" : StringUtil.applyPlaceHolder(Config.config.getLine2(), new HashMap<String, String>() {{
-            put("sell", Shop.this.currentSells.get(0).getPrice() + "");
+            put("sell", Shop.this.currentSells.get(0).get("price") + "");
         }}));
         sign.setLine(3, this.currentBuys.size() == 0 ? "" : StringUtil.applyPlaceHolder(Config.config.getLine3(), new HashMap<String, String>() {{
-            put("buy", Shop.this.currentBuys.get(0).getPrice() + "");
+            put("buy", Shop.this.currentBuys.get(0).get("price") + "");
         }}));
         sign.update();
         
@@ -398,25 +397,25 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 break;
             case Slot.PRICE_INFO:
                 if (mode.buy) {
-                    for (StockTrade currentBuy : this.currentSells) {
+                    for (Map<String, Object> currentBuy : this.currentSells) {
                         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getSellDetailInfo(), new HashMap<String, String>() {{
-                            put("player", currentBuy.getPlayer());
-                            put("currency", currentBuy.getCurrency());
-                            put("price", currentBuy.getPrice() + "");
-                            put("number", currentBuy.getTradeNumber() + "");
-                            put("type", currentBuy.getItem());
-                            put("subtype", currentBuy.getHash());
+                            put("player", (String) currentBuy.get("player"));
+                            put("currency",(String) currentBuy.get("currency"));
+                            put("price",String.valueOf(currentBuy.get("price")) + "");
+                            put("number",String.valueOf(currentBuy.get("trade_number")) + "");
+                            put("type",(String) currentBuy.get("item"));
+                            put("subtype",(String) currentBuy.get("hash"));
                         }}));
                     }
                 } else {
-                    for (StockTrade currentBuy : this.currentBuys) {
+                    for (Map<String, Object> currentBuy : this.currentBuys) {
                         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getBuyDetailInfo(), new HashMap<String, String>() {{
-                            put("player", currentBuy.getPlayer());
-                            put("currency", currentBuy.getCurrency());
-                            put("price", currentBuy.getPrice() + "");
-                            put("number", currentBuy.getTradeNumber() + "");
-                            put("type", currentBuy.getItem());
-                            put("subtype", currentBuy.getHash());
+                            put("player", (String) currentBuy.get("player"));
+                            put("currency",(String) currentBuy.get("currency"));
+                            put("price",String.valueOf(currentBuy.get("price")) + "");
+                            put("number",String.valueOf(currentBuy.get("trade_number")) + "");
+                            put("type",(String) currentBuy.get("item"));
+                            put("subtype",(String) currentBuy.get("hash"));
                         }}));
                     }
                 }

@@ -10,17 +10,17 @@ import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
-import org.xjcraft.trade.entity.StockTrade;
 import org.xjcraft.trade.utils.StringUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Counter implements InventoryHolder, StockMarketGui {
     private final StockMarket plugin;
     private final Inventory inventory;
-    private List<StockTrade> trades;
+    private List<Map<String, Object>> trades;
 
     public Counter(StockMarket plugin, Player player) {
         this.plugin = plugin;
@@ -38,18 +38,18 @@ public class Counter implements InventoryHolder, StockMarketGui {
     private void refresh(Player player) {
         for (int i = 0; i < Slot.BAG; i++) {
             if (i < trades.size()) {
-                StockTrade trade = this.trades.get(i);
-                ItemStack itemStack = plugin.getManager().getItemStack(trade.getItem(), trade.getHash());
+                Map<String, Object> trade = this.trades.get(i);
+                ItemStack itemStack = plugin.getManager().getItemStack((String) trade.get("item"),(String) trade.get("hash"));
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 String s = StringUtil.applyPlaceHolder(MessageConfig.config.getTrade(), new HashMap<String, String>() {{
-                    put("operation", trade.getSell() ? "卖出" : "收购");
+                    put("operation",(boolean) trade.get("sell") ? "卖出" : "收购");
                     put("type", plugin.getManager().getTranslate(itemStack));
-                    put("subtype", trade.getHash());
-                    put("currency", trade.getCurrency());
-                    put("time", trade.getCreateTime().toString());
-                    put("id", trade.getId() + "");
-                    put("number", trade.getTradeNumber() + "");
-                    put("price", trade.getPrice() + "");
+                    put("subtype",(String) trade.get("hash"));
+                    put("currency",(String) trade.get("currency"));
+                    put("time", trade.get("create_time").toString());
+                    put("id",trade.get("id") + "");
+                    put("number", trade.get("trade_number") + "");
+                    put("price", trade.get("price") + "");
                 }});
                 itemMeta.setLore(Arrays.asList(s.split("\n")));
                 itemStack.setItemMeta(itemMeta);
@@ -102,9 +102,9 @@ public class Counter implements InventoryHolder, StockMarketGui {
     }
 
     private void cancelTrade(Player player, int slot) {
-        StockTrade trade = plugin.getManager().getTradeById(trades.get(slot));
-        if (trade == null) return;
-        plugin.getManager().delete(trade);
+        Map<String, Object> trade = trades.get(slot);
+        if (trade.isEmpty()) return;
+        plugin.getManager().delete("stock_trade",(int) trade.get("id"));
         plugin.getManager().cancelTrade(player, trade);
     }
 

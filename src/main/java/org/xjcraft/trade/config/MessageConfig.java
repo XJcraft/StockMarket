@@ -37,6 +37,13 @@ public class MessageConfig {
     String inputButton = "点击手工输入数字";
     String inputTitle = "请输入一个整数";
 
+    String mine = "数字归零";
+    String buy = "买入";
+    String sell = "卖出";
+    String close = "返回";
+    String buymod = "返回";
+    String sellmod = "返回";
+
 
     String sellDetailInfo = "%player%以%currency%%price%的价格出售%number%个%type%%subtype%";
     String buyDetailInfo = "%player%以%currency%%price%的价格收购%number%个%type%%subtype%";

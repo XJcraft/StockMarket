@@ -10,7 +10,6 @@ import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
-import org.xjcraft.trade.entity.StockStorage;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.trade.utils.StringUtil;
 
@@ -18,11 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Bag implements InventoryHolder, StockMarketGui {
     private final StockMarket plugin;
     private final Inventory inventory;
-    private List<StockStorage> storage;
+    private List<Map<String, Object>> storage;
 
     public Bag(StockMarket plugin, Player player) {
         this.plugin = plugin;
@@ -41,16 +41,16 @@ public class Bag implements InventoryHolder, StockMarketGui {
     private void refresh(Player player) {
         for (int i = 0; i < Slot.COLLECT_ALL; i++) {
             if (i < storage.size()) {
-                StockStorage storage = this.storage.get(i);
-                ItemStack itemStack = plugin.getManager().getItemStack(storage.getItem(), storage.getHash());
+                Map<String, Object> storage = this.storage.get(i);
+                ItemStack itemStack = plugin.getManager().getItemStack((String) storage.get("item"),(String) storage.get("hash"));
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 String s = StringUtil.applyPlaceHolder(MessageConfig.config.getStorage(), new HashMap<String, String>() {{
-                    put("seller", storage.getSource());
+                    put("seller",(String) storage.get("source"));
                     put("type", plugin.getManager().getTranslate(itemStack));
-                    put("subtype", storage.getHash());
-                    put("time", storage.getCreateTime().toString());
-                    put("id", storage.getId() + "");
-                    put("number", storage.getNumber() + "");
+                    put("subtype",(String) storage.get("hash"));
+                    put("time", storage.get("create_time").toString());
+                    put("id", storage.get("id") + "");
+                    put("number", storage.get("number") + "");
                 }});
                 itemMeta.setLore(Arrays.asList(s.split("\n")));
                 itemStack.setItemMeta(itemMeta);
@@ -128,9 +128,9 @@ public class Bag implements InventoryHolder, StockMarketGui {
 
     private void collectStorage(Player player, int slot) throws NumberFormatException {
 
-        StockStorage stockStorage = storage.get(slot);
-        ItemStack itemStack = plugin.getManager().getItemStack(stockStorage.getItem(), stockStorage.getHash());
-        Integer number = stockStorage.getNumber();
+        Map<String, Object> stockStorage = storage.get(slot);
+        ItemStack itemStack = plugin.getManager().getItemStack((String) stockStorage.get("item"),(String) stockStorage.get("hash"));
+        Integer number =(Integer) stockStorage.get("number");
         itemStack.setAmount(number);
         int stacks = (int) Math.ceil(number.doubleValue() / itemStack.getMaxStackSize());
         int i = ItemUtil.countEmptySlot(player);
@@ -141,7 +141,7 @@ public class Bag implements InventoryHolder, StockMarketGui {
             throw new NumberFormatException();
         }
 
-        plugin.getManager().delete(stockStorage);
+        plugin.getManager().delete("stock_storage",(int) stockStorage.get("id"));
         List<ItemStack> itemStacks = new ArrayList<ItemStack>();
         itemStacks.add(itemStack);
         while (itemStacks.get(0).getAmount() > itemStack.getMaxStackSize()) {
@@ -152,10 +152,10 @@ public class Bag implements InventoryHolder, StockMarketGui {
         }
         player.getInventory().addItem(itemStacks.toArray(new ItemStack[]{}));
         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getReceive(), new HashMap<String, String>() {{
-            put("player", stockStorage.getSource());
-            put("number", stockStorage.getNumber() + "");
-            put("type", stockStorage.getItem() + "");
-            put("subtype", stockStorage.getHash() + "");
+            put("player",(String) stockStorage.get("source"));
+            put("number", stockStorage.get("number") + "");
+            put("type", stockStorage.get("item") + "");
+            put("subtype", stockStorage.get("hash") + "");
         }}));
     }
 

@@ -15,7 +15,7 @@ import org.xjcraft.trade.gui.Shop;
 
 import java.lang.reflect.Field;
 
-public class StockMarketCommands extends CommonCommandExecutor{
+public class StockMarketCommands extends CommonCommandExecutor {
     private StockMarket plugin;
     private StockMarketManager manager;
 
@@ -59,7 +59,7 @@ public class StockMarketCommands extends CommonCommandExecutor{
             ((Player) player).openInventory(new Bag(plugin, (Player) player).getInventory());
         }
     }
-    
+
     @RCommand(value = "mine", sender = RCommand.Sender.PLAYER, desc = "打开柜台面板")
     public void mine(CommandSender player) {
         if (player instanceof Player) {
@@ -86,7 +86,7 @@ public class StockMarketCommands extends CommonCommandExecutor{
         plugin.saveConfig(IconConfig.class);
     }
 
-     /**
+    /**
      * 命令: /save <字段>
      * 描述: 将手持物品保存到配置文件中的指定字段中
      */
