@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
+import org.xjcraft.trade.utils.ItemUtil;
 
 public class Menu implements InventoryHolder, StockMarketGui {
     private final String currency;
@@ -24,10 +25,10 @@ public class Menu implements InventoryHolder, StockMarketGui {
         this.item = item;
         this.sign = sign;
         inventory = Bukkit.createInventory(this, 27, Config.config.getTitle_menu());
-        inventory.setItem(Slot.buy, IconConfig.config.getBuy());
-        inventory.setItem(Slot.sell, IconConfig.config.getSell());
-        inventory.setItem(Slot.bag, IconConfig.config.getBag());
-        inventory.setItem(Slot.counter, IconConfig.config.getAccount());
+        inventory.setItem(Slot.buy,ItemUtil.getBuy());
+        inventory.setItem(Slot.sell, ItemUtil.getSell());
+        inventory.setItem(Slot.bag, ItemUtil.getSwitchBagButton());
+        inventory.setItem(Slot.counter, ItemUtil.getSwitchCounterButton());
     }
 
 

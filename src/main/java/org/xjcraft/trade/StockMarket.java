@@ -37,7 +37,8 @@ public class StockMarket extends CommonPlugin{
                 "`seller` VARCHAR(255)," +
                 "`buyer` VARCHAR(255)," +
                 "`item` VARCHAR(255)," +
-                "`hash` VARCHAR(255)," +
+                "`item_name` VARCHAR(255)," +
+                "`hash` TEXT," +
                 "`price` INT(11)," +
                 "`currency` VARCHAR(255)," +
                 "`number` INT(11)," +
@@ -50,7 +51,8 @@ public class StockMarket extends CommonPlugin{
                 "`id` INT(11) NOT NULL AUTO_INCREMENT," +
                 "`name` VARCHAR(255)," +
                 "`item` VARCHAR(255)," +
-                "`hash` VARCHAR(255)," +
+                "`item_name` VARCHAR(255)," +
+                "`hash` TEXT," +
                 "`number` INT(11)," +
                 "`source` VARCHAR(255)," +
                 "`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
@@ -62,7 +64,8 @@ public class StockMarket extends CommonPlugin{
                 "`player` VARCHAR(255)," +
                 "`sell` BOOLEAN," +
                 "`item` VARCHAR(255)," +
-                "`hash` VARCHAR(255)," +
+                "`item_name` VARCHAR(255)," +
+                "`hash` TEXT," +
                 "`currency` VARCHAR(255)," +
                 "`price` INT(11)," +
                 "`trade_number` INT(11)," +
@@ -71,16 +74,8 @@ public class StockMarket extends CommonPlugin{
                 "PRIMARY KEY (`id`)," +
                 "INDEX `sell_index` (`sell`)," +
                 "INDEX `item_index` (`item`)," +
-                "INDEX `hash_index` (`hash`)," +
                 "INDEX `currency_index` (`currency`)" +
                 ") ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='市场交易表';",
-                "CREATE TEMPORARY TABLE IF NOT EXISTS `stock_custom_item` (" +
-                "`id` INT(11) NOT NULL," +
-                "`meta` VARCHAR(255)," +
-                "`flat_item` TEXT," + 
-                "PRIMARY KEY (`id`)," +
-                "INDEX `meta_index` (`meta`)" +
-                ") ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='临时自定义物品表';"
             };
             for (String s : create) {
                 PreparedStatement preparedStatement = connection.prepareStatement(s);

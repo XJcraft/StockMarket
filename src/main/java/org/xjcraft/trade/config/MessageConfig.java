@@ -14,39 +14,45 @@ public class MessageConfig {
     String sellButton = "以%d价格卖出%d个%s";
     String buyButton = "以%d价格购买%d个%s";
     String itemOwned = "你拥有%d个%s。";
-    String sellInfo = "%size%个出售，起价%price%%currency%";
+    String sellInfo = "%size%个出售，起价%price% %currency%";
     String nohighest = "无人出售";
-    String buyInfo = "%size%笔交易尝试以%price%%currency%的价格购买";
+    String buyInfo = "%size%笔交易尝试以%price% %currency%的价格购买";
     String nolowest = "无人购买";
     String stackButton = "点击切换组模式与单个模式";
     String currencyNotFound = "该货币不存在！";
-    String storage = "出售者%seller%\n类型%type%:%subtype%\n数量：%number%\n交易时间：%time%\n流水号：%id%";
+    String storage = "出售者：%seller%\n类型：%type%\n数量：%number%\n交易时间：%time%\n流水号：%id%";
     String collectAll = "一键收取！";
-    String receive = "从仓库中收到来自%player%的%number%个%type%%subtype%";
+    String receive = "仓库/背包中收到了来自%player%的%number%个%type%";
     String slotNotEnough = "背包空间不足！\n你需要留出%slot%个空格来接受物品！";
-    String buyHint = "你从%seller%手中购买了%number%个%type%%subtype%";
-    String buyRemain = "没有足够的出售者！\n剩余%number%物品以%currency%%price%的价格发出一笔收购申请！";
-    String sellHint = "你卖给%buyer%了%number%个%type%%subtype%";
-    String sellRemain = "没有足够的收购者！\n剩余%number%物品以%currency%%price%的价格发出一笔出售申请！";
-    String trade = "%operation%%number%个%type%%subtype%\n价格%currency%%price%\n流水号：%id%\n§r§l§4点击取消";
+    String buyHint = "你从%seller%手中购买了%number%个%type%";
+    String buyRemain = "没有足够的出售者！\n剩余%number%个物品将以%currency% %price%的价格发出一笔收购申请！";
+    String sellHint = "你卖给%buyer%了%number%个%type%";
+    String sellRemain = "没有足够的收购者！\n剩余%number%个物品将以%currency% %price%的价格发出一笔出售申请！";
+    String trade = "%operation%%number%个%type%\n价格%currency% %price%\n流水号：%id%\n§r§l§4点击取消";
+    String collectMsg = "已取消，物品将返还至仓库";
 
-    String switchToBag = "点击打开我的仓库";
-    String switchToCounter = "点击打开我的柜台";
+    String switchToBag = "我的仓库";
+    String switchToBagIntroduce = "点击打开我的仓库";
+    String switchToCounter = "我的柜台";
+    String switchToCounterIntroduce = "点击打开我的柜台";
     String sellInfoButton = "点击查询当前在售";
     String buyInfoButton = "点击查询当前收购";
     String inputButton = "点击手工输入数字";
     String inputTitle = "请输入一个整数";
 
-    String mine = "数字归零";
+    String mine = "数量归零";
     String buy = "买入";
     String sell = "卖出";
     String close = "返回";
     String buymod = "返回";
     String sellmod = "返回";
+    String buyStore = "收购";
+    String buyStoreIntroduce = "点击打开收购页面";
+    String sellStore = "出售";
+    String sellStoreIntroduce = "点击打开出售页面";
 
-
-    String sellDetailInfo = "%player%以%currency%%price%的价格出售%number%个%type%%subtype%";
-    String buyDetailInfo = "%player%以%currency%%price%的价格收购%number%个%type%%subtype%";
+    String sellDetailInfo = "%player%以%currency%%price%的价格出售%number%个%type%";
+    String buyDetailInfo = "%player%以%currency%%price%的价格收购%number%个%type%";
 
 //    String createShop = "商店%s已建立！";
 //    String enterShop = "进入%s市场中...";

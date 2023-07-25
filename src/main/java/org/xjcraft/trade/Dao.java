@@ -54,8 +54,8 @@ public class Dao {
         return resultList;
     }
 
-    public void setStorage(String name,Integer number,Player source,String item,String hash) {
-        String sql = "INSERT INTO stock_storage (name, number, source, item, hash) VALUES (?, ?, ?, ?, ?)";
+    public void setStorage(String name,Integer number,Player source,String item,String hash,String item_name) {
+        String sql = "INSERT INTO stock_storage (name, number, source, item, hash,item_name) VALUES (?, ?, ?, ?, ?,?)";
         Connection connection = null;
         try{
             connection = hikari.getConnection();
@@ -65,6 +65,38 @@ public class Dao {
                 preparedStatement.setString(3, source.getName());
                 preparedStatement.setString(4, item);
                 preparedStatement.setString(5, hash);
+                preparedStatement.setString(6, item_name);
+                preparedStatement.executeUpdate();
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
+        }catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void setStorage(String type, String subtype, String player, Integer number, String source,String item_name) {
+        String sql = "INSERT INTO stock_storage (item, hash, name, number, source,item_name) VALUES (?, ?, ?, ?, ?,?)";
+        Connection connection = null;
+        try{
+            connection = hikari.getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, type);
+                preparedStatement.setString(2, subtype);
+                preparedStatement.setString(3, player);
+                preparedStatement.setInt(4, number);
+                preparedStatement.setString(5, source);
+                preparedStatement.setString(6, item_name);
                 preparedStatement.executeUpdate();
                 connection.commit();
             } catch (SQLException e) {
@@ -239,8 +271,8 @@ public class Dao {
         }
     }
 
-    public void setTrade(String type,String subType,String currency,Integer price,boolean sell,Player buyer,Integer amount) {
-        String sql = "INSERT INTO stock_trade (item, hash, currency, price, sell, player, trade_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void setTrade(String type,String subType,String currency,Integer price,boolean sell,Player buyer,Integer amount,String type_name) {
+        String sql = "INSERT INTO stock_trade (item, hash, currency, price, sell, player, trade_number,item_name) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
         Connection connection = null;
         try{
             connection = hikari.getConnection();
@@ -252,6 +284,8 @@ public class Dao {
                 preparedStatement.setBoolean(5, sell);
                 preparedStatement.setString(6, buyer.getName());
                 preparedStatement.setInt(7, amount);
+                preparedStatement.setInt(7, amount);
+                preparedStatement.setString(8, type_name);
                 preparedStatement.executeUpdate();
                 connection.commit();
             } catch (SQLException e) {
@@ -272,7 +306,7 @@ public class Dao {
     }
 
     public void processSells(Player buyer, Map<String, Object> sell) {
-        String insertHistorySql = "INSERT INTO stock_history (buyer, seller, item, hash, price, currency, trade_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String insertHistorySql = "INSERT INTO stock_history (seller, buyer, item, hash, price, currency, number,item_name) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
         String deleteSellSql = "DELETE FROM stock_trade WHERE id = ?";
         Connection connection = null;
 
@@ -282,10 +316,11 @@ public class Dao {
                 insertHistoryStmt.setString(1, buyer.getName());
                 insertHistoryStmt.setString(2, (String) sell.get("player"));
                 insertHistoryStmt.setString(3, (String) sell.get("item"));
-                insertHistoryStmt.setString(4, (String) sell.get("hash"));
+                insertHistoryStmt.setString(4, "");
                 insertHistoryStmt.setInt(5, (Integer) sell.get("price"));
                 insertHistoryStmt.setString(6, (String) sell.get("currency"));
                 insertHistoryStmt.setInt(7, (Integer) sell.get("trade_number"));
+                insertHistoryStmt.setString(8,(String) sell.get("item_name"));
                 insertHistoryStmt.executeUpdate();
             }
             // 删除原有的 sell 记录
@@ -315,7 +350,7 @@ public class Dao {
     }
 
     public void processSells(Player buyer, Map<String, Object> sell,Integer amount) {
-        String insertHistorySql = "INSERT INTO stock_history (buyer, seller, item, hash, price, currency, trade_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String insertHistorySql = "INSERT INTO stock_history (seller, buyer, item, hash, price, currency, number,item_name) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
         Connection connection = null;
 
         try {
@@ -324,10 +359,11 @@ public class Dao {
                 insertHistoryStmt.setString(1, buyer.getName());
                 insertHistoryStmt.setString(2, (String) sell.get("player"));
                 insertHistoryStmt.setString(3, (String) sell.get("item"));
-                insertHistoryStmt.setString(4, (String) sell.get("hash"));
+                insertHistoryStmt.setString(4, "");
                 insertHistoryStmt.setInt(5, (Integer) sell.get("price"));
                 insertHistoryStmt.setString(6, (String) sell.get("currency"));
                 insertHistoryStmt.setInt(7,amount);
+                insertHistoryStmt.setString(8,(String) sell.get("item_name"));
                 insertHistoryStmt.executeUpdate();
             }
             connection.commit(); // 提交事务
@@ -355,8 +391,7 @@ public class Dao {
         HashMap<String, String> map = new HashMap<>();
         map.put("buyer", buyer.getName());
         map.put("seller", (String) sell.get("player"));
-        map.put("type", (String) sell.get("item"));
-        map.put("subtype", (String) sell.get("hash"));
+        map.put("type", (String) sell.get("item_name"));
         map.put("currency", (String) sell.get("currency"));
         map.put("price", String.valueOf(sell.get("price")));
         map.put("number", String.valueOf(sell.get("trade_number")));

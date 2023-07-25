@@ -10,8 +10,10 @@ import org.xjcraft.trade.StockMarket;
 import org.xjcraft.trade.config.Config;
 import org.xjcraft.trade.config.IconConfig;
 import org.xjcraft.trade.config.MessageConfig;
+import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.trade.utils.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ public class Counter implements InventoryHolder, StockMarketGui {
     public Counter(StockMarket plugin, Player player) {
         this.plugin = plugin;
         inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_offer());
-        inventory.setItem(Slot.BAG, IconConfig.config.getBag());
+        inventory.setItem(Slot.BAG, ItemUtil.getSwitchBagButton());
 //        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
@@ -44,7 +46,6 @@ public class Counter implements InventoryHolder, StockMarketGui {
                 String s = StringUtil.applyPlaceHolder(MessageConfig.config.getTrade(), new HashMap<String, String>() {{
                     put("operation",(boolean) trade.get("sell") ? "卖出" : "收购");
                     put("type", plugin.getManager().getTranslate(itemStack));
-                    put("subtype",(String) trade.get("hash"));
                     put("currency",(String) trade.get("currency"));
                     put("time", trade.get("create_time").toString());
                     put("id",trade.get("id") + "");
@@ -79,6 +80,7 @@ public class Counter implements InventoryHolder, StockMarketGui {
             default:
                 if (slot < trades.size() && slot >= 0) {
                     collect(player, slot);
+                    player.sendMessage(MessageConfig.config.getCollectMsg());
                 }
                 break;
         }

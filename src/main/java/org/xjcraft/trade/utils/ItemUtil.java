@@ -15,6 +15,7 @@ import org.xjcraft.trade.config.MessageConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -252,57 +253,79 @@ public class ItemUtil {
 
     public static ItemStack getMine() {
         ItemStack temp = new ItemStack(Material.SKELETON_SKULL, 1);
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getMine());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getMine());
+        temp.setItemMeta(itemMeta);
+        return temp;
+    }
+
+    public static ItemStack getBuy() {
+        ItemStack temp = IconConfig.config.getBuy();
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getBuyStore());
+        List<String> lore = new ArrayList<>();
+        lore.add(MessageConfig.config.getBuyStoreIntroduce());
+        itemMeta.setLore(lore);
+        temp.setItemMeta(itemMeta);
+        return temp;
+    }
+
+    public static ItemStack getSell() {
+        ItemStack temp = IconConfig.config.getSell();
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getSellStore());
+        List<String> lore = new ArrayList<>();
+        lore.add(MessageConfig.config.getSellStoreIntroduce());
+        itemMeta.setLore(lore);
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getBuyConfirm() {
         ItemStack temp = IconConfig.config.getBuyConfirm();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getBuy());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getBuy());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getBuySimple() {
         ItemStack temp = IconConfig.config.getBuySimple();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getBuy());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getBuy());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getSellConfirm() {
         ItemStack temp = IconConfig.config.getSellConfirm();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getSell());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getSell());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getClose() {
         ItemStack temp = IconConfig.config.getClose();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getClose());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getClose());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getBuymod() {
         ItemStack temp = IconConfig.config.getClose();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getBuymod());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getBuymod());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
     public static ItemStack getSellmod() {
         ItemStack temp = IconConfig.config.getClose();
-        BannerMeta bannerMeta = (BannerMeta) temp.getItemMeta();
-        bannerMeta.setDisplayName(MessageConfig.config.getSellmod());
-        temp.setItemMeta(bannerMeta);
+        ItemMeta itemMeta = temp.getItemMeta();
+        itemMeta.setDisplayName(MessageConfig.config.getSellmod());
+        temp.setItemMeta(itemMeta);
         return temp;
     }
 
@@ -436,10 +459,8 @@ public class ItemUtil {
         return empty;
     }
 
-
     public static ItemStack getCollectAll() {
         ItemStack temp = new ItemStack(Material.ENDER_CHEST, 1);
-
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(MessageConfig.config.getCollectAll());
@@ -448,19 +469,23 @@ public class ItemUtil {
     }
 
     public static ItemStack getSwitchBagButton() {
-        ItemStack temp = new ItemStack(Material.IRON_DOOR, 1);
+        ItemStack temp = IconConfig.config.getBag();
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(MessageConfig.config.getSwitchToBag());
+        List<String> lore = new ArrayList<>();
+        lore.add(MessageConfig.config.getSwitchToBagIntroduce());
         temp.setItemMeta(im);
         return temp;
     }
 
     public static ItemStack getSwitchCounterButton() {
-        ItemStack temp = new ItemStack(Material.OAK_DOOR, 1);
+        ItemStack temp = IconConfig.config.getAccount();
         ItemMeta im;
         im = temp.getItemMeta();
         im.setDisplayName(MessageConfig.config.getSwitchToCounter());
+        List<String> lore = new ArrayList<>();
+        lore.add(MessageConfig.config.getSwitchToCounterIntroduce());
         temp.setItemMeta(im);
         return temp;
     }

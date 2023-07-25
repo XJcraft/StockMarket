@@ -403,8 +403,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
                             put("currency",(String) currentBuy.get("currency"));
                             put("price",String.valueOf(currentBuy.get("price")) + "");
                             put("number",String.valueOf(currentBuy.get("trade_number")) + "");
-                            put("type",(String) currentBuy.get("item"));
-                            put("subtype",(String) currentBuy.get("hash"));
+                            put("type",(String) currentBuy.get("item_name"));
                         }}));
                     }
                 } else {
@@ -414,8 +413,7 @@ public class Shop implements InventoryHolder, StockMarketGui {
                             put("currency",(String) currentBuy.get("currency"));
                             put("price",String.valueOf(currentBuy.get("price")) + "");
                             put("number",String.valueOf(currentBuy.get("trade_number")) + "");
-                            put("type",(String) currentBuy.get("item"));
-                            put("subtype",(String) currentBuy.get("hash"));
+                            put("type",(String) currentBuy.get("item_name"));
                         }}));
                     }
                 }

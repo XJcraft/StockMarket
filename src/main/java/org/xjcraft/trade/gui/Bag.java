@@ -27,8 +27,8 @@ public class Bag implements InventoryHolder, StockMarketGui {
     public Bag(StockMarket plugin, Player player) {
         this.plugin = plugin;
         inventory = Bukkit.createInventory(this, 54, Config.config.getTitle_bag());
-        inventory.setItem(Slot.COLLECT_ALL, IconConfig.config.getCollectAll());
-        inventory.setItem(Slot.COUNTER, IconConfig.config.getAccount());
+        inventory.setItem(Slot.COLLECT_ALL, ItemUtil.getCollectAll());
+        inventory.setItem(Slot.COUNTER, ItemUtil.getSwitchCounterButton());
 //        inventory.setItem(Slot.CLOSE, IconConfig.config.getClose());
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> update(player));
     }
@@ -47,7 +47,6 @@ public class Bag implements InventoryHolder, StockMarketGui {
                 String s = StringUtil.applyPlaceHolder(MessageConfig.config.getStorage(), new HashMap<String, String>() {{
                     put("seller",(String) storage.get("source"));
                     put("type", plugin.getManager().getTranslate(itemStack));
-                    put("subtype",(String) storage.get("hash"));
                     put("time", storage.get("create_time").toString());
                     put("id", storage.get("id") + "");
                     put("number", storage.get("number") + "");
@@ -154,8 +153,7 @@ public class Bag implements InventoryHolder, StockMarketGui {
         player.sendMessage(StringUtil.applyPlaceHolder(MessageConfig.config.getReceive(), new HashMap<String, String>() {{
             put("player",(String) stockStorage.get("source"));
             put("number", stockStorage.get("number") + "");
-            put("type", stockStorage.get("item") + "");
-            put("subtype", stockStorage.get("hash") + "");
+            put("type", stockStorage.get("item_name") + "");
         }}));
     }
 
