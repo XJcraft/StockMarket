@@ -87,7 +87,7 @@ public class StockMarket extends CommonPlugin{
 
         manager = new StockMarketManager(this, hikari);
         setupListeners(manager);
-        registerCommand(new StockMarketCommands(this, manager));
+        // registerCommand(new StockMarketCommands(this, manager));
         getLogger().info("StockMarket has been enabled");
     }
 

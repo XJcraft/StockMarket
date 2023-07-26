@@ -2,10 +2,10 @@ package org.xjcraft.trade;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.gson.Gson;
 import com.zjyl1994.minecraftplugin.multicurrency.services.BankService;
 import com.zjyl1994.minecraftplugin.multicurrency.utils.OperateResult;
 import com.zjyl1994.minecraftplugin.multicurrency.utils.TxTypeEnum;
+
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -19,18 +19,18 @@ import org.xjcraft.trade.gui.Menu;
 import org.xjcraft.trade.gui.Shop;
 import org.xjcraft.trade.utils.ItemUtil;
 import org.xjcraft.utils.JSON;
+import org.xjcraft.utils.TranslationManager;
 import org.xjcraft.trade.utils.StringUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.Base64;
+import java.io.File;
 
 import javax.sql.DataSource;
 
@@ -44,9 +44,9 @@ public class StockMarketManager {
     public StockMarketManager(StockMarket stockMarket, DataSource hikari) {
         plugin = stockMarket;
         this.dao = new Dao(hikari,plugin);
-        InputStream resource = plugin.getResource("zh_cn.json");
-         // 使用Gson库将JSON文件解析为Map对象，用于物品名称的翻译
-        map = new Gson().fromJson(new InputStreamReader(resource), Map.class);
+        File modFolder = new File("mods");
+        TranslationManager manager = new TranslationManager(plugin, modFolder);
+        this.map = manager.getMergedTranslations(manager.loadOriginalTranslations());
     }
 
     // 建立一个基于Guava的缓存，主要用于存储物品和名称之间的关系
