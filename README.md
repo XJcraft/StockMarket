@@ -1,6 +1,6 @@
 # StockMarket
-魔改自这个项目
-https://github.com/XJcraft/StockMarket
+魔改自这个项目<br>
+https://github.com/XJcraft/StockMarket<br>
 由于原版项目缺乏一些运行库和环境兼容的问题，这边改写了一些内容，让插件能顺利运行
 ## 更改项如下
 1. 删除了缺失的xjcraft依赖库，增加了猜测的功能实现代码
