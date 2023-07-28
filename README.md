@@ -1,100 +1,10 @@
 # StockMarket
-this is a plugin to simulate stock market, the default currency is emerald.
-Developping
-```
-StockMarket
-├─ .git
-│  ├─ config
-│  ├─ description
-│  ├─ FETCH_HEAD
-│  ├─ HEAD
-│  ├─ hooks
-│  │  ├─ applypatch-msg.sample
-│  │  ├─ commit-msg.sample
-│  │  ├─ fsmonitor-watchman.sample
-│  │  ├─ post-update.sample
-│  │  ├─ pre-applypatch.sample
-│  │  ├─ pre-commit.sample
-│  │  ├─ pre-merge-commit.sample
-│  │  ├─ pre-push.sample
-│  │  ├─ pre-rebase.sample
-│  │  ├─ pre-receive.sample
-│  │  ├─ prepare-commit-msg.sample
-│  │  ├─ push-to-checkout.sample
-│  │  └─ update.sample
-│  ├─ index
-│  ├─ info
-│  │  └─ exclude
-│  ├─ logs
-│  │  ├─ HEAD
-│  │  └─ refs
-│  │     ├─ heads
-│  │     │  ├─ master
-│  │     │  └─ StockMarket
-│  │     └─ remotes
-│  │        └─ origin
-│  │           └─ HEAD
-│  ├─ objects
-│  │  ├─ info
-│  │  └─ pack
-│  │     ├─ pack-5c4ef11f1377cd743163597563fa73b253813c82.idx
-│  │     └─ pack-5c4ef11f1377cd743163597563fa73b253813c82.pack
-│  ├─ packed-refs
-│  └─ refs
-│     ├─ heads
-│     │  ├─ master
-│     │  └─ StockMarket
-│     ├─ remotes
-│     │  └─ origin
-│     │     └─ HEAD
-│     └─ tags
-├─ .gitignore
-├─ .vscode
-│  └─ settings.json
-├─ pom.xml
-├─ README.md
-└─ src
-   ├─ main
-   │  ├─ java
-   │  │  └─ org
-   │  │     └─ xjcraft
-   │  │        ├─ trade
-   │  │        │  ├─ bean
-   │  │        │  │  └─ StockCustomItem.java
-   │  │        │  ├─ config
-   │  │        │  │  ├─ Config.java
-   │  │        │  │  ├─ IconConfig.java
-   │  │        │  │  ├─ LoreConfig.java
-   │  │        │  │  ├─ MessageConfig.java
-   │  │        │  │  └─ SpecialItemConfig.java
-   │  │        │  ├─ Dao.java
-   │  │        │  ├─ entity
-   │  │        │  │  ├─ StockHistory.java
-   │  │        │  │  ├─ StockStorage.java
-   │  │        │  │  └─ StockTrade.java
-   │  │        │  ├─ gui
-   │  │        │  │  ├─ Bag.java
-   │  │        │  │  ├─ Callback.java
-   │  │        │  │  ├─ Counter.java
-   │  │        │  │  ├─ Menu.java
-   │  │        │  │  ├─ Shop.java
-   │  │        │  │  └─ StockMarketGui.java
-   │  │        │  ├─ StockMarket.java
-   │  │        │  ├─ StockMarketCommands.java
-   │  │        │  ├─ StockMarketListener.java
-   │  │        │  ├─ StockMarketManager.java
-   │  │        │  └─ utils
-   │  │        │     ├─ InfoUtil.java
-   │  │        │     ├─ ItemUtil.java
-   │  │        │     ├─ SerializeUtil.java
-   │  │        │     └─ StringUtil.java
-   │  │        └─ utils
-   │  │           └─ JSON.java
-   │  └─ resources
-   │     ├─ plugin.yml
-   │     └─ zh_cn.json
-   └─ test
-      └─ java
-         └─ DecodeTest.java
-
-```
+魔改自这个项目
+https://github.com/XJcraft/StockMarket
+由于原版项目缺乏一些运行库和环境兼容的问题，这边改写了一些内容，让插件能顺利运行
+## 更改项如下
+1. 删除了缺失的xjcraft依赖库，增加了猜测的功能实现代码
+2. 删除了在服务端有些兼容问题（环境为authlib，有类加载器和表格不写入的bug）的io.ebean，改为sql+hikari形式
+3. 原先默认图表存在难以分辨功能（没有更改方块名称或数字提示缺失），改写了默认的商店图标，并增加了提示
+4. 原版的方块hash-ItemMeta校验存在无法适配mod的问题，改写了对同一类方块的校验逻辑，以直接在数据库中储存Base64-ItemMeta的形式直接存入方块数据
+5. 改写了原版的交易提示，原先是直接提示ItemName，可读性较差，目前改为了翻译过后的，包括mod在内的方块都可以直接显示其名称
