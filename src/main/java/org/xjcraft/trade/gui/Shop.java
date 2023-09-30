@@ -351,11 +351,11 @@ public class Shop implements InventoryHolder, StockMarketGui {
                 new AnvilGUI.Builder().plugin(plugin)
                         .title(MessageConfig.config.getInputButton())
                         .text(number + "")
-                        .item(new ItemStack(Material.PAPER))
-                        .onComplete((p, text) -> {
+                        .itemRight(new ItemStack(Material.PAPER))
+                        .onClick((p, text) -> {
                             boolean success = false;
                             try {
-                                int i = Integer.parseInt(text);
+                                int i = Integer.parseInt(text.getText());
                                 number = i;
                                 success = true;
                                 return AnvilGUI.Response.close();
@@ -366,9 +366,9 @@ public class Shop implements InventoryHolder, StockMarketGui {
                             }
 
                         }).onClose(p -> {
-                    player.openInventory(getInventory());
-                    plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
-                }).open(player);
+                            player.openInventory(getInventory());
+                            plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
+                        }).open(player);
 
                 break;
             case Slot.PRICE_INPUT:
@@ -376,11 +376,11 @@ public class Shop implements InventoryHolder, StockMarketGui {
                     new AnvilGUI.Builder().plugin(plugin)
                             .title(MessageConfig.config.getInputButton())
                             .text(price + "")
-                            .item(new ItemStack(Material.PAPER))
-                            .onComplete((p, text) -> {
+                            .itemRight(new ItemStack(Material.PAPER))
+                            .onClick((p, text) -> {
                                 boolean success = false;
                                 try {
-                                    int i = Integer.parseInt(text);
+                                    int i = Integer.parseInt(text.getText());
                                     price = i;
                                     success = true;
                                     return AnvilGUI.Response.close();
@@ -391,9 +391,9 @@ public class Shop implements InventoryHolder, StockMarketGui {
                                 }
 
                             }).onClose(p -> {
-                        player.openInventory(getInventory());
-                        plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
-                    }).open(player);
+                                player.openInventory(getInventory());
+                                plugin.getServer().getScheduler().runTask(plugin, () -> refresh(player));
+                            }).open(player);
                 break;
             case Slot.PRICE_INFO:
                 if (mode.buy) {
