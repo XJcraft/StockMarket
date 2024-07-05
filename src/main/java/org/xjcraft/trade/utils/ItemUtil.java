@@ -85,7 +85,7 @@ public class ItemUtil {
         i = i % 10;
         ItemStack itemStack = new ItemStack(Material.WHITE_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
-        bannerMeta.setBaseColor(DyeColor.WHITE);
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BASE));
 
         switch (i) {
             case 0:
@@ -124,10 +124,10 @@ public class ItemUtil {
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT));
                 break;
             case 5:
-                bannerMeta.setBaseColor(DyeColor.BLACK);
+                bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.BASE));
                 bannerMeta.setDisplayName("5");
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_BOTTOM));
-                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.RHOMBUS_MIDDLE));
+                bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.RHOMBUS));
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
                 bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_DOWNRIGHT));
                 break;
@@ -170,9 +170,10 @@ public class ItemUtil {
         ItemStack upArrow = new ItemStack(Material.BLACK_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) upArrow.getItemMeta();
         bannerMeta.setDisplayName("+");
-        bannerMeta.setBaseColor(DyeColor.BLACK);
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.BASE));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_LEFT));
-        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_RIGHT_MIRROR));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_UP_RIGHT));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BASE));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
 
         upArrow.setItemMeta(bannerMeta);
@@ -183,9 +184,9 @@ public class ItemUtil {
         ItemStack downArrow = new ItemStack(Material.BLACK_BANNER, 1);
         BannerMeta bannerMeta = (BannerMeta) downArrow.getItemMeta();
         bannerMeta.setDisplayName("-");
-        bannerMeta.setBaseColor(DyeColor.BLACK);
+        bannerMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.BASE));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_RIGHT));
-        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_LEFT_MIRROR));
+        bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_UP_LEFT));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
         downArrow.setItemMeta(bannerMeta);
         return downArrow;

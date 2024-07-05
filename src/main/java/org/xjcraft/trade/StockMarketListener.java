@@ -84,6 +84,7 @@ public class StockMarketListener implements Listener {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 String[] lines = sign.getLines();
                 if (lines[0].contains(Config.config.getShop_name())) {
+                    event.setCancelled(true);
                     if (StringUtil.isEmpty(lines[2])) {
                         //create shop with item in hand
                         ItemStack itemInHand = player.getItemInHand();
@@ -109,9 +110,9 @@ public class StockMarketListener implements Listener {
                         Menu shop = new Menu(plugin, player, currency, itemStack, sign);
                         player.openInventory(shop.getInventory());
 //                        updateSign(sign, itemStack);
-
                     }
                 } else if (lines[0].contains(Config.config.getShop_nameHide())) {
+                    event.setCancelled(true);
                     if (sign.getLine(1).contains("@")) {
                         //get into a shop
                         String currency = sign.getLine(1);
@@ -122,12 +123,13 @@ public class StockMarketListener implements Listener {
                         String hashcode = split.length > 2 ? split[2] : "";
                         ItemStack itemStack = manager.getItemStack(type, hashcode);
                         manager.openIndex(player, sign, currency, itemStack);
-
                     }
                 } else if (lines[0].equals(Config.config.getShop_bagName())) {
                     player.openInventory(new Bag(plugin, player).getInventory());
+                    event.setCancelled(true);
                 } else if (lines[0].equals(Config.config.getShop_offerName())) {
                     player.openInventory(new Counter(plugin, player).getInventory());
+                    event.setCancelled(true);
                 }
             }
         }
